@@ -7,15 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "pretest": "mv exammple.babelrc .babelrc",
-    "test": "jest",
-    "protest": "mv .babelrc exammple.babelrc"
+    "test": "jest"
   },
   "dependencies": {
     "likehome": "file:",
     "next": "14.2.7",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
