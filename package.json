@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "pretest": "mv exammple.babelrc .babelrc",
+    "test": "jest",
+    "protest": "mv .babelrc exammple.babelrc"
   },
   "dependencies": {
     "likehome": "file:",
@@ -15,11 +18,13 @@
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@babel/core": "^7.25.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.7",
+    "jest": "^29.7.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
