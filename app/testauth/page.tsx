@@ -17,6 +17,19 @@ export default function TestAuth() {
             log into below.
           </p>
           <div className='mt-6'>
+            {/* GitHub sign-in button */}
+            <div className='pb-2 flex flex-col items-center'>
+              <button className='flex items-center border border-transparent rounded-md shadow-sm px-4 py-2 bg-gray-400 text-white font-medium hover:bg-gray-600 transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full'>
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/25/25231.png"
+                  alt="GitHub Logo"
+                  className="h-7"
+                />
+                <p className='flex-grow text-center'>
+                  Sign in with GitHub
+                </p>
+              </button>
+            </div>
             {/* Google sign-in button */}
             <div className='pb-2 flex flex-col items-center'>
               <button className='flex items-center border border-transparent rounded-md shadow-sm px-4 py-2 bg-blue-600 text-white font-medium hover:bg-blue-700 transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full'>
