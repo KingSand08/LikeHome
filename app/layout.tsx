@@ -1,7 +1,7 @@
-import Header from '@/app/Header';
 import type { Metadata } from "next";
 import { Marcellus, Urbanist } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/layout/Header";
 
 const marcellus = Marcellus({
   subsets: ["latin"],
