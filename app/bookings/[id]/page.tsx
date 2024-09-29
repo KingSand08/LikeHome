@@ -1,10 +1,7 @@
-import { useRouter } from "next/router";
 import React from "react";
 
-const router = useRouter();
-
-const BookingDetailsPage = () => {
-  return <div>BookingDetailsPage {router.query.id}</div>;
+const BookingDetailsPage = ({ params }: { params: { slug: string } }) => {
+  return <div>BookingDetailsPage {params.slug}</div>;
 };
 
 export default BookingDetailsPage;
