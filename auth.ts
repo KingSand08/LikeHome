@@ -14,6 +14,10 @@
 
 import NextAuth from "next-auth"
 import GitHub from "next-auth/providers/github"
+import Google from "next-auth/providers/google"
+import Instagram from "next-auth/providers/instagram"
+import Facebook from "next-auth/providers/Facebook"
+import Twitter from "next-auth/providers/twitter"
 import Credentials from "next-auth/providers/credentials"
 import type { Provider } from "next-auth/providers"
 
@@ -31,6 +35,10 @@ const providers: Provider[] = [
     },
   }),
   GitHub,
+  Google,
+  Instagram,
+  Facebook,
+  Twitter,
 ]
  
 export const providerMap = providers
