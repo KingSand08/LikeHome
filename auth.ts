@@ -1,17 +1,3 @@
-// import NextAuth from "next-auth";
-// import GitHub from "next-auth/providers/github";
-
-// export const { handlers, signIn, signOut, auth } = NextAuth({
-//   providers: [GitHub],
-//   callbacks: {
-//     async redirect({ url, baseUrl }) {
-//       // Allow redirecting to the intended page after sign-in
-//       return url.startsWith(baseUrl) ? url : baseUrl; // Redirect to base URL if not from base
-//     },
-//   },
-// });
-
-
 import NextAuth from "next-auth"
 import GitHub from "next-auth/providers/github"
 import Google from "next-auth/providers/google"
@@ -57,4 +43,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/signin",
   },
-})
+  // callbacks: {
+  //   async redirect({ url, baseUrl }) {
+  //     return url.startsWith(baseUrl) ? url : baseUrl; // NEW ADDED! Allow redirecting to the intended page after sign-in
+  //   },
+  // },
+});

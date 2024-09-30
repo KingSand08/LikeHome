@@ -14,7 +14,7 @@ import XImage from '../../public/icons/x-twitter.icon.png'
 export default async function SignInPage(props: {
   searchParams: { callbackUrl: string | undefined }
 }) {
-  const SIGNIN_ERROR_URL = "/api/auth/signin"; // Define the error URL
+  const SIGNIN_ERROR_URL = "/api/auth/signin";
 
   const providerIcons: { [key: string]: StaticImageData } = {
     github: GitHubImage,
