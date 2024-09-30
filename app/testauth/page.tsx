@@ -21,7 +21,7 @@ export default async function SignInPage(props: {
     google: GoogleImage,
     instagram: InstagramImage,
     facebook: FacebookImage,
-    x: XImage
+    twitter: XImage
   };
 
   return (
