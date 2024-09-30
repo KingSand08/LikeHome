@@ -16,7 +16,7 @@ export default async function TestAuth() {
       <div className='h-screen flex items-center justify-center' >
         <div className='bg-white flex rounded-lg w-3/4'>
           <div className='flex-1 text-gray-800 p-20'>
-            <div className='flex items-center mb-5'>
+            <div className='flex-col'>
               <h1 className='text-3xl pb-2'>Test ID Page</h1>
               <img
                 alt='likehome image'
@@ -35,7 +35,11 @@ export default async function TestAuth() {
                 Sign Out
               </div>
             </a>
-
+            <div>
+              <h2 className='pb-2 text-3xl'>{session.user.name}</h2>
+              <h3 className='pb-2 text-2xl'>{session.user.email}</h3>
+              <img className='pb-2 w-20' src={session.user.image} /><br />
+            </div>
           </div>
         </div>
       </div>
