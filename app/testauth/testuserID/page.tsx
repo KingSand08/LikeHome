@@ -1,15 +1,18 @@
 import React from 'react'
 import Image from 'next/image'
-import { auth } from '@/auth'
+import { auth, signOut } from '@/auth'
 import { redirect } from 'next/navigation'
 
 export default async function TestAuth() {
-  const session = await auth()
-  const userId = "user-1"
+  const session = await auth();
+  console.log("Session:", session);
 
-  if (!session?.user) {
-    redirect("/api/auth/signin?callbackURL=/me")
+  if (!session) {
+    redirect("/testauth");
   }
+
+
+  const user = session?.user
 
   return (
     <>
@@ -28,17 +31,24 @@ export default async function TestAuth() {
               This page is for dev only to test session user functionality.
             </p>
             <pre className='mt-12 text-2xl text-purple-600 italic'>{JSON.stringify(session, null, 2)}</pre>
-            <a href='http://localhost:3000/api/auth/signout'>
-              <div
+            <form
+              action={async () => {
+                "use server";
+                await signOut();
+              }}
+            >
+              <button
                 className='m-10 text-center border border-transparent rounded-md shadow-sm px-4 py-2 bg-blue-600 text-white font-medium hover:bg-blue-800 transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-1/2'
               >
                 Sign Out
-              </div>
-            </a>
+              </button>
+            </form>
             <div>
               <h2 className='pb-2 text-3xl'>{session.user.name}</h2>
               <h3 className='pb-2 text-2xl'>{session.user.email}</h3>
-              <img className='pb-2 w-20' src={session.user.image} /><br />
+              <img className='pb-2 w-20' src={
+                // "https://www.chantalhandley.com/cdn/shop/products/SOLD-KILLER-KLOWNS-FROM-OUTER-SPACE-Original-Pastel-Artwork-ChantalLauraHandley-989.jpg?v=1678084015" || 
+                session.user.image} /><br />
             </div>
           </div>
         </div>
