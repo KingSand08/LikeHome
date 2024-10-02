@@ -20,11 +20,11 @@ const providers: Provider[] = [
       }
     },
   }),
-  GitHub,
+  // GitHub,
   Google,
-  Instagram,
-  Facebook,
-  Twitter,
+  // Instagram,
+  // Facebook,
+  // Twitter,
 ]
  
 export const providerMap = providers
