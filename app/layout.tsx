@@ -1,8 +1,8 @@
+import Footer from "@/app/Footer";
+import Header from "@/app/Header";
+import { Providers } from '@/app/providers';
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Footer from "./Footer";
-import Header from "./Header";
-import { Providers } from './providers';
 
 import "./globals.css";
 
