@@ -23,7 +23,7 @@ export default async function SignInPage(props: {
     twitter: XImage,
   };
 
-  const profilePageURL = "testauth/testUser";
+  const profilePageURL = "testauth/testuserID";
 
   // redirect user
   const session = await auth();
