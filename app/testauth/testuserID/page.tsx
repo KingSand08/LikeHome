@@ -13,6 +13,7 @@ export default async function TestAuth() {
 
 
   const user = session?.user
+  const userImageUrl = session.user.image || "https://www.chantalhandley.com/cdn/shop/products/SOLD-KILLER-KLOWNS-FROM-OUTER-SPACE-Original-Pastel-Artwork-ChantalLauraHandley-989.jpg?v=1678084015"
 
   return (
     <>
@@ -46,9 +47,8 @@ export default async function TestAuth() {
             <div>
               <h2 className='pb-2 text-3xl'>{session.user.name}</h2>
               <h3 className='pb-2 text-2xl'>{session.user.email}</h3>
-              <img className='pb-2 w-20' src={
-                // "https://www.chantalhandley.com/cdn/shop/products/SOLD-KILLER-KLOWNS-FROM-OUTER-SPACE-Original-Pastel-Artwork-ChantalLauraHandley-989.jpg?v=1678084015" || 
-                session.user.image} /><br />
+              <Image className='pb-2 w-20' src={userImageUrl} alt={''} width={100} height={100} />
+              <br />
             </div>
           </div>
         </div>
