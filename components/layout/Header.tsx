@@ -8,9 +8,10 @@ const Header = () => {
         <div className="flex flex-col md:flex-row md:justify-between gap-6">
           {/* logo */}
           <div className="flex items-center gap-5 justify-center xl:w-max">
+            {/* Replace with product logo later */}
             <Image
               src="/stellarHorizons.png"
-              alt="LikeHome"
+              alt="LikeHome Logo"
               width={55}
               height={20}
             />
