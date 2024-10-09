@@ -45,7 +45,7 @@ const Header = () => {
               {/* Register Button */}
               REGISTER
             </button>
-            <ThemeSwitch />
+            {/* <ThemeSwitch /> */}
           </div>
         </div>
       </div>
