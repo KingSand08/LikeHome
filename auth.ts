@@ -20,11 +20,7 @@ const providers: Provider[] = [
       }
     },
   }),
-  // GitHub,
-  Google,
-  // Instagram,
-  // Facebook,
-  // Twitter,
+  Google
 ]
  
 export const providerMap = providers
@@ -43,9 +39,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/signin",
   },
-  // callbacks: {
-  //   async redirect({ url, baseUrl }) {
-  //     return url.startsWith(baseUrl) ? url : baseUrl; // NEW ADDED! Allow redirecting to the intended page after sign-in
-  //   },
-  // },
+  callbacks: {
+        async redirect({ url, baseUrl }) {
+            if (url.includes('errror=access_denied')) {
+                return '/testauth'
+            }
+            return url
+        },
+    },
 });

@@ -1,14 +1,13 @@
 import React from "react";
 import { redirect } from "next/navigation";
-import { signIn, auth, providerMap } from "@/auth";
+import { signIn, auth, providerMap } from "@/auth.ts";
 import { AuthError } from "next-auth";
 import Image, { StaticImageData } from "next/image";
 import formImage from "../../public/likehome_form_icon.png";
-import GitHubImage from "../../public/icons/github.icon.png";
 import GoogleImage from "../../public/icons/google.icon.png";
-import InstagramImage from "../../public/icons/instagram.icon.png";
-import FacebookImage from "../../public/icons/meta.icon.png";
-import XImage from "../../public/icons/x-twitter.icon.png";
+
+
+const loginPageURL = "/testauth";
 
 export default async function SignInPage(props: {
   searchParams: { callbackUrl: string | undefined };
@@ -16,11 +15,7 @@ export default async function SignInPage(props: {
   const SIGNIN_ERROR_URL = "/api/auth/signin";
 
   const providerIcons: { [key: string]: StaticImageData } = {
-    github: GitHubImage,
     google: GoogleImage,
-    instagram: InstagramImage,
-    facebook: FacebookImage,
-    twitter: XImage,
   };
 
   const profilePageURL = "testauth/testuserID";
@@ -42,49 +37,32 @@ export default async function SignInPage(props: {
             providers to log into below.
           </p>
           <div className="mt-6">
-            {Object.values(providerMap).map((provider) => (
-              <form
-                key={provider.id}
-                action={async () => {
-                  "use server";
-                  try {
-                    await signIn(provider.id, {
-                      redirectTo: props.searchParams?.callbackUrl ?? "",
-                    });
-                  } catch (error) {
-                    // Signin can fail for a number of reasons, such as the user
-                    // not existing, or the user not having the correct role.
-                    // In some cases, you may want to redirect to a custom error
-                    if (error instanceof AuthError) {
-                      return redirect(
-                        `${SIGNIN_ERROR_URL}?error=${error.type}`
-                      );
-                    }
-
-                    // Otherwise if a redirects happens Next.js can handle it
-                    // so you can just re-thrown the error and let Next.js handle it.
-                    // Docs:
-                    // https://nextjs.org/docs/app/api-reference/functions/redirect#server-component
-                    throw error;
-                  }
-                }}
+            {/* OAuth Login */}
+            {/* Process the sign-in */}
+            <form
+              action={async () => {
+                "use server"
+                await signIn("google",
+                  // { redirectTo: props.searchParams?.callbackUrl ?? "" }
+                  { redirect: false })
+              }}
+            >
+              {/* Button display */}
+              <button
+                type="submit"
+                className="flex items-center mb-2 border border-transparent rounded-md shadow-sm px-4 py-2 bg-blue-600 text-white font-medium hover:bg-blue-700 transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full"
               >
-                <button
-                  type="submit"
-                  className="flex items-center mb-2 border border-transparent rounded-md shadow-sm px-4 py-2 bg-blue-600 text-white font-medium hover:bg-blue-700 transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full"
-                >
-                  <Image
-                    alt={`${provider.name} logo`}
-                    src={providerIcons[provider.name.toLowerCase()]}
-                    width={40} // Set the desired width
-                    height={40} // Set the desired height
-                  />
-                  <p className="flex-grow text-center">
-                    Sign in with {provider.name}
-                  </p>
-                </button>
-              </form>
-            ))}
+                <Image
+                  alt={`Google logo`}
+                  src={providerIcons['google']}
+                  width={40} // Set the desired width
+                  height={40} // Set the desired height
+                />
+                <p className="flex-grow text-center">
+                  Sign in with {'Google'}
+                </p>
+              </button>
+            </form>
             {/* Section divider input field */}
             <div>
               <p className="mb-2 text-center">or</p>
