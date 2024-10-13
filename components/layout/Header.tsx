@@ -5,7 +5,7 @@ import ThemeSwitch from "./ThemeSwitch";
 import React from "react";
 import { useRouter } from "next/navigation";
 
-const loginPageURL = "/testauth";
+const loginPageURL = "/signin";
 const homePageURL = "/";
 const contactPageURL = "/";
 const roomsPageURL = "/";
@@ -13,7 +13,7 @@ const roomsPageURL = "/";
 const Header = () => {
 
   const router = useRouter();
-  const handleClick = (URL) => {
+  const handleClick = (URL: string) => {
     router.push(URL);
   }
 

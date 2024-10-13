@@ -3,8 +3,8 @@ import Image from "next/image";
 import { auth, signOut } from "@/auth";
 import { redirect } from "next/navigation";
 
-export default async function TestAuth() {
-  const signInPageUrl = "/testauth";
+export default async function ProfileTest() {
+  const signInPageUrl = "/signin";
 
   // redirect user
   const session = await auth();

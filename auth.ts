@@ -42,7 +42,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
         async redirect({ url, baseUrl }) {
             if (url.includes('errror=access_denied')) {
-                return '/testauth'
+                return '/signin'
             }
             return url
         },
