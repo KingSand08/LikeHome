@@ -1,7 +1,7 @@
 import React from "react";
 
-const RoomPage = () => {
-  return <div>RoomPage</div>;
+const RoomPage = ({ params }: { params: { roomID: string } }) => {
+  return <div>RoomPage {params.roomID}</div>;
 };
 
 export default RoomPage;
