@@ -1,39 +1,41 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("DATABASE_URL") // Use your MongoDB connection string
 }
 
 model User {
-  id    String  @id @default(dbgenerated()) @map("_id")
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
   email String  @unique
   name  String?
   posts Post[]
 }
 
 model Post {
-  id       String  @id @default(dbgenerated()) @map("_id")
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
   title    String
   content  String?
   author   User?   @relation(fields: [authorId], references: [id])
-  authorId String?
+  authorId String? @db.ObjectId
 }
 
-// Example on how to use Prisma in API routes
-// import { PrismaClient } from '@prisma/client';
+model Hotel {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId // Use ObjectId for MongoDB
+  name          String
+  location      Json
+  amenities     String[]
+  pricePerNight Int
+  ratings       Ratings?
+  createdAt     DateTime @default(now())
+}
 
-// const prisma = new PrismaClient();
-
-// export default async function handler(req, res) {
-//   const users = await prisma.user.findMany();
-//   res.status(200).json(users);
-// }
+model Ratings {
+  id             String @id @default(auto()) @map("_id") @db.ObjectId // Use ObjectId for MongoDB
+  roomsAvailable Int
+  description    String
+  hotelId        String @unique @db.ObjectId
+  hotel          Hotel  @relation(fields: [hotelId], references: [id])
+}
