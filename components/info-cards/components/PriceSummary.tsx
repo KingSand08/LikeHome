@@ -11,8 +11,8 @@ const PriceSummary = () => {
     <div className="flex justify-end flex-col text-right p-2">
       <p>$149 per night</p>
       <p>$338 total</p>
-      <div className="flex flex-row gap-2 text-green-500">
-        <IoIosCheckmark />
+      <div className="flex flex-row items-center text-green-500">
+        <IoIosCheckmark className="text-2xl" />
         <p>All taxes and fees included in total</p>
       </div>
     </div>
