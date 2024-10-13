@@ -9,7 +9,7 @@ import OAuthButton from "@/components/OAuthButton";
 const loginPageURL = "/profiletest";
 
 export default async function SignInPage() {
-  const profilePageURL = "signin/profiletest";
+  const profilePageURL = "/";
 
   // redirect user
   const session = await auth();
