@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL") // Use your MongoDB connection string
+}
+
+model User {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  email String  @unique
+  name  String?
+  posts Post[]
+}
+
+model Post {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  title    String
+  content  String?
+  author   User?   @relation(fields: [authorId], references: [id])
+  authorId String? @db.ObjectId
+}
+
+model Hotel {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId // Use ObjectId for MongoDB
+  name          String
+  location      Json
+  amenities     String[]
+  pricePerNight Int
+  ratings       Ratings?
+  createdAt     DateTime @default(now())
+}
+
+model Ratings {
+  id             String @id @default(auto()) @map("_id") @db.ObjectId // Use ObjectId for MongoDB
+  roomsAvailable Int
+  description    String
+  hotelId        String @unique @db.ObjectId
+  hotel          Hotel  @relation(fields: [hotelId], references: [id])
+}
