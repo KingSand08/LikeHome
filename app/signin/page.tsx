@@ -22,17 +22,17 @@ export default async function SignInPage() {
       <div className="h-[75vh] flex items-center justify-center">
         <div className="bg-white flex rounded-lg w-3/4">
           <div className="flex-1 text-gray-800 p-20">
-            <h1 className="text-3xl pb-2">Let&apos;s get started!</h1>
+            <h1 className="text-3xl pb-4">Let&apos;s get started!</h1>
             <p className="text-lg text-gray-700">
-              This page will be for testing purposes only until a login page has
-              been made and approved. Users can login and choose one of the
-              providers to log into below.
+              Welcome to LikeHome! Sign in Google or provide your email to get started!
+              New users will have a shortprofile section to fill out once signing in for
+              the first time.
             </p>
-            <div className="mt-6">
+            <div className="mt-14">
               <OAuthButton provider="google" />
               {/* Section divider input field */}
               <div>
-                <p className="mb-2 text-center">or</p>
+                <p className="mt-4 mb-4 text-center text-lg">or</p>
               </div>
               {/* Email input field */}
               <div className="pb-4 flex flex-col items-center">
