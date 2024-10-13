@@ -3,30 +3,24 @@ import { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import "./globals.css";
-import Header from "@/components/layout/Header";
+import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
-const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "LikeHome",
-};
+//const inter = Inter({ subsets: ["latin"] });
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+// export const metadata: Metadata = {
+//   title: "LikeHome",
+// };
+
+export default function RootLayout({ children }:{ children: React.ReactNode; }) {
   return (
-    <html lang="en" className={inter.className} suppressHydrationWarning>
-      <body className="min-h-screen flex flex-col bg-gray-50 dark:bg-slate-800">
-        <Providers>
-          <Header />
-          <main className="flex-grow">{children}</main>{" "}
-          {/* Main content takes up remaining space */}
-          <Footer />
-        </Providers>
+    <html lang="en">
+      <Navbar />
+      <body>
+        {children}
       </body>
+      <Footer />
     </html>
   );
 }
