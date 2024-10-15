@@ -28,9 +28,9 @@ export default function HomePage() {
       </div>
 
       {/* Rooms Section */}
-      <section className="w-full py-20">
-        <div className="text-center mb-10">
-          <h2 className="text-4xl font-bold">Our Rooms</h2>
+      <section className="w-full py-20 bg-base-100">
+        <div className="text-center mb-1">
+          <h2 className="text-4xl font-bold text-base-content">Our Rooms</h2>
           <p className="text-lg mt-2">Choose from our wide variety of rooms</p>
         </div>
         {/* Filter Section */}
