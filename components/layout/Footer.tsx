@@ -13,7 +13,7 @@ const Footer = () => {
               width={55}
               height={20}
             />
-            <span className="ml-2 text-lg font-bold text-white">LikeHome</span>{" "}
+            <span className="ml-2 text-lg font-bold text-white">Stellar Horizons</span>{" "}
             {/* Text displayed next to image */}
           </div>
         </div>

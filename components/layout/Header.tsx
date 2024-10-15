@@ -7,40 +7,41 @@ const Header = () => {
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row md:justify-between gap-6">
           {/* logo */}
-          <div className="flex items-center gap-5 justify-center xl:w-max">
-            {/* Replace with product logo later */}
-            <Image
-              src="/stellarHorizons.png"
-              alt="LikeHome Logo"
-              width={55}
-              height={20}
-            />
-            <span className="ml-2 text-lg font-bold">LikeHome</span>{" "}
-            {/* Text displayed next to image */}
-          </div>
+          <a href="./">
+            <div className="flex items-center gap-5 justify-center xl:w-max">
+              {/* Replace with product logo later */}
+              <Image
+                src="/stellarHorizons.png"
+                alt="LikeHome Logo"
+                width={55}
+                height={20}
+              />
+              <span className="ml-2 text-lg font-bold">LikeHome</span>{" "}
+              {/* Text displayed next to image */}
+            </div>
+          </a>
           <div className="flex items-center gap-8 ">
             {/* Navigation Links */}
+            <input
+              type="text"
+              placeholder="Search"
+              className="input input-primary text-neutral w-full max-w-xs" 
+            />
             <nav className="flex items-center gap-8">
               {" "}
               {/* Flex container for navigation items */}
-              <div className="text-black-700 hover:text-purple-600 cursor-pointer">
-                Home
-              </div>
-              <div className="text-black-700 hover:text-purple-600 cursor-pointer">
-                Rooms
-              </div>
-              <div className="text-black-700 hover:text-purple-600 cursor-pointer">
+              <div className="text-primary-content hover:text-accent cursor-pointer">
                 Contact
               </div>
             </nav>
             {/* sign in & register */}
-
-            <button className="px-4 py-2 bg-black text-white rounded hover:bg-black-500">
+          
+            <button className="btn px-4 py-2 btn-secondary text-secondary-content rounded ">
               {" "}
               {/* Sign In Button */}
               SIGN IN
             </button>
-            <button className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
+            <button className="btn px-4 py-2 btn-primary text-primary-content rounded ">
               {" "}
               {/* Register Button */}
               REGISTER
