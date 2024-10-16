@@ -3,8 +3,8 @@ import ThemeSwitch from "./ThemeSwitch";
 
 const Header = () => {
   return (
-    <header className="py-6 shadow-md">
-      <div className="container mx-auto">
+    <header className="py-5 bg-base-100">
+      <div className="container mx-auto bg-base-100">
         <div className="flex flex-col md:flex-row md:justify-between gap-6">
           {/* logo */}
           <a href="./">
@@ -16,7 +16,7 @@ const Header = () => {
                 width={55}
                 height={20}
               />
-              <span className="ml-2 text-lg font-bold">LikeHome</span>{" "}
+              <span className="ml-2 text-lg font-bold text-base-content">LikeHome</span>{" "}
               {/* Text displayed next to image */}
             </div>
           </a>
@@ -30,7 +30,7 @@ const Header = () => {
             <nav className="flex items-center gap-8">
               {" "}
               {/* Flex container for navigation items */}
-              <div className="text-primary-content hover:text-accent cursor-pointer">
+              <div className="text-base-content hover:text-accent cursor-pointer">
                 Contact
               </div>
             </nav>

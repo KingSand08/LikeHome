@@ -1,7 +1,14 @@
 import React from 'react';
-import Card from '@/components/layout/Card'
+import Card from '@/components/layout/Card';
+import SearchBox from '@/components/layout/SearchBox'
 
-export default function HomePage() {
+const roomData = [1, 2, 3, 4, 5] as const;
+
+interface ClickProps {
+  onClick: (event: React.MouseEvent<HTMLAnchorElement>) => void;
+}
+
+export default function HomePage({ onClick }: ClickProps) {
   return (
     <main className="">
       {/* Hero Section */}
@@ -29,10 +36,13 @@ export default function HomePage() {
 
       {/* Rooms Section */}
       <section className="w-full py-20 bg-base-100">
-        <div className="text-center mb-1">
+        <div className="text-center mb-8">
           <h2 className="text-4xl font-bold text-base-content">Our Rooms</h2>
           <p className="text-lg mt-2">Choose from our wide variety of rooms</p>
         </div>
+
+        <SearchBox  />
+
         {/* Filter Section */}
         <div className="flex justify-center mb-8">
           <div className="join flex max-w-md">
@@ -42,17 +52,13 @@ export default function HomePage() {
             <button className="join-item btn btn-info flex-1">Extended</button>
           </div>
         </div>
+
         {/* Cards Container */}
         <div className="w-full flex justify-center">
           <div className="max-w-7xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4 sm:px-6 lg:px-8">
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
-            <Card />
+            {roomData.map((room) => (
+              <Card key={room} />
+            ))}
           </div>
         </div>
       </section>

@@ -13,7 +13,9 @@ export default function Card() {
         <h2 className="card-title text-neutral-content">Hotel Room</h2>
         <p>Hotel Room Description</p>
         <div className="card-actions justify-end">
-          <button className="btn btn-primary">Buy Now</button>
+          <a href='/reserve'>
+            <button className="btn btn-accent text-accent-content">Buy Now</button>
+          </a>
         </div>
       </div>
     </div>
