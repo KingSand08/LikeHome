@@ -5,9 +5,6 @@ import Image from "next/image";
 import formImage from "../../public/likehome_form_icon.png";
 import OAuthButton from "@/components/OAuthButton";
 
-
-const loginPageURL = "/profiletest";
-
 export default async function SignInPage() {
   const profilePageURL = "/";
 
@@ -25,7 +22,7 @@ export default async function SignInPage() {
             <h1 className="text-3xl pb-4">Let&apos;s get started!</h1>
             <p className="text-lg text-gray-700">
               Welcome to LikeHome! Sign in Google or provide your email to get started!
-              New users will have a shortprofile section to fill out once signing in for
+              New users will have a short profile section to fill out once signing in for
               the first time.
             </p>
             <div className="mt-14">
