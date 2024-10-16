@@ -16,9 +16,9 @@ export default function OAuthButton({ provider }: OAuthButtonProps) {
             {/* OAuth Login */}
             {/* Process the sign-in */}
             <form
-                action={async (e) => {
+                action={async () => {
                     "use server"
-                    await signIn(provider);
+                    await signIn("google")
                 }}
             >
                 {/* Button display */}

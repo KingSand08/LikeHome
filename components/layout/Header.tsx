@@ -1,26 +1,30 @@
-"use client"; // Add this line to indicate a Client Component
-
 import Image from "next/image";
 import ThemeSwitch from "./ThemeSwitch";
 import React from "react";
-import { useRouter } from "next/navigation";
+import SignOutButton from "../SignOutButton";
+import { auth } from "../../auth";
 
 const loginPageURL = "/signin";
 const homePageURL = "/";
 const contactPageURL = "/";
 const roomsPageURL = "/";
 
-const Header = () => {
+export default async function Header() {
+  const session = await auth();
+  console.log("Session:", session);
 
-  const router = useRouter();
-  const handleClick = (URL: string) => {
-    router.push(URL);
+  const user = !session?.user;
+
+  var loginStatus = false;
+
+  if (!user) {
+    loginStatus = true;
   }
 
   return (
-    <header className="py-6 shadow-md">
-      <div className="container mx-auto">
-        <div className="flex flex-col md:flex-row md:justify-between gap-6">
+    <header className="py-6 shadow-md mb-5">
+      <div className="container mx-auto h-25">
+        <div className="flex flex-col text-center md:flex-row md:justify-between gap-6">
           {/* logo */}
           <div className="flex items-center gap-5 justify-center xl:w-max">
             {/* Replace with product logo later */}
@@ -38,11 +42,11 @@ const Header = () => {
             <nav className="flex items-center gap-8">
               {" "}
               {/* Flex container for navigation items */}
-              <div className="text-black-700 hover:text-purple-600 cursor-pointer"
-                onClick={() => handleClick(homePageURL)}
+              <a className="text-black-700 hover:text-purple-600 cursor-pointer"
+                href={homePageURL}
               >
                 Home
-              </div>
+              </a>
               <div className="text-black-700 hover:text-purple-600 cursor-pointer">
                 Rooms
               </div>
@@ -52,13 +56,31 @@ const Header = () => {
             </nav>
             {/* sign in & register */}
 
-            <button className="px-4 py-2 bg-black text-white rounded hover:bg-black-500"
-              onClick={() => handleClick(loginPageURL)}
-            >
-              {" "}
-              {/* Sign In Button */}
-              SIGN IN
-            </button>
+            {user && (
+              <a className="px-4 py-2 bg-black text-white rounded bg-purple-600 hover:bg-purple-900 duration-150"
+                href={loginPageURL}
+              >
+                {/* Sign In Button */}
+                SIGN IN
+              </a>
+            )}
+            {!user && (
+              <div className="flex flex-row items-center">
+                <div className="bg-black bg-opacity-40 flex space-x-4 items-center mr-7 px-5 py-3 rounded-lg text-white hover:text-purple-300 hover:bg-opacity-85 cursor-pointer">
+                  <Image
+                    src={session.user.image}
+                    alt="User Avatar"
+                    width={10}
+                    height={10}
+                    className="w-4 h-4 md:w-[2.8rem] md:h-[2.8rem] lg:w-[2.8rem] lg:h-[2.8rem] rounded-full"
+                  />
+                  <p className="text-lg">
+                    {session.user?.name}
+                  </p>
+                </div>
+                <SignOutButton />
+              </div>
+            )}
             <button className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
               {" "}
               {/* Register Button */}
@@ -71,5 +93,3 @@ const Header = () => {
     </header>
   );
 };
-
-export default Header;
