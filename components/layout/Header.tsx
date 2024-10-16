@@ -68,7 +68,7 @@ export default async function Header() {
               <div className="flex flex-row items-center">
                 <div className="bg-black bg-opacity-40 flex space-x-4 items-center mr-7 px-5 py-3 rounded-lg text-white hover:text-purple-300 hover:bg-opacity-85 cursor-pointer">
                   <Image
-                    src={session.user.image}
+                    src={session?.user?.image ?? "/default-avatar.png"}
                     alt="User Avatar"
                     width={10}
                     height={10}
