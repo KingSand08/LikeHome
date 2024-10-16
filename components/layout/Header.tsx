@@ -1,7 +1,22 @@
+"use client"; // Add this line to indicate a Client Component
+
 import Image from "next/image";
 import ThemeSwitch from "./ThemeSwitch";
+import React from "react";
+import { useRouter } from "next/navigation";
+
+const loginPageURL = "/signin";
+const homePageURL = "/";
+const contactPageURL = "/";
+const roomsPageURL = "/";
 
 const Header = () => {
+
+  const router = useRouter();
+  const handleClick = (URL: string) => {
+    router.push(URL);
+  }
+
   return (
     <header className="py-6 shadow-md">
       <div className="container mx-auto">
@@ -23,7 +38,9 @@ const Header = () => {
             <nav className="flex items-center gap-8">
               {" "}
               {/* Flex container for navigation items */}
-              <div className="text-black-700 hover:text-purple-600 cursor-pointer">
+              <div className="text-black-700 hover:text-purple-600 cursor-pointer"
+                onClick={() => handleClick(homePageURL)}
+              >
                 Home
               </div>
               <div className="text-black-700 hover:text-purple-600 cursor-pointer">
@@ -35,7 +52,9 @@ const Header = () => {
             </nav>
             {/* sign in & register */}
 
-            <button className="px-4 py-2 bg-black text-white rounded hover:bg-black-500">
+            <button className="px-4 py-2 bg-black text-white rounded hover:bg-black-500"
+              onClick={() => handleClick(loginPageURL)}
+            >
               {" "}
               {/* Sign In Button */}
               SIGN IN
