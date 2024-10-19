@@ -1,7 +1,26 @@
 import Image from "next/image";
 import ThemeSwitch from "./ThemeSwitch";
+import React from "react";
+import SignOutButton from "../SignOutButton";
+import { auth } from "../../auth";
 
-const Header = () => {
+const loginPageURL = "/signin";
+const homePageURL = "/";
+const contactPageURL = "/";
+const roomsPageURL = "/";
+
+export default async function Header() {
+  const session = await auth();
+  console.log("Session:", session);
+
+  const user = !session?.user;
+
+  var loginStatus = false;
+
+  if (!user) {
+    loginStatus = true;
+  }
+
   return (
     <header className="py-5 bg-base-100">
       <div className="container mx-auto bg-base-100">
@@ -53,5 +72,3 @@ const Header = () => {
     </header>
   );
 };
-
-export default Header;
