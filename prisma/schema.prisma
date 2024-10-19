@@ -1,41 +1,44 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["mongoDb"]
 }
 
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL") // Use your MongoDB connection string
-}
-
-model User {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
-  email String  @unique
-  name  String?
-  posts Post[]
-}
-
-model Post {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  title    String
-  content  String?
-  author   User?   @relation(fields: [authorId], references: [id])
-  authorId String? @db.ObjectId
+  url      = env("DATABASE_URL")
 }
 
 model Hotel {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId // Use ObjectId for MongoDB
-  name          String
-  location      Json
-  amenities     String[]
-  pricePerNight Int
-  ratings       Ratings?
-  createdAt     DateTime @default(now())
+  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  name                 String
+  location             Location
+  amenities            String[]
+  pricePerNight        Int
+  ratings              Ratings?
+  roomsAvailable       Int
+  description          String
+  singleRoomsAvailable Int
+  doubleRoomsAvailable Int
+  createdAt            DateTime?
+
+  @@map("hotels") // Maps the model to "hotels" collection in MongoDB
 }
 
-model Ratings {
-  id             String @id @default(auto()) @map("_id") @db.ObjectId // Use ObjectId for MongoDB
-  roomsAvailable Int
-  description    String
-  hotelId        String @unique @db.ObjectId
-  hotel          Hotel  @relation(fields: [hotelId], references: [id])
+type Location {
+  address     String
+  city        String
+  state       String
+  zip         String
+  country     String
+  coordinates Coordinates? // Make coordinates nullable
+}
+
+type Coordinates {
+  latitude  Float
+  longitude Float
+}
+
+type Ratings {
+  average      Float
+  reviewsCount Int
 }
