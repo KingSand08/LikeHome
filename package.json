@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@prisma/client": "^5.20.0",
+    "@prisma/client": "^5.21.1",
     "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/typography": "^0.5.15",
     "likehome": "file:",
@@ -27,7 +27,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.7",
     "postcss": "^8.4.47",
-    "prisma": "^5.20.0",
+    "prisma": "^5.21.1",
     "tailwindcss": "^3.4.13",
     "typescript": "^5"
   }
