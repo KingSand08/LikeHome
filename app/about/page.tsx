@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 const team = [
@@ -65,7 +66,7 @@ const AboutPage = () => {
               key={index}
               className="bg-white p-6 rounded-lg shadow-lg text-center"
             >
-              <img
+              <Image
                 src={member.image}
                 alt={member.name}
                 className="w-32 h-32 rounded-full mx-auto mb-4"

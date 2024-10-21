@@ -4,11 +4,8 @@ import SearchBox from '@/components/layout/SearchBox'
 
 const roomData = [1, 2, 3, 4, 5] as const;
 
-interface ClickProps {
-  onClick: (event: React.MouseEvent<HTMLAnchorElement>) => void;
-}
 
-export default function HomePage({ onClick }: ClickProps) {
+export default function HomePage() {
   return (
     <main className="">
       {/* Hero Section */}
