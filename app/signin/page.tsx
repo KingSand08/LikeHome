@@ -21,9 +21,9 @@ export default async function SignInPage() {
           <div className="flex-1 text-gray-800 p-20">
             <h1 className="text-3xl pb-4">Let&apos;s get started!</h1>
             <p className="text-lg text-gray-700">
-              Welcome to LikeHome! Sign in Google or provide your email to get started!
-              New users will have a short profile section to fill out once signing in for
-              the first time.
+              Welcome to LikeHome! Sign in Google or provide your email to get
+              started! New users will have a short profile section to fill out
+              once signing in for the first time.
             </p>
             <div className="mt-14">
               <OAuthButton provider="google" />
@@ -45,7 +45,9 @@ export default async function SignInPage() {
           <div className="relative flex-1">
             <Image
               alt="likehome image"
-              src={formImage}
+              src="/stellarHorizons.png"
+              width={100}
+              height={100}
               fill
               className="object-cover rounded-lg"
             />
@@ -54,6 +56,4 @@ export default async function SignInPage() {
       </div>
     </>
   );
-};
-
-
+}

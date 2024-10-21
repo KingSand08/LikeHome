@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const WelcomePage = () => {
@@ -11,9 +12,9 @@ const WelcomePage = () => {
         <p className="text-lg mb-6">
           Get exclusive deals on unique homes, apartments, and more.
         </p>
-        <a href="/" className="btn btn-primary btn-lg">
+        <Link href="/" className="btn btn-primary btn-lg">
           Start Your Journey
-        </a>
+        </Link>
       </section>
 
       {/* Why Choose LikeHome */}
@@ -51,9 +52,9 @@ const WelcomePage = () => {
         <h2 className="text-4xl font-bold mb-6">
           Book Your Dream Location Now
         </h2>
-        <a href="/" className="btn btn-primary btn-lg">
+        <Link href="/" className="btn btn-primary btn-lg">
           Explore Our Listings
-        </a>
+        </Link>
       </section>
     </div>
   );
