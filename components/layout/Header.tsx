@@ -27,7 +27,7 @@ export default async function Header() {
       <div className="container mx-auto bg-base-100">
         <div className="flex flex-col md:flex-row md:justify-between gap-6">
           {/* logo */}
-          <Link href="/welcome">
+          <Link href="/">
             <div className="flex items-center gap-5 justify-center xl:w-max">
               {/* Replace with product logo later */}
               <Image

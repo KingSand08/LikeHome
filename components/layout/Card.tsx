@@ -1,23 +1,35 @@
 import Image from 'next/image';
 import React from 'react';
 
-export default function Card() {
+type CardProps = {
+  name: string;
+  description: string;
+  price: number;
+  location: string;
+  imageUrl: string;
+  hotelId: string;
+};
+
+export default function Card({ name, description, price, location, imageUrl, hotelId }: CardProps) {
   return (
-    <div className="card card-compact bg-neutral shadow-xl w-full">
-      <figure>
+    <div className="card bg-base-100 shadow-xl p-4">
+      <figure className="mb-4">
         <Image
-          src="/hotelRoom.jpg"
-          alt="Hotel room"
+          src={imageUrl}
+          alt={name}
           width={200}
-          height={200}
+          height={150}
+          className="w-full rounded-lg"
         />
       </figure>
-      <div className="card-body">
-        <h2 className="card-title text-neutral-content">Hotel Room</h2>
-        <p>Hotel Room Description</p>
-        <div className="card-actions justify-end">
-          <a href='/reserve'>
-            <button className="btn btn-accent text-accent-content">Buy Now</button>
+      <div className="card-body p-0">
+        <h2 className="card-title text-xl font-bold mb-2 text-base-content">{name}</h2>
+        <p className="text-sm mb-2 text-base-content">{description}</p> {/* Allow full description */}
+        <p className="text-lg font-semibold text-info mb-4">${price} / night</p>
+        <div className="flex items-center justify-between text-gray-600">
+          <p className="text-sm">{location}</p>
+          <a href={`/hotel/${hotelId}`} className="btn btn-primary">
+            Reserve Now
           </a>
         </div>
       </div>
