@@ -6,7 +6,7 @@ import formImage from "../../public/likehome_form_icon.png";
 import OAuthButton from "@/components/OAuthButton";
 
 export default async function SignInPage() {
-  const profilePageURL = "/";
+  const profilePageURL = "/profile";
 
   // redirect user
   const session = await auth();

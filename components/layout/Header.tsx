@@ -3,6 +3,7 @@ import ThemeSwitch from "./ThemeSwitch";
 import React from "react";
 import SignOutButton from "../SignOutButton";
 import { auth } from "../../auth";
+import Link from "next/link";
 
 const loginPageURL = "/signin";
 const homePageURL = "/";
@@ -26,7 +27,7 @@ export default async function Header() {
       <div className="container mx-auto bg-base-100">
         <div className="flex flex-col md:flex-row md:justify-between gap-6">
           {/* logo */}
-          <a href="./">
+          <Link href="/welcome">
             <div className="flex items-center gap-5 justify-center xl:w-max">
               {/* Replace with product logo later */}
               <Image
@@ -35,40 +36,58 @@ export default async function Header() {
                 width={55}
                 height={20}
               />
-              <span className="ml-2 text-lg font-bold text-base-content">LikeHome</span>{" "}
+              <span className="ml-2 text-lg font-bold text-base-content">
+                LikeHome
+              </span>{" "}
               {/* Text displayed next to image */}
             </div>
-          </a>
+          </Link>
           <div className="flex items-center gap-8 ">
             {/* Navigation Links */}
             <input
               type="text"
               placeholder="Search"
-              className="input input-primary text-neutral w-full max-w-xs" 
+              className="input input-primary text-neutral w-full max-w-xs"
             />
-            <nav className="flex items-center gap-8">
+            <Link className="flex items-center gap-8" href="/about">
               {" "}
               {/* Flex container for navigation items */}
               <div className="text-base-content hover:text-accent cursor-pointer">
-                Contact
+                About
               </div>
-            </nav>
-            {/* sign in & register */}
-          
-            <button className="btn px-4 py-2 btn-secondary text-secondary-content rounded ">
-              {" "}
-              {/* Sign In Button */}
-              SIGN IN
-            </button>
-            <button className="btn px-4 py-2 btn-primary text-primary-content rounded ">
-              {" "}
-              {/* Register Button */}
-              REGISTER
-            </button>
+            </Link>
+            {!loginStatus ? (
+              <>
+                <Link
+                  className="btn px-4 py-2 btn-secondary text-secondary-content rounded"
+                  href="/signin"
+                >
+                  {" "}
+                  {/* Sign In Button */}
+                  SIGN IN
+                </Link>
+                <button className="btn px-4 py-2 btn-primary text-primary-content rounded ">
+                  {" "}
+                  {/* Register Button */}
+                  REGISTER
+                </button>
+              </>
+            ) : (
+              <Link
+                className="btn px-4 py-2 btn-primary text-primary-content rounded"
+                href="/profile"
+              >
+                {" "}
+                {/* Register Button */}
+                Profile
+              </Link>
+            )}
+            {/* sign in & registe4r */}
+
             {/* <ThemeSwitch /> */}
           </div>
         </div>
       </div>
     </header>
   );
-};
+}
