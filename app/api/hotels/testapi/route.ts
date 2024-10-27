@@ -1,22 +1,7 @@
-import { API_TOKEN_ROUTE, APIValidTokenResponse } from "@/types/types";
+import { getAccessToken } from "@/lib/tokenstorage";
 import { NextRequest, NextResponse } from "next/server";
 
 const TEST_URL = "https://test.api.amadeus.com/v1/shopping/flight-destinations";
-
-async function getAccessToken(req: NextRequest) {
-  try {
-    const tokenUrl = new URL(API_TOKEN_ROUTE, req.nextUrl.origin);
-    const tokenResponse = await fetch(tokenUrl.toString());
-    const data: APIValidTokenResponse = await tokenResponse.json();
-
-    console.log("Token response data:", data);
-
-    return data.access_token || null;
-  } catch (error) {
-    console.error("Error fetching access token:", error);
-    return null;
-  }
-}
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -24,8 +9,6 @@ export async function GET(req: NextRequest) {
   const maxPrice = searchParams.get("maxPrice") || "200";
 
   const accessToken = await getAccessToken(req);
-
-  console.log(`Access token: ${accessToken}`);
 
   if (!accessToken) {
     return NextResponse.json(
