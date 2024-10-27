@@ -1,4 +1,4 @@
-import { getAccessToken } from "@/lib/tokenstorage";
+import { getAccessToken } from "@/lib/amadeus-api/tokenstorage";
 import { NextRequest, NextResponse } from "next/server";
 
 const TEST_URL = "https://test.api.amadeus.com/v1/shopping/flight-destinations";

@@ -1,9 +1,9 @@
-import { getAccessToken } from "@/lib/tokenstorage";
+import { getAccessToken } from "@/lib/amadeus-api/tokenstorage";
 import {
   HotelListByCity,
   HotelListByLatitude,
   HotelListByUniqueID,
-} from "@/types/hotel-search-api/hotels-list-types";
+} from "@/types/amadeus-api/hotel-search-api/hotels-list-types";
 import { NextRequest, NextResponse } from "next/server";
 
 // https://developers.amadeus.com/self-service/category/hotels/api-doc/hotel-list/api-reference

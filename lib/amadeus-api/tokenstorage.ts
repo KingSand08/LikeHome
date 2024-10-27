@@ -1,6 +1,6 @@
 // add token storage on client later
 
-import { API_TOKEN_ROUTE, APIValidTokenResponse } from "@/types/token-api/types";
+import { API_TOKEN_ROUTE, APIValidTokenResponse } from "@/types/amadeus-api/token-api/types";
 import { NextRequest } from "next/server";
 
 

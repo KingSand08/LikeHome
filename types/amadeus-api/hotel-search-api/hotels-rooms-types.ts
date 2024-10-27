@@ -20,3 +20,8 @@ export type HotelRoomOffers = {
   bestRateOnly?: boolean; // Return only the cheapest offer per hotel, default is true
   lang?: string; // Language of descriptive texts, in ISO language code, defaults to English if unavailable
 };
+
+export type HotelRoomOfferPricing = {
+  offerId: string; // Unique identifier of an offer. Either the GDS booking code or the aggregator offerId with a limited lifetime.
+  lang?: string; // Requested language of descriptive texts in ISO 639 format.
+}

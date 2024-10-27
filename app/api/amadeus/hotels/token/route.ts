@@ -1,4 +1,4 @@
-import { APIValidTokenResponse } from "@/types/token-api/types";
+import { APIValidTokenResponse } from "@/types/amadeus-api/token-api/types";
 import { NextResponse } from "next/server";
 
 const TOKEN_URL = "https://test.api.amadeus.com/v1/security/oauth2/token";
