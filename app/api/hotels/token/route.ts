@@ -24,6 +24,7 @@ export async function GET() {
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET,
       }),
+      cache: 'no-store',
     });
 
     if (!tokenResponse.ok) {

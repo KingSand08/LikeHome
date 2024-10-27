@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+        cache: "no-store",
       }
     );
 
