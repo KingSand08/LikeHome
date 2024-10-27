@@ -108,6 +108,7 @@ function buildQueryUrl(
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
+  // Validate search params
   if (!searchParams.toString()) {
     return NextResponse.json(
       {
@@ -116,9 +117,7 @@ export async function GET(req: NextRequest) {
       { status: 400 }
     );
   }
-
   const { query, endpoint } = validateSearchParams(searchParams);
-
   if (!query || !endpoint) {
     return NextResponse.json(
       {
@@ -127,9 +126,7 @@ export async function GET(req: NextRequest) {
       { status: 400 }
     );
   }
-
   const accessToken = await getAccessToken(req);
-
   if (!accessToken) {
     return NextResponse.json(
       { error: "Failed to retrieve access token" },
@@ -140,6 +137,7 @@ export async function GET(req: NextRequest) {
   // Build the complete API URL with query parameters
   const apiUrl = buildQueryUrl(query, endpoint);
 
+  // Use API with apiURL and correct searchparams
   try {
     const response = await fetch(apiUrl, {
       headers: {
