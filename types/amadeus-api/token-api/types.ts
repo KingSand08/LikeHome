@@ -13,4 +13,4 @@ export type APIValidTokenResponse = {
   [key: string]: any;
 };
 
-export const API_TOKEN_ROUTE = "/api/hotels/token"
+export const API_TOKEN_ROUTE = "/api/amadeus/hotels/token"
