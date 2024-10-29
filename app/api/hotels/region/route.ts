@@ -1,8 +1,12 @@
 import { API_OPTIONS } from "@/types/rapid-hotels-api/api-types";
 import {
+  DEFAULT_DOMAIN,
+  DEFAULT_LOCALE,
   REGION_SEARCH_URL,
   RegionSearchDomainOptions,
+  RegionSearchDomainType,
   RegionSearchLocaleOptions,
+  RegionSearchLocaleType,
 } from "@/types/rapid-hotels-api/region-search-types";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -14,8 +18,8 @@ interface validateSearchParams {
 
 function validateSearchParams(searchParams: URLSearchParams) {
   const query = encodeURIComponent(searchParams.get("query") || "");
-  const domain = searchParams.get("domain");
-  const locale = searchParams.get("locale");
+  const domain = searchParams.get("domain") || DEFAULT_DOMAIN;
+  const locale = searchParams.get("locale") || DEFAULT_LOCALE;
 
   const isValidDomain =
     domain && (RegionSearchDomainOptions as readonly string[]).includes(domain);
@@ -27,11 +31,11 @@ function validateSearchParams(searchParams: URLSearchParams) {
       query,
       domain: domain!,
       locale: locale!,
-    }).toString();
+    });
 
     return {
-      query,
-      endpoint: `${REGION_SEARCH_URL}?${combinedSearchParams}`,
+      quer: searchParams.toString(),
+      endpoint: `${REGION_SEARCH_URL}?${combinedSearchParams.toString()}`,
     };
   }
 
@@ -68,7 +72,7 @@ export async function GET(req: NextRequest) {
   }
 
   const { query, endpoint, error } = validateSearchParams(searchParams);
-  if (!endpoint || !query || error) {
+  if (!endpoint || error) {
     return NextResponse.json(
       {
         error: `Invalid input given searchParams: ${query}. \n ${error}`,
@@ -84,13 +88,14 @@ export async function GET(req: NextRequest) {
 
     if (!response.ok) {
       return NextResponse.json(
-        { error: `Failed to fetch data from API: ${response.statusText}` },
+        {
+          error: `Failed to fetch data from API: ${response.statusText}. Status code: ${response.status} Endpoint: ${endpoint}`,
+        },
         { status: response.status }
       );
     }
 
     const data = await response.json();
-
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
     return NextResponse.json(
@@ -102,17 +107,29 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// API Response
-type RegionResult = {
+// API input searchParams
+type RegionSearchAPIsearchParams = {
+  query: string;
+  domain?: RegionSearchDomainType; // If undefined, default defined by DEFAULT_DOMAIN
+  locale?: RegionSearchLocaleType; // If undefined, default defined by DEFAULT_LOCALE
+};
+
+// API output response JSON
+type RegionSearchAPIResponseJSON = {
+  query: string;
+  data: RegionResults[];
+};
+
+type RegionResults = {
   "@type": "gaiaRegionResult";
   index: string;
-  gaiaId: string;
+  gaiaId: string; // This is regionId used in api/hotel/search API route
   type: "CITY" | "AIRPORT" | "POI" | "NEIGHBORHOOD" | "MULTICITY" | string;
   regionNames: {
     fullName: string;
     shortName: string;
     displayName: string;
-    primaryDisplayName: string;
+    primaryDisplayName: string; // Would recommend this as the hotel name
     secondaryDisplayName: string;
     lastSearchName: string;
   };
@@ -121,13 +138,14 @@ type RegionResult = {
     sourceId: string;
   };
   coordinates: {
+    // Geocode
     lat: string;
     long: string;
   };
   hierarchyInfo: {
     country: {
       name: string;
-      isoCode2: string;
+      isoCode2: string; // Same as domain
       isoCode3: string;
     };
     airport?: {
@@ -138,10 +156,5 @@ type RegionResult = {
     };
     relation?: string[];
   };
-  isMinorAirport?: "false";
-};
-
-type RegionSearchAPIResponse = {
-  query: string;
-  data: RegionResult[];
+  isMinorAirport?: "false"; // Only applies to type "AIRPORT"
 };

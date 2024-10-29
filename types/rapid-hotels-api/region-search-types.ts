@@ -149,3 +149,6 @@ export interface RegionsSearchQuery {
   domain: RegionSearchDomainType;
   locale: RegionSearchLocaleType;
 }
+
+export const DEFAULT_DOMAIN: RegionSearchDomainType = "US" as const;
+export const DEFAULT_LOCALE: RegionSearchLocaleType = "en_US" as const;
