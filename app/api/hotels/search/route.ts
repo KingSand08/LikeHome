@@ -2,6 +2,10 @@ import {
   validateDateFormat,
   validateDateRange,
 } from "@/lib/rapid-hotel-api/validateDates";
+import {
+  validateDomain,
+  validateLocale,
+} from "@/lib/rapid-hotel-api/validateDomainLocale";
 import { validatePriceRange } from "@/lib/rapid-hotel-api/validatePriceRange";
 import { API_OPTIONS } from "@/types/rapid-hotels-api/api-types";
 import {
@@ -29,7 +33,7 @@ function validateSearchParams(searchParams: URLSearchParams) {
   ];
   const requiredWithDefaultSearchParams = {
     sort_order: searchParams.get("sort_order") || DEFAULT_SORT_ORDER,
-    locale: searchParams.get("sort_order") || DEFAULT_LOCALE,
+    locale: searchParams.get("locale") || DEFAULT_LOCALE,
     domain: searchParams.get("domain") || DEFAULT_DOMAIN,
   };
   const optionalSearchParams = [
@@ -77,12 +81,18 @@ function validateSearchParams(searchParams: URLSearchParams) {
   const priceRangeError = validatePriceRange(minPrice, maxPrice);
   if (priceRangeError) errors.push(priceRangeError);
 
+  // Validate domain and locale
+  const domainError = validateDomain(requiredWithDefaultSearchParams.domain);
+  const localeError = validateLocale(requiredWithDefaultSearchParams.locale);
+  if (domainError) errors.push(domainError);
+  if (localeError) errors.push(localeError);
+
   // Check for errors in required searchParams
   if (errors.length > 0) {
     return {
       query: searchParams.toString(),
       endpoint: null,
-      error: errors.join(", "),
+      error: errors.join(" | "),
     };
   }
 
@@ -181,7 +191,7 @@ type PropertySearchResults = {
   shoppingContext: {}; // Placeholder, as details are not required
   map: {}; // Placeholder, as details are not required
   clickstream: {}; // Placeholder, as details are not required
-  [key: string]: any; 
+  [key: string]: any;
 };
 
 // Level 1 - filterMetadata
@@ -222,7 +232,7 @@ type Property = {
   regionId: string;
   priceMetadata: PropertyPriceMetadata;
   saveTripItem: string | null;
-  [key: string]: any; 
+  [key: string]: any;
 };
 
 // Level 2 - Property attributes
