@@ -30,3 +30,17 @@ export function validateLocale(locale: string | null): string | null {
   }
   return null;
 }
+
+export function validateDomainAndLocale(
+  domain: string | null,
+  locale: string | null
+): string[] | null {
+  let errors: string[] = [];
+
+  const domainError = validateDomain(domain);
+  const localeError = validateLocale(locale);
+  if (domainError) errors.push(domainError);
+  if (localeError) errors.push(localeError);
+
+  return errors.length > 0 ? errors : null;
+}

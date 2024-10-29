@@ -1,11 +1,5 @@
-import {
-  validateDateFormat,
-  validateDateRange,
-} from "@/lib/rapid-hotel-api/validateDates";
-import {
-  validateDomain,
-  validateLocale,
-} from "@/lib/rapid-hotel-api/validateDomainLocale";
+import { validateDateFormatAndDateRange } from "@/lib/rapid-hotel-api/validateDates";
+import { validateDomainAndLocale } from "@/lib/rapid-hotel-api/validateDomainLocale";
 import { API_OPTIONS } from "@/types/rapid-hotels-api/api-types";
 import { HOTEL_ROOM_OFFERS_URL } from "@/types/rapid-hotels-api/hotel-room-offers-types";
 import {
@@ -26,7 +20,7 @@ function validateSearchParams(searchParams: URLSearchParams) {
     domain: searchParams.get("domain") || DEFAULT_DOMAIN,
   };
   const optionalSearchParams = ["children_ages"];
-  const errors: string[] = [];
+  let errors: string[] = [];
 
   // Validate required searchParams and check for missing searchParams.
   requiredSearchParams.forEach((searchParam) => {
@@ -38,25 +32,15 @@ function validateSearchParams(searchParams: URLSearchParams) {
   // Validate check-in and check-out date formatting/range.
   const checkinDate = searchParams.get("checkin_date");
   const checkoutDate = searchParams.get("checkout_date");
-  const checkinDateFormatError = validateDateFormat(
-    checkinDate,
-    "checkin_date"
-  );
-  const checkoutDateFormatError = validateDateFormat(
-    checkoutDate,
-    "checkout_date"
-  );
-  if (checkinDateFormatError) errors.push(checkinDateFormatError);
-  if (checkoutDateFormatError) errors.push(checkoutDateFormatError);
-  // Validate date range between check-in and check-out dates
-  const dateRangeError = validateDateRange(checkinDate, checkoutDate);
-  if (dateRangeError) errors.push(dateRangeError);
+  const dateErrors = validateDateFormatAndDateRange(checkinDate, checkoutDate);
+  if (dateErrors) errors = [...errors, ...dateErrors];
 
   // Validate domain and locale
-  const domainError = validateDomain(requiredWithDefaultSearchParams.domain);
-  const localeError = validateLocale(requiredWithDefaultSearchParams.locale);
-  if (domainError) errors.push(domainError);
-  if (localeError) errors.push(localeError);
+  const domainLocaleErrors = validateDomainAndLocale(
+    requiredWithDefaultSearchParams.domain,
+    requiredWithDefaultSearchParams.locale
+  );
+  if (domainLocaleErrors) errors = [...errors, ...domainLocaleErrors];
 
   // Check for errors in required searchParams
   if (errors.length > 0) {

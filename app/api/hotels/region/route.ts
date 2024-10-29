@@ -1,12 +1,9 @@
+import { validateDomainAndLocale } from "@/lib/rapid-hotel-api/validateDomainLocale";
 import { API_OPTIONS } from "@/types/rapid-hotels-api/api-types";
 import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,
   REGION_SEARCH_URL,
-  RegionSearchDomainOptions,
-  RegionSearchDomainType,
-  RegionSearchLocaleOptions,
-  RegionSearchLocaleType,
 } from "@/types/rapid-hotels-api/region-search-types";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -20,41 +17,34 @@ function validateSearchParams(searchParams: URLSearchParams) {
   const query = encodeURIComponent(searchParams.get("query") || "");
   const domain = searchParams.get("domain") || DEFAULT_DOMAIN;
   const locale = searchParams.get("locale") || DEFAULT_LOCALE;
+  let errors: string[] = [];
 
-  const isValidDomain =
-    domain && (RegionSearchDomainOptions as readonly string[]).includes(domain);
-  const isValidLocale =
-    locale && (RegionSearchLocaleOptions as readonly string[]).includes(locale);
+  // Validate query
+  if (!query || query == "")
+    errors = [...errors, "Missing searchParam: query."];
 
-  if (query && isValidDomain && isValidLocale) {
-    const combinedSearchParams = new URLSearchParams({
-      query,
-      domain: domain!,
-      locale: locale!,
-    });
+  // Validate domain and locale
+  const domainLocaleErrors = validateDomainAndLocale(domain, locale);
+  if (domainLocaleErrors) errors = [...errors, ...domainLocaleErrors];
 
+  // Check for errors in required searchParams
+  if (errors.length > 0) {
     return {
-      quer: searchParams.toString(),
-      endpoint: `${REGION_SEARCH_URL}?${combinedSearchParams.toString()}`,
+      query: searchParams.toString(),
+      endpoint: null,
+      error: errors.join(" | "),
     };
   }
 
-  let errorMessage = "";
-  if (!isValidDomain) {
-    errorMessage += `Invalid domain. Expected one of: ${RegionSearchDomainOptions.join(
-      ", "
-    )}. `;
-  }
-  if (!isValidLocale) {
-    errorMessage += `Invalid locale. Expected one of: ${RegionSearchLocaleOptions.join(
-      ", "
-    )}. `;
-  }
-
-  return {
+  // Create endpoint
+  const combinedSearchParams = new URLSearchParams({
     query,
-    endpoint: null,
-    error: errorMessage,
+    domain: domain!,
+    locale: locale!,
+  });
+  return {
+    query: searchParams.toString(),
+    endpoint: `${REGION_SEARCH_URL}?${combinedSearchParams.toString()}`,
   };
 }
 
@@ -106,55 +96,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-
-// API input searchParams
-type RegionSearchAPIsearchParams = {
-  query: string;
-  domain?: RegionSearchDomainType; // If undefined, default defined by DEFAULT_DOMAIN
-  locale?: RegionSearchLocaleType; // If undefined, default defined by DEFAULT_LOCALE
-};
-
-// API output response JSON
-type RegionSearchAPIResponseJSON = {
-  query: string;
-  data: RegionResults[];
-};
-
-type RegionResults = {
-  "@type": "gaiaRegionResult";
-  index: string;
-  gaiaId: string; // This is regionId used in api/hotel/search API route
-  type: "CITY" | "AIRPORT" | "POI" | "NEIGHBORHOOD" | "MULTICITY" | string; // Include in Frontend as an Icon?
-  regionNames: {
-    fullName: string;
-    shortName: string;
-    displayName: string;
-    primaryDisplayName: string; // Would recommend this as the hotel name
-    secondaryDisplayName: string;
-    lastSearchName: string;
-  };
-  essId: {
-    sourceName: "GAI";
-    sourceId: string;
-  };
-  coordinates: {
-    // Geocode
-    lat: string;
-    long: string;
-  };
-  hierarchyInfo: {
-    country: {
-      name: string;
-      isoCode2: string; // Same as domain, make sure to set domain appropriately before any hotel search query. 
-      isoCode3: string;
-    };
-    airport?: {
-      airportCode: string;
-      airportId: string;
-      metrocode?: string;
-      multicity: string;
-    };
-    relation?: string[];
-  };
-  isMinorAirport?: "false"; // Only applies to type "AIRPORT"
-};

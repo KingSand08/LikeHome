@@ -28,3 +28,26 @@ export function validateDateRange(
   }
   return null;
 }
+
+export function validateDateFormatAndDateRange(
+  checkinDate: string | null,
+  checkoutDate: string | null
+): string[] | null {
+  let errors: string[] = [];
+
+  const checkinDateFormatError = validateDateFormat(
+    checkinDate,
+    "checkin_date"
+  );
+  const checkoutDateFormatError = validateDateFormat(
+    checkoutDate,
+    "checkout_date"
+  );
+  if (checkinDateFormatError) errors.push(checkinDateFormatError);
+  if (checkoutDateFormatError) errors.push(checkoutDateFormatError);
+  // Validate date range between check-in and check-out dates
+  const dateRangeError = validateDateRange(checkinDate, checkoutDate);
+  if (dateRangeError) errors.push(dateRangeError);
+
+  return errors.length > 0 ? errors : null;
+}
