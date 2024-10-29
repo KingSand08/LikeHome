@@ -1,5 +1,6 @@
 import { validateDateFormatAndDateRange } from "@/lib/rapid-hotel-api/validateDates";
 import { validateDomainAndLocale } from "@/lib/rapid-hotel-api/validateDomainLocale";
+import { ApiHotelRoomOffersResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotel-room-offers-doc";
 import { API_OPTIONS } from "@/types/rapid-hotels-api/api-types";
 import { HOTEL_ROOM_OFFERS_URL } from "@/types/rapid-hotels-api/hotel-room-offers-types";
 import {
@@ -118,8 +119,29 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const data = await response.json();
-    return NextResponse.json(data, { status: 200 });
+    const JSON_DATA: ApiHotelRoomOffersResponseJSON = await response.json();
+    const PAYLOAD: HotelRoomOffersResult = {
+      hotel_id: JSON_DATA.id,
+      soldOut: JSON_DATA.soldOut,
+      basePrice: JSON_DATA.stickyBar.displayPrice,
+      hotelRoomOffers: JSON_DATA.categorizedListings.map(
+        (categorizedListing) => ({
+          hotel_room_id: categorizedListing.unitId,
+          description:
+            categorizedListing.primarySelections[0].propertyUnit.description,
+          name: categorizedListing.header.text,
+          galleryImages:
+            categorizedListing.primarySelections[0].propertyUnit.unitGallery.gallery.map(
+              (galleryImage, index) => ({
+                description: galleryImage.image.description,
+                url: galleryImage.image.url,
+                index: index,
+              })
+            ),
+        })
+      ),
+    };
+    return NextResponse.json(JSON_DATA, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       {
@@ -129,3 +151,22 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+type HotelRoomOffersResult = {
+  hotel_id: string;
+  soldOut: boolean;
+  basePrice: string;
+  hotelRoomOffers: HotelRoom[];
+};
+
+type HotelRoom = {
+  hotel_room_id: string;
+  description: string;
+  name: string;
+  galleryImages: Images[];
+};
+
+type Images = {
+  description: string;
+  url: string;
+};

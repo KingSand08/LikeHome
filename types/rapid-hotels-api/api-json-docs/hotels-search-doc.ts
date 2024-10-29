@@ -5,17 +5,19 @@
 // Hotel Search API output:
 
 // Level 0 - API output
-type PropertySearchResults = {
+export type ApiHotelSearchResponseJSON = {
   __typename: "PropertySearchResults";
   filterMetadata: PropertyFilterMetadata;
   properties: Property[];
-  universalSortAndFilter: {}; // Placeholder, as details are not required
-  propertySearchListings: {}; // Placeholder, as details are not required
-  summary: {}; // Placeholder, as details are not required
-  searchCriteria: {}; // Placeholder, as details are not required
-  shoppingContext: {}; // Placeholder, as details are not required
-  map: {}; // Placeholder, as details are not required
-  clickstream: {}; // Placeholder, as details are not required
+  universalSortAndFilter: any;
+  propertySearchListings: any;
+  summary: {
+    matchedPropertiesSize: number;
+  };
+  searchCriteria: any;
+  shoppingContext: any;
+  map: any;
+  clickstream: any;
   [key: string]: any;
 };
 
@@ -34,7 +36,7 @@ type PriceRange = {
 };
 
 // Level 1 - properties (hotels)
-type Property = {
+export type Property = {
   __typename: "Property";
   id: string; // hotelId, required for HotelRoomOffers api
   name: string;
@@ -48,7 +50,7 @@ type Property = {
   neighborhood: Region;
   offerBadge: string | null;
   offerSummary: OfferSummary;
-  pinnedDetails: string | null;
+  pinnedDetails: string;
   price: PropertyPrice; // Price of hotel
   priceAfterLoyaltyPointsApplied: PropertyPrice;
   propertyFees: any[];

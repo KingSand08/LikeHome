@@ -1,4 +1,5 @@
 import { validateDomainAndLocale } from "@/lib/rapid-hotel-api/validateDomainLocale";
+import { APIRegionSearchResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotels-region-doc";
 import { API_OPTIONS } from "@/types/rapid-hotels-api/api-types";
 import {
   DEFAULT_DOMAIN,
@@ -85,8 +86,30 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const data = await response.json();
-    return NextResponse.json(data, { status: 200 });
+    const JSON_DATA: APIRegionSearchResponseJSON = await response.json();
+    const PAYLOAD: RegionListResult[] = JSON_DATA.data.map((regionItem) => ({
+      region_id: regionItem.gaiaId,
+      type: regionItem.type,
+      regionNames: {
+        fullName: regionItem.regionNames.fullName,
+        shortName: regionItem.regionNames.shortName,
+        displayName: regionItem.regionNames.displayName, // Would recommend this as the name
+        primaryDisplayName: regionItem.regionNames.primaryDisplayName,
+        secondaryDisplayName: regionItem.regionNames.secondaryDisplayName,
+        lastSearchName: regionItem.regionNames.lastSearchName,
+      },
+      coordinates: {
+        // Geocode
+        lat: regionItem.coordinates.lat,
+        long: regionItem.coordinates.long,
+      },
+      country: {
+        name: regionItem.hierarchyInfo.country.name,
+        domain: regionItem.hierarchyInfo.country.isoCode2, // Using isoCode2 as domain.
+      },
+    }));
+
+    return NextResponse.json(PAYLOAD, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       {
@@ -96,3 +119,25 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+type RegionListResult = {
+  region_id: string;
+  type: "CITY" | "AIRPORT" | "POI" | "NEIGHBORHOOD" | "MULTICITY" | string;
+  regionNames: {
+    fullName: string;
+    shortName: string;
+    displayName: string; // Would recommend this as the name
+    primaryDisplayName: string;
+    secondaryDisplayName: string;
+    lastSearchName: string;
+  };
+  coordinates: {
+    // Geocode
+    lat: string;
+    long: string;
+  };
+  country: {
+    name: string;
+    domain: string; // Using isoCode2 as domain.
+  };
+};

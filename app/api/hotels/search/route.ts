@@ -1,6 +1,7 @@
 import { validateDateFormatAndDateRange } from "@/lib/rapid-hotel-api/validateDates";
 import { validateDomainAndLocale } from "@/lib/rapid-hotel-api/validateDomainLocale";
 import { validatePriceRange } from "@/lib/rapid-hotel-api/validatePriceRange";
+import { ApiHotelSearchResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotels-search-doc";
 import { API_OPTIONS } from "@/types/rapid-hotels-api/api-types";
 import {
   DEFAULT_SORT_ORDER,
@@ -147,8 +148,32 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const data = await response.json();
-    return NextResponse.json(data, { status: 200 });
+    const JSON_DATA: ApiHotelSearchResponseJSON = await response.json();
+    const PAYLOAD: HotelSearchResult = {
+      priceRange: {
+        maxPrice: JSON_DATA.filterMetadata.priceRange.max,
+        minPrice: JSON_DATA.filterMetadata.priceRange.min,
+      },
+      summary: {
+        matchedPropertiesSize: JSON_DATA.summary.matchedPropertiesSize,
+      },
+      properties: JSON_DATA.properties.map((propertyItem) => ({
+        hotel_id: propertyItem.id,
+        name: propertyItem.name,
+        image: {
+          description: propertyItem.propertyImage.image.description,
+          url: propertyItem.propertyImage.image.url,
+          alt: propertyItem.propertyImage.alt,
+        },
+        coordinates: {
+          // Geocode
+          lat: propertyItem.mapMarker.latLong.latitude,
+          long: propertyItem.mapMarker.latLong.longitude,
+        },
+      })),
+    };
+
+    return NextResponse.json(PAYLOAD, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       {
@@ -158,3 +183,29 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+type HotelSearchResult = {
+  priceRange: {
+    maxPrice: number;
+    minPrice: number;
+  };
+  properties: PropertyInfoResult[];
+  summary: {
+    matchedPropertiesSize: number;
+  };
+};
+
+type PropertyInfoResult = {
+  hotel_id: string;
+  name: string;
+  image: {
+    description: string;
+    url: string;
+    alt: string;
+  };
+  coordinates: {
+    // Geocode
+    lat: number;
+    long: number;
+  };
+};
