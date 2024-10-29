@@ -137,9 +137,9 @@ type PriceDetail = {
   pointsApplied: any | null;
   price: {
     total: {
-        __typename: string;
-        amount: number; 
-    }
+      __typename: string;
+      amount: number;
+    };
   };
   priceAfterLoyaltyPointsApplied: any;
   pricingScheme: any;

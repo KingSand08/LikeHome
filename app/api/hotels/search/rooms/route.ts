@@ -105,7 +105,7 @@ export async function GET(req: NextRequest) {
   }
 
   // For testing
-  //   return NextResponse.json({ data: endpoint }, { status: 200 });
+  // return NextResponse.json({ data: endpoint }, { status: 200 });
 
   try {
     const response = await fetch(endpoint, API_OPTIONS);
@@ -141,7 +141,7 @@ export async function GET(req: NextRequest) {
         })
       ),
     };
-    return NextResponse.json(JSON_DATA, { status: 200 });
+    return NextResponse.json(PAYLOAD, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       {

@@ -55,7 +55,7 @@ export type Property = {
   priceAfterLoyaltyPointsApplied: PropertyPrice;
   propertyFees: any[];
   reviews: PropertyReviewsSummary;
-  star: number | null;
+  star: number;
   supportingMessages: string | null;
   regionId: string;
   priceMetadata: PropertyPriceMetadata;

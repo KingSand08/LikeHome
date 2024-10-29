@@ -149,7 +149,7 @@ export async function GET(req: NextRequest) {
     }
 
     const JSON_DATA: ApiHotelSearchResponseJSON = await response.json();
-    const PAYLOAD: HotelSearchResult = {
+    const PAYLOAD: HotelsSearchResult = {
       priceRange: {
         maxPrice: JSON_DATA.filterMetadata.priceRange.max,
         minPrice: JSON_DATA.filterMetadata.priceRange.min,
@@ -158,6 +158,7 @@ export async function GET(req: NextRequest) {
         matchedPropertiesSize: JSON_DATA.summary.matchedPropertiesSize,
       },
       properties: JSON_DATA.properties.map((propertyItem) => ({
+        region_id: propertyItem.regionId,
         hotel_id: propertyItem.id,
         name: propertyItem.name,
         image: {
@@ -169,6 +170,11 @@ export async function GET(req: NextRequest) {
           // Geocode
           lat: propertyItem.mapMarker.latLong.latitude,
           long: propertyItem.mapMarker.latLong.longitude,
+        },
+        reviews: {
+          score: propertyItem.reviews.score,
+          totalReviews: propertyItem.reviews.total,
+          starRating: propertyItem.star,
         },
       })),
     };
@@ -184,18 +190,18 @@ export async function GET(req: NextRequest) {
   }
 }
 
-type HotelSearchResult = {
+type HotelsSearchResult = {
   priceRange: {
     maxPrice: number;
     minPrice: number;
   };
-  properties: PropertyInfoResult[];
+  properties: HotelInfo[];
   summary: {
     matchedPropertiesSize: number;
   };
 };
 
-type PropertyInfoResult = {
+type HotelInfo = {
   hotel_id: string;
   name: string;
   image: {
@@ -207,5 +213,10 @@ type PropertyInfoResult = {
     // Geocode
     lat: number;
     long: number;
+  };
+  reviews: {
+    score: number;
+    totalReviews: number;
+    starRating: number;
   };
 };
