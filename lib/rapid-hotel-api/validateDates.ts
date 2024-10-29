@@ -13,7 +13,7 @@ export function validateDateFormat(
   return null;
 }
 
-// Validates that the check-out date is the same as or after the check-in date.
+// Validates that the check-out date is the same as or after the check-in date. Also, check if check-in date is not in the past.
 export function validateDateRange(
   checkinDate: string | null,
   checkoutDate: string | null
@@ -22,7 +22,11 @@ export function validateDateRange(
 
   const checkin = new Date(checkinDate);
   const checkout = new Date(checkoutDate);
+  const today = new Date();
 
+  if (checkin < today) {
+    return "Check-in date cannot be in the past.";
+  }
   if (checkout < checkin) {
     return "Check-out date must be after or the same as the check-in date.";
   }
