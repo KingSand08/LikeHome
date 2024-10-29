@@ -124,7 +124,7 @@ type RegionResults = {
   "@type": "gaiaRegionResult";
   index: string;
   gaiaId: string; // This is regionId used in api/hotel/search API route
-  type: "CITY" | "AIRPORT" | "POI" | "NEIGHBORHOOD" | "MULTICITY" | string;
+  type: "CITY" | "AIRPORT" | "POI" | "NEIGHBORHOOD" | "MULTICITY" | string; // Include in Frontend as an Icon?
   regionNames: {
     fullName: string;
     shortName: string;
@@ -145,7 +145,7 @@ type RegionResults = {
   hierarchyInfo: {
     country: {
       name: string;
-      isoCode2: string; // Same as domain
+      isoCode2: string; // Same as domain, make sure to set domain appropriately before any hotel search query. 
       isoCode3: string;
     };
     airport?: {

@@ -70,7 +70,16 @@ export type HotelsSearchLodging =
   | "RYOKAN"
   | "BED_AND_BREAKFAST";
 
-export interface HotelsSearchQuery {
+export type HotelTravelerBookingInfo = {
+  checkin_date: string; // Check-in date, required
+  adults_number: number; // Number of adults, required
+  locale: RegionSearchLocaleType; // Locale, required (adjust to actual type if known)
+  checkout_date: string; // Checkout date, required
+  children_ages?: number[]; // Ages of children as comma-separated values, e.g., "4,0,15"
+  domain: RegionSearchDomainType; // Domain, required (adjust to actual type if known)
+}
+
+export interface HotelsSearchQuery extends HotelTravelerBookingInfo {
   accessibility?: HotelsSearchAccessibility[]; // Array of accessibility features
   amenities?: HotelsSearchAmenities[]; // Array of amenities
   meal_plan?: HotelsSearchMealPlan[]; // Array of meal plan options
@@ -79,17 +88,17 @@ export interface HotelsSearchQuery {
   payment_type?: HotelsSearchPayment[]; // Array of payment types
   star_rating_ids?: string; // Star rating string, e.g., "4,5"
   guest_rating_min?: number; // Minimal guest rating
-  children_ages?: number[]; // Ages of children as comma-separated values, e.g., "4,0,15"
-  checkin_date: string; // Check-in date, required
-  locale: RegionSearchLocaleType; // Locale, required (adjust to actual type if known)
-  adults_number: number; // Number of adults, required
+  // children_ages?: number[]; // Ages of children as comma-separated values, e.g., "4,0,15"
+  // checkin_date: string; // Check-in date, required
+  // locale: RegionSearchLocaleType; // Locale, required (adjust to actual type if known)
+  // adults_number: number; // Number of adults, required
   sort_order: HotelSearchSortOrder; // Sort order, required (adjust to actual type if known)
   page_number?: number;
-  domain: RegionSearchDomainType; // Domain, required (adjust to actual type if known)
+  // domain: RegionSearchDomainType; // Domain, required (adjust to actual type if known)
   price_max?: number;
   region_id: number; // Region ID, required
   lodging_type?: HotelsSearchLodging[]; // Array of lodging types
-  checkout_date: string; // Checkout date, required
+  // checkout_date: string; // Checkout date, required
 }
 
 export const DEFAULT_SORT_ORDER: HotelSearchSortOrder = "DISTANCE" as const;

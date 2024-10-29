@@ -29,7 +29,7 @@ function validateSearchParams(searchParams: URLSearchParams) {
     "checkin_date",
     "checkout_date",
     "adults_number",
-    "region_id",
+    "region_id", // Also known as gaiaId in region search api.
   ];
   const requiredWithDefaultSearchParams = {
     sort_order: searchParams.get("sort_order") || DEFAULT_SORT_ORDER,
@@ -175,7 +175,8 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// Refer to types/rapid-hotels-api/hotel-search-types.ts for API input searchParams. See HotelsSearchQuery.
+// Refer to types/rapid-hotels-api/hotel-search-types.ts for API input searchParams. See HotelsSearchQuery.\
+// Otherwise, check possible searchParams in requiredSearchParams, requiredWithDefaultSearchParams (required, but gives default value if not provided), optionalSearchParams in function validateSearchParams.
 
 // Hotel Search API output:
 
@@ -197,9 +198,10 @@ type PropertySearchResults = {
 // Level 1 - filterMetadata
 type PropertyFilterMetadata = {
   __typename: "PropertyFilterMetadata";
-  priceRange: PriceRange; // Set absolute minPrice and maxPrice based on this data if price range not provided.
+  priceRange: PriceRange; // Set minPrice and maxPrice absolute limits.
   [key: string]: any;
 };
+// Level 2 - filterMetadata attributes
 type PriceRange = {
   __typename: "PriceRange";
   max: number;
@@ -207,10 +209,10 @@ type PriceRange = {
   [key: string]: any;
 };
 
-// Level 1 - properties
+// Level 1 - properties (hotels)
 type Property = {
   __typename: "Property";
-  id: string;
+  id: string; // hotelId, required for HotelRoomOffers api
   name: string;
   featuredMessages: any[];
   availability: PropertyAvailability;
@@ -223,7 +225,7 @@ type Property = {
   offerBadge: string | null;
   offerSummary: OfferSummary;
   pinnedDetails: string | null;
-  price: PropertyPrice;
+  price: PropertyPrice; // Price of hotel
   priceAfterLoyaltyPointsApplied: PropertyPrice;
   propertyFees: any[];
   reviews: PropertyReviewsSummary;
@@ -235,7 +237,7 @@ type Property = {
   [key: string]: any;
 };
 
-// Level 2 - Property attributes
+// Level 2 - Property (hotel) attributes
 type PropertyAvailability = {
   __typename: "PropertyAvailability";
   available: boolean;
