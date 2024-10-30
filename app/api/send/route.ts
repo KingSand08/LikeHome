@@ -1,22 +1,24 @@
 import { NextResponse } from 'next/server';
-import { EmailTemplate } from '../../../components/email/email-template';
+import { SignInEmail } from '@/components/email/sign-in-template';
 import { Resend } from 'resend';
+import { EmailTemplate } from '@/components/email/email-template';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST() {
     try {
-        const emails = ['test@gmail.com'];
+        const emails = ['clinvil2@gmail.com'];
 
         const emailPromises = [...new Set(emails)]
             .map((recipientEmail) => {
                 return resend.emails.send({
-                    from: 'Acme <onboarding@resend.dev>',
-                    // from: 'stellar.horizons@likehome.biz',
+                    from: 'LikeHome <onboarding@resend.dev>',
+                    // from: 'LikeHome <stellar.horizons@likehome.biz>', //waiting for DNS approval
                     to: recipientEmail,
-                    // replyTo: 'support@likehome.biz',
-                    subject: 'Hello world',
-                    react: EmailTemplate({ firstName: 'NAME HERE' }),
+                    // replyTo: 'LikeHome Support <support@likehome.biz>', //waiting for DNS approval
+                    subject: 'LikeHome Hotels Sign in',
+                    react: SignInEmail({ content: '<LINK TO SIGN IN HERE>' }), //waiting for DNS approval
+                    // react: EmailTemplate({ firstName: 'NAME HERE' }),
                 });
             })
 

@@ -14,6 +14,10 @@
   "dependencies": {
     "@auth/core": "^0.37.0",
     "@auth/mongodb-adapter": "^3.7.2",
+    "@react-email/components": "^0.0.25",
+    "@react-email/img": "^0.0.10",
+    "@react-email/link": "^0.0.10",
+    "@react-email/text": "^0.0.10",
     "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/typography": "^0.5.15",
     "jest-dom": "^4.0.0",
