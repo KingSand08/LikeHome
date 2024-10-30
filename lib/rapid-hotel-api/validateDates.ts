@@ -6,8 +6,7 @@ export function validateDateFormat(
   date: string | null,
   searchParam: string
 ): string | null {
-  if (!date) return null;
-  if (!dateRegex.test(date)) {
+  if (!date || !dateRegex.test(date)) {
     return `Invalid ${searchParam} format. Use YYYY-MM-DD. Use only numbers.`;
   }
   return null;
@@ -15,13 +14,14 @@ export function validateDateFormat(
 
 // Validates that the check-out date is the same as or after the check-in date. Also, check if check-in date is not in the past.
 export function validateDateRange(
-  checkinDate: string | null,
-  checkoutDate: string | null
+  checkin_date: string | null,
+  checkout_date: string | null
 ): string | null {
-  if (!checkinDate || !checkoutDate) return null;
+  if (!checkin_date || !checkout_date)
+    return "Invalid date range format or missing checkin_date and/or checkout_date.";
 
-  const checkin = new Date(checkinDate);
-  const checkout = new Date(checkoutDate);
+  const checkin = new Date(checkin_date);
+  const checkout = new Date(checkout_date);
   const today = new Date();
 
   if (checkin < today) {
@@ -34,23 +34,23 @@ export function validateDateRange(
 }
 
 export function validateDateFormatAndDateRange(
-  checkinDate: string | null,
-  checkoutDate: string | null
+  checkin_date: string | null,
+  checkout_date: string | null
 ): string[] | null {
   let errors: string[] = [];
 
   const checkinDateFormatError = validateDateFormat(
-    checkinDate,
+    checkin_date,
     "checkin_date"
   );
   const checkoutDateFormatError = validateDateFormat(
-    checkoutDate,
+    checkout_date,
     "checkout_date"
   );
   if (checkinDateFormatError) errors.push(checkinDateFormatError);
   if (checkoutDateFormatError) errors.push(checkoutDateFormatError);
   // Validate date range between check-in and check-out dates
-  const dateRangeError = validateDateRange(checkinDate, checkoutDate);
+  const dateRangeError = validateDateRange(checkin_date, checkout_date);
   if (dateRangeError) errors.push(dateRangeError);
 
   return errors.length > 0 ? errors : null;
