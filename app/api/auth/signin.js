@@ -10,14 +10,18 @@ export default async function handler(req, res) {
 
       if (result.error) {
         console.error("Sign-in error:", result.error); // Log error to terminal
-        return res.redirect(`/testauth?error=${encodeURIComponent(result.error)}`);
+        return res.redirect(
+          `/signin?error=${encodeURIComponent(result.error)}`
+        );
       }
 
       // On successful sign-in, redirect to the profile page
-      res.redirect('/profile'); 
+      res.redirect("/profile");
     } catch (error) {
       console.error("Unexpected error during sign-in:", error); // Log unexpected errors
-      res.redirect(`/testauth?error=${encodeURIComponent("An unexpected error occurred.")}`);
+      res.redirect(
+        `/signin?error=${encodeURIComponent("An unexpected error occurred.")}`
+      );
     }
   } else {
     res.setHeader("Allow", ["POST"]);

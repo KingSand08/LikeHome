@@ -5,9 +5,9 @@ import type { NextAuthConfig } from "next-auth"
 export default {
     providers: [
         Google,
-        Resend({
-            from: 'LikeHome <onboarding@resend.dev>',
-        }),
+        // Resend({
+        //     from: 'LikeHome <onboarding@resend.dev>',
+        // }),
     ], pages: {
         signIn: "/signin",
         error: "/signin",
