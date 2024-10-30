@@ -1,6 +1,6 @@
 import { validateDomainAndLocale } from "@/lib/rapid-hotel-api/validateDomainLocale";
 import { APIRegionSearchResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotels-region-doc";
-import { API_OPTIONS } from "@/types/rapid-hotels-api/api-types";
+import { API_OPTIONS } from "@/lib/rapid-hotel-api/api-setup";
 import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,

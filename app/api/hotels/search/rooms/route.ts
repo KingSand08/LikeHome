@@ -1,7 +1,7 @@
 import { validateDateFormatAndDateRange } from "@/lib/rapid-hotel-api/validateDates";
 import { validateDomainAndLocale } from "@/lib/rapid-hotel-api/validateDomainLocale";
 import { ApiHotelRoomOffersResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotel-room-offers-doc";
-import { API_OPTIONS } from "@/types/rapid-hotels-api/api-types";
+import { API_OPTIONS } from "@/lib/rapid-hotel-api/api-setup";
 import { HOTEL_ROOM_OFFERS_URL } from "@/types/rapid-hotels-api/hotel-room-offers-types";
 import {
   DEFAULT_LOCALE,
