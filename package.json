@@ -13,10 +13,12 @@
   },
   "dependencies": {
     "@auth/core": "^0.37.0",
+    "@auth/mongodb-adapter": "^3.7.2",
     "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/typography": "^0.5.15",
     "jest-dom": "^4.0.0",
     "likehome": "file:",
+    "mongodb": "^6.10.0",
     "next": "^14.2.13",
     "next-auth": "^5.0.0-beta.22",
     "next-themes": "^0.3.0",
