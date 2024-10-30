@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { SignInEmail } from '@/components/email/sign-in-template';
 import { Resend } from 'resend';
-import { EmailTemplate } from '@/components/email/email-template';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
