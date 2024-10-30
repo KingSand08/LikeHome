@@ -5,8 +5,8 @@ import type { NextAuthConfig } from "next-auth"
 export default {
     providers: [
         Google,
-        Resend({
-            from: "auth@app.company.com",
-        }),
+        // Resend({
+        //     from: "auth@app.company.com",
+        // }),
     ],
 } satisfies NextAuthConfig
