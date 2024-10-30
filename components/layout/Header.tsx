@@ -70,8 +70,8 @@ export default async function Header() {
                   <Image
                     src={session?.user?.image ?? "/default-avatar.png"}
                     alt="User Avatar"
-                    width={10}
-                    height={10}
+                    width={1000}
+                    height={1000}
                     className="w-4 h-4 md:w-[2.8rem] md:h-[2.8rem] lg:w-[2.8rem] lg:h-[2.8rem] rounded-full"
                   />
                   <p className="text-lg">

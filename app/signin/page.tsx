@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import Image from "next/image";
 import formImage from "../../public/likehome_form_icon.png";
 import OAuthButton from "@/components/OAuthButton";
+import SignInEmailButton from "@/components/SignInEmailButton";
 
 export default async function SignInPage() {
   const profilePageURL = "/";
@@ -39,6 +40,7 @@ export default async function SignInPage() {
                   name="email"
                   placeholder="Enter your email"
                 />
+                <SignInEmailButton />
               </div>
             </div>
           </div>
