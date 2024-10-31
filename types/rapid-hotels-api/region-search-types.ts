@@ -1,8 +1,8 @@
 // Regions search API
 // https://rapidapi.com/tipsters/api/hotels-com-provider/playground/apiendpoint_8decc805-015f-4163-95e4-f3e0d276eb06
 
-export const REGION_SEARCH_URL =
-  "https://hotels-com-provider.p.rapidapi.com/v2/regions" as const;
+// export const REGION_SEARCH_URL =
+//   "https://hotels-com-provider.p.rapidapi.com/v2/regions" as const;
 
 export const RegionSearchDomainOptions = [
   "AR",

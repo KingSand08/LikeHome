@@ -1,113 +1,88 @@
-import { validateDomainAndLocale } from "@/lib/rapid-hotel-api/validateDomainLocale";
 import { APIRegionSearchResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotels-region-doc";
-import { API_OPTIONS } from "@/lib/rapid-hotel-api/api-setup";
 import {
-  DEFAULT_DOMAIN,
-  DEFAULT_LOCALE,
-  REGION_SEARCH_URL,
-} from "@/types/rapid-hotels-api/region-search-types";
+  API_OPTIONS,
+  buildURLSearchParams,
+} from "@/lib/rapid-hotel-api/api-setup";
 import { NextRequest, NextResponse } from "next/server";
-
-interface validateSearchParams {
-  query: string | null;
-  endpoint: string | null;
-  error?: string | null;
-}
+import {
+  API_REGION_SEARCH_URL,
+  regionSearchParamsSchema,
+} from "@/lib/rapid-hotel-api/zod/region-search-schemas";
 
 function validateSearchParams(searchParams: URLSearchParams) {
-  const query = encodeURIComponent(searchParams.get("query") || "");
-  const domain = searchParams.get("domain") || DEFAULT_DOMAIN;
-  const locale = searchParams.get("locale") || DEFAULT_LOCALE;
-  let errors: string[] = [];
+  const parseResult = regionSearchParamsSchema.safeParse({
+    query: searchParams.get("query"),
+    domain: searchParams.get("domain"),
+    locale: searchParams.get("locale"),
+  });
+  if (!parseResult.success) {
+    const errorMessages = parseResult.error.errors
+      .map((err) => `searchParam: ${err.path.join(" ")} - ${err.message}`)
+      .join(" & ");
 
-  // Validate query
-  if (!query || query == "")
-    errors = [...errors, "Missing searchParam: query."];
-
-  // Validate domain and locale
-  const domainLocaleErrors = validateDomainAndLocale(domain, locale);
-  if (domainLocaleErrors) errors = [...errors, ...domainLocaleErrors];
-
-  // Check for errors in required searchParams
-  if (errors.length > 0) {
     return {
       query: searchParams.toString(),
       endpoint: null,
-      error: errors.join(" | "),
+      error: `Errors: ${errorMessages}`,
     };
   }
 
   // Create endpoint
-  const combinedSearchParams = new URLSearchParams({
-    query,
-    domain: domain!,
-    locale: locale!,
-  });
+  const combinedSearchParams = buildURLSearchParams(parseResult.data);
   return {
     query: searchParams.toString(),
-    endpoint: `${REGION_SEARCH_URL}?${combinedSearchParams.toString()}`,
+    endpoint: `${API_REGION_SEARCH_URL}?${combinedSearchParams.toString()}`,
   };
 }
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  if (!searchParams.toString()) {
-    return NextResponse.json(
-      {
-        error: `Empty searchParams`,
-      },
-      {
-        status: 400,
-      }
-    );
-  }
-
   const { query, endpoint, error } = validateSearchParams(searchParams);
-  if (!endpoint || error) {
+  if (error) {
     return NextResponse.json(
       {
-        error: `Invalid input given searchParams: ${query}. \n ${error}`,
+        error,
       },
-      {
-        status: 400,
-      }
+      { status: 400 }
     );
   }
 
   try {
-    const response = await fetch(endpoint, API_OPTIONS);
+    const response = await fetch(endpoint!, API_OPTIONS);
 
     if (!response.ok) {
       return NextResponse.json(
         {
-          error: `Failed to fetch data from API: ${response.statusText}. Status code: ${response.status} Endpoint: ${endpoint}`,
+          error: `Failed to fetch data from API: ${response.statusText} & Status code: ${response.status} & Endpoint: ${endpoint}`,
         },
         { status: response.status }
       );
     }
 
     const JSON_DATA: APIRegionSearchResponseJSON = await response.json();
-    const PAYLOAD: RegionListResult[] = JSON_DATA.data.map((regionItem) => ({
-      region_id: regionItem.gaiaId,
-      type: regionItem.type,
-      regionNames: {
-        fullName: regionItem.regionNames.fullName,
-        shortName: regionItem.regionNames.shortName,
-        displayName: regionItem.regionNames.displayName, // Would recommend this as the name
-        primaryDisplayName: regionItem.regionNames.primaryDisplayName,
-        secondaryDisplayName: regionItem.regionNames.secondaryDisplayName,
-        lastSearchName: regionItem.regionNames.lastSearchName,
-      },
-      coordinates: {
-        // Geocode
-        lat: regionItem.coordinates.lat,
-        long: regionItem.coordinates.long,
-      },
-      country: {
-        name: regionItem.hierarchyInfo.country.name,
-        domain: regionItem.hierarchyInfo.country.isoCode2, // Using isoCode2 as domain.
-      },
-    }));
+    const PAYLOAD: APIRegionJSONFormatted = JSON_DATA.data.map(
+      (regionItem) => ({
+        region_id: regionItem.gaiaId,
+        type: regionItem.type,
+        regionNames: {
+          fullName: regionItem.regionNames.fullName,
+          shortName: regionItem.regionNames.shortName,
+          displayName: regionItem.regionNames.displayName, // Would recommend this as the name
+          primaryDisplayName: regionItem.regionNames.primaryDisplayName,
+          secondaryDisplayName: regionItem.regionNames.secondaryDisplayName,
+          lastSearchName: regionItem.regionNames.lastSearchName,
+        },
+        coordinates: {
+          // Geocode
+          lat: regionItem.coordinates.lat,
+          long: regionItem.coordinates.long,
+        },
+        country: {
+          name: regionItem.hierarchyInfo.country.name,
+          domain: regionItem.hierarchyInfo.country.isoCode2, // Using isoCode2 as domain.
+        },
+      })
+    );
 
     return NextResponse.json(PAYLOAD, { status: 200 });
   } catch (error) {
@@ -120,9 +95,9 @@ export async function GET(req: NextRequest) {
   }
 }
 
-type RegionListResult = {
+type APIRegionJSONFormatted = {
   region_id: string;
-  type: "CITY" | "AIRPORT" | "POI" | "NEIGHBORHOOD" | "MULTICITY" | string;
+  type: string;
   regionNames: {
     fullName: string;
     shortName: string;
@@ -140,4 +115,4 @@ type RegionListResult = {
     name: string;
     domain: string; // Using isoCode2 as domain.
   };
-};
+}[];

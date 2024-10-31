@@ -8,3 +8,22 @@ export const API_OPTIONS: RequestInit = {
   },
   cache: "no-store",
 };
+
+export function buildURLSearchParams(
+  validatedData: Record<string, any>
+): URLSearchParams {
+  const combinedSearchParams = new URLSearchParams();
+
+  Object.entries(validatedData).forEach(([key, value]) => {
+    if (value !== undefined) {
+      combinedSearchParams.append(
+        key,
+        Array.isArray(value)
+          ? value.join(",")
+          : encodeURIComponent(value.toString())
+      );
+    }
+  });
+
+  return combinedSearchParams;
+}
