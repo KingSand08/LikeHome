@@ -27,3 +27,9 @@ export function buildURLSearchParams(
 
   return combinedSearchParams;
 }
+
+export type validateSearchParamsOutput = {
+  query: string | null;
+  endpoint: string | null;
+  error?: string | null;
+};

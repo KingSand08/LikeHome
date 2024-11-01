@@ -2,6 +2,7 @@ import { APIRegionSearchResponseJSON } from "@/types/rapid-hotels-api/api-json-d
 import {
   API_OPTIONS,
   buildURLSearchParams,
+  validateSearchParamsOutput,
 } from "@/lib/rapid-hotel-api/api-setup";
 import { NextRequest, NextResponse } from "next/server";
 import {
@@ -9,7 +10,9 @@ import {
   regionSearchParamsSchema,
 } from "@/lib/rapid-hotel-api/zod/region-search-schemas";
 
-function validateSearchParams(searchParams: URLSearchParams) {
+function validateSearchParams(
+  searchParams: URLSearchParams
+): validateSearchParamsOutput {
   const parseResult = regionSearchParamsSchema.safeParse({
     query: searchParams.get("query"),
     domain: searchParams.get("domain"),

@@ -2,6 +2,7 @@ import { ApiHotelRoomOffersResponseJSON } from "@/types/rapid-hotels-api/api-jso
 import {
   API_OPTIONS,
   buildURLSearchParams,
+  validateSearchParamsOutput,
 } from "@/lib/rapid-hotel-api/api-setup";
 import { NextRequest, NextResponse } from "next/server";
 import {
@@ -9,7 +10,9 @@ import {
   hotelRoomOffersParamsSchema,
 } from "@/lib/rapid-hotel-api/zod/hotel-room-offers-schemas";
 
-function validateSearchParams(searchParams: URLSearchParams) {
+function validateSearchParams(
+  searchParams: URLSearchParams
+): validateSearchParamsOutput {
   const parseResult = hotelRoomOffersParamsSchema.safeParse({
     // Required
     checkin_date: searchParams.get("checkin_date"),
