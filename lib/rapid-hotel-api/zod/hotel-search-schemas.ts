@@ -2,6 +2,7 @@
 // https://rapidapi.com/tipsters/api/hotels-com-provider/playground/apiendpoint_01161e64-954f-4a4e-a331-ffa662e04629
 import { z, ZodObject, ZodRawShape } from "zod";
 import { localeSchema, domainSchema } from "./region-search-schemas";
+import { DEFAULT_SORT_ORDER } from "./constants";
 
 export const API_HOTEL_SEARCH_URL =
   "https://hotels-com-provider.p.rapidapi.com/v2/hotels/search" as const;
@@ -47,9 +48,8 @@ export const HotelSearchSortOrderOptions = [
   "PROPERTY_CLASS",
   "PRICE_RELEVANT",
 ] as const;
-type HotelSearchSortOrderOptionsType =
+export type HotelSearchSortOrderOptionsType =
   (typeof HotelSearchSortOrderOptions)[number];
-const DEFAULT_SORT_ORDER: HotelSearchSortOrderOptionsType = "DISTANCE" as const;
 
 export const HotelsSearchLodgingOptions = [
   "HOSTAL",
@@ -98,8 +98,6 @@ const sortOrderSchema = z
   .nullable()
   .default(DEFAULT_SORT_ORDER)
   .transform((val) => val ?? DEFAULT_SORT_ORDER);
-
-const mealPlanSchema = z.array(z.enum(HotelsSearchMealPlanOptions)).optional();
 
 export const adultsNumberSchema = z
   .number()
@@ -186,7 +184,7 @@ export const hotelSearchParamsSchema = refinePriceAndDateValidationZod(
     accessibility: z.array(z.enum(HotelsSearchAccessibilityOptions)).optional(),
     amenities: z.array(z.enum(HotelsSearchAmenitiesOptions)).optional(),
     lodging_type: z.array(z.enum(HotelsSearchLodgingOptions)).optional(),
-    meal_plan: mealPlanSchema,
+    meal_plan: z.array(z.enum(HotelsSearchMealPlanOptions)).optional(),
     payment_type: z.array(z.enum(HotelsSearchPaymentTypeOptions)).optional(),
     available_filter: z
       .array(z.enum(HotelsSearchAvailableFilterOptions))

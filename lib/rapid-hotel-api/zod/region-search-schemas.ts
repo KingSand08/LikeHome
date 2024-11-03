@@ -1,6 +1,7 @@
 // Region Search API
 // https://rapidapi.com/tipsters/api/hotels-com-provider/playground/apiendpoint_8decc805-015f-4163-95e4-f3e0d276eb06
 import { z } from "zod";
+import { DEFAULT_DOMAIN, DEFAULT_LOCALE } from "./constants";
 
 export const API_REGION_SEARCH_URL =
   "https://hotels-com-provider.p.rapidapi.com/v2/regions" as const;
@@ -143,10 +144,8 @@ const RegionSearchLocaleOptions = [
   "zh_TW",
 ] as const;
 
-type RegionSearchDomainType = (typeof RegionSearchDomainOptions)[number];
-type RegionSearchLocaleType = (typeof RegionSearchLocaleOptions)[number];
-const DEFAULT_DOMAIN: RegionSearchDomainType = "US" as const;
-const DEFAULT_LOCALE: RegionSearchLocaleType = "en_US" as const;
+export type RegionSearchDomainType = (typeof RegionSearchDomainOptions)[number];
+export type RegionSearchLocaleType = (typeof RegionSearchLocaleOptions)[number];
 
 // Schemas
 export const domainSchema = z
