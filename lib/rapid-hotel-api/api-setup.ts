@@ -33,3 +33,8 @@ export type validateSearchParamsOutput = {
   endpoint: string | null;
   error?: string | null;
 };
+
+// Custom API routes
+export const REGION_SEARCH_API_URL = "/api/hotels/region" as const;
+export const HOTEL_SEARCH_API_URL = "/api/hotels/search" as const;
+export const HOTEL_ROOM_OFFERS_API_URL = "/api/hotels/search/rooms" as const;

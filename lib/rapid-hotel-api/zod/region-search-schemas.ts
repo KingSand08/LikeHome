@@ -7,7 +7,7 @@ export const API_REGION_SEARCH_URL =
   "https://hotels-com-provider.p.rapidapi.com/v2/regions" as const;
 
 // Options
-const RegionSearchDomainOptions = [
+export const RegionSearchDomainOptions = [
   "AR",
   "AS",
   "AT",
@@ -54,7 +54,7 @@ const RegionSearchDomainOptions = [
   "ZA",
 ] as const;
 
-const RegionSearchLocaleOptions = [
+export const RegionSearchLocaleOptions = [
   "es_AR",
   "en_GB",
   "en_US",

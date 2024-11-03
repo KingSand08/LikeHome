@@ -175,17 +175,17 @@ export async function GET(req: NextRequest) {
   }
 }
 
-type APIHotelSearchJSONFormatted = {
+export type APIHotelSearchJSONFormatted = {
   priceRange: {
     maxPrice: number;
     minPrice: number;
   };
-  properties: HotelInfo[];
+  properties: APIHotelSearchHotelInfo[];
   summary: {
     matchedPropertiesSize: number;
   };
 };
-type HotelInfo = {
+type APIHotelSearchHotelInfo = {
   hotel_id: string;
   name: string;
   image: {

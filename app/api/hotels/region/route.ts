@@ -98,7 +98,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-type APIRegionJSONFormatted = {
+export type APIRegionJSONFormatted = {
   region_id: string;
   type: string;
   regionNames: {
