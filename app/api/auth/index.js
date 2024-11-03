@@ -1,38 +1,37 @@
-//File: pages/api/reservations/index.js
-import { db } from '../../../lib/db';  //Database connection
+import { db } from '../../../utils/db'; // Ensure you have a database utility
 
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    const { userId, roomId, startDate, endDate, guests } = req.body;
+    if (req.method === 'POST') {
+        const { userId, roomId, startDate, endDate, guests } = req.body;
 
-    //Check if room is available for the selected dates
-    const existingReservation = await db.collection('reservations').findOne({
-      roomId,
-      $or: [
-        { startDate: { $lt: endDate }, endDate: { $gt: startDate } }
-      ],
-    });
+        // Check room availability (this would be a custom function)
+        const isAvailable = await db.checkRoomAvailability(roomId, startDate, endDate);
+        
+        if (!isAvailable) {
+            return res.status(400).json({ error: 'Room is unavailable.' });
+        }
 
-    if (existingReservation) {
-      return res.status(400).json({ message: 'Room is not available for the selected dates.' });
+        // Create a pending reservation
+        const reservation = await db.createReservation({
+            userId,
+            roomId,
+            startDate,
+            endDate,
+            guests,
+            status: 'pending' // Initially set to pending
+        });
+
+        if (reservation) {
+            return res.status(200).json({
+                reservationId: reservation.id,
+                totalAmount: reservation.totalAmount
+            });
+        } else {
+            return res.status(500).json({ error: 'Failed to create reservation.' });
+        }
+    } else {
+        // Handle any other HTTP method
+        res.setHeader('Allow', ['POST']);
+        res.status(405).end(`Method ${req.method} Not Allowed`);
     }
-
-    //Create a new reservation
-    const newReservation = {
-      userId,
-      roomId,
-      startDate,
-      endDate,
-      guests,
-      status: 'confirmed',
-      createdAt: new Date(),
-    };
-
-    const result = await db.collection('reservations').insertOne(newReservation);
-
-    return res.status(201).json({ message: 'Reservation successful!', reservation: result.ops[0] });
-  } else {
-    res.setHeader('Allow', ['POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
-  }
 }

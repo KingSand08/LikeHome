@@ -1,56 +1,54 @@
-//File: components/ReservationForm.js
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-export default function ReservationForm() {
-  const [formData, setFormData] = useState({
-    roomId: '',
-    startDate: '',
-    endDate: '',
-    guests: 1,
-  });
+function ReservationForm({ userId, roomId }) {
+    const router = useRouter();
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [guests, setGuests] = useState(1);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const response = await fetch('/api/reservations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId,
+                roomId,
+                startDate,
+                endDate,
+                guests,
+            }),
+        });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const res = await fetch('/api/reservations', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
+        const data = await response.json();
+        if (response.ok) {
+            // Redirect to payment page with reservationId and totalAmount
+            router.push(`/payment?reservationId=${data.reservationId}&totalAmount=${data.totalAmount}`);
+        } else {
+            // Handle error (e.g., display error message)
+            alert(data.error || 'Failed to create reservation');
+        }
+    };
 
-    const data = await res.json();
-    if (res.ok) {
-      alert('Reservation Successful!');
-    } else {
-      alert(data.message);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Room ID:
-        <input type="text" name="roomId" value={formData.roomId} onChange={handleChange} />
-      </label>
-      <label>
-        Start Date:
-        <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} />
-      </label>
-      <label>
-        End Date:
-        <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} />
-      </label>
-      <label>
-        Guests:
-        <input type="number" name="guests" value={formData.guests} onChange={handleChange} />
-      </label>
-      <button type="submit">Reserve</button>
-    </form>
-  );
+    return (
+        <form onSubmit={handleSubmit}>
+            <h2>Reserve This Room</h2>
+            <label>
+                Start Date:
+                <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
+            </label>
+            <label>
+                End Date:
+                <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} required />
+            </label>
+            <label>
+                Guests:
+                <input type="number" value={guests} onChange={(e) => setGuests(e.target.value)} min="1" required />
+            </label>
+            <button type="submit">Reserve Now</button>
+        </form>
+    );
 }
 
-
-//TEST
+export default ReservationForm;
