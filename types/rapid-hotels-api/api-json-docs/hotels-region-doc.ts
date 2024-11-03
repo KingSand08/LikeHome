@@ -1,15 +1,4 @@
-import {
-  RegionSearchDomainType,
-  RegionSearchLocaleType,
-} from "@/types/rapid-hotels-api/region-search-types";
-
 // api/hotels/region API route
-// API input searchParams
-type APIRegionSearchsearchParams = {
-  query: string;
-  domain?: RegionSearchDomainType; // If undefined, default defined by DEFAULT_DOMAIN
-  locale?: RegionSearchLocaleType; // If undefined, default defined by DEFAULT_LOCALE
-};
 
 // API output response JSON
 export type APIRegionSearchResponseJSON = {
