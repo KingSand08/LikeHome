@@ -1,6 +1,5 @@
 import React from "react";
 import { signIn, auth } from "@/auth";
-import { redirect } from "next/navigation";
 import Image from "next/image";
 import GoogleImage from "../public/icons/google.icon.png";
 

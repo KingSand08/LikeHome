@@ -2,7 +2,6 @@ import React from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import Image from "next/image";
-import formImage from "../../public/likehome_form_icon.png";
 import OAuthButton from "@/components/OAuthButton";
 
 export default async function SignInPage() {
