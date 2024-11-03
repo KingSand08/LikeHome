@@ -1,3 +1,11 @@
+import icecream from "@/app/assets/images/icecream.webp"
+import pineapple from "@/app/assets/images/pineapple.webp"
+import grapes from "@/app/assets/images/grapes.webp"
+import yellowlemon from "@/app/assets/images/yellowlemon.webp"
+import lemon from "@/app/assets/images/lemon.webp"
+import strawberry from "@/app/assets/images/strawberry.webp"
+import cherry from "@/app/assets/images/cherry.webp"
+import Image from 'next/image'
 
 export default function RoomPage() {
 
@@ -15,45 +23,6 @@ export default function RoomPage() {
 
   return (
     <main className="container mx-auto p-6">
-      {/* Carousel */}
-      <div className="carousel rounded-box">
-            <div className="carousel-item">
-                <img
-                src="https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp"
-                alt="Burger" />
-            </div>
-
-            <div className="carousel-item">
-                <img
-                src="https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp"
-                alt="Burger" />
-            </div>
-            <div className="carousel-item">
-                <img
-                src="https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp"
-                alt="Burger" />
-            </div>
-            <div className="carousel-item">
-                <img
-                src="https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp"
-                alt="Burger" />
-            </div>
-            <div className="carousel-item">
-                <img
-                src="https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp"
-                alt="Burger" />
-            </div>
-            <div className="carousel-item">
-                <img
-                src="https://img.daisyui.com/images/stock/photo-1559181567-c3190ca9959b.webp"
-                alt="Burger" />
-            </div>
-            <div className="carousel-item">
-                <img
-                src="https://img.daisyui.com/images/stock/photo-1601004890684-d8cbf643f5f2.webp"
-                alt="Burger" />
-            </div>
-        </div>
       <div
         className="hero h-80 bg-base-200 rounded-lg shadow-md mb-10 flex flex-col justify-center items-center text-center"
         style={{
@@ -67,9 +36,56 @@ export default function RoomPage() {
           <p className="text-lg mb-4 text-base-content">{mockRoomData.description}</p>
         </div>
       </div>
+      
 
       {/* Room Details Section */}
       <section className="w-full bg-base-100 p-8 rounded-lg shadow-md">
+        {/* Carousel */}
+      <div className="carousel rounded-box">
+          <div className="carousel-item">
+              <Image
+              className="object-fill"
+              src={icecream}
+              alt="Burger" />
+          </div>
+
+          <div className="carousel-item">
+              <Image
+              className="object-fill"
+              src={pineapple}
+              alt="Burger" />
+          </div>
+          <div className="carousel-item">
+            <Image
+              className="object-fill"
+              src={grapes}
+              alt="Burger" />
+          </div>
+          <div className="carousel-item">
+            <Image
+              className="object-fill"
+              src={cherry}
+              alt="Burger" />
+          </div>
+          <div className="carousel-item">
+            <Image
+              className="object-fill"
+              src={lemon}
+              alt="Burger" />
+          </div>
+          <div className="carousel-item">
+            <Image
+              className="object-fill"
+              src={strawberry}
+              alt="Burger" />
+          </div>
+          <div className="carousel-item">
+            <Image
+              className="object-fill"
+              src={yellowlemon}
+              alt="Burger" />
+          </div>
+      </div>
         <div className="flex w-full flex-col">
           {/* Room Description */}
           <div className="card rounded-box grid h-20 place-items-center p-4">
