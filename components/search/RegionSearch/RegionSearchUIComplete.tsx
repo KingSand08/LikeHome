@@ -17,7 +17,7 @@ import SearchBar from "./SearchComponents/SearchBar";
 import FindRegionAPI from "./FindRegionAPI";
 import RegionListItem from "./RegionListItem";
 
-const SearchUIComplete: React.FC = () => {
+const RegionSearchUIComplete: React.FC = () => {
   // Inputs
   const [regionSearchInputs, setRegionSearchInputs] = useState<
     z.infer<typeof regionSearchParamsSchema>
@@ -124,4 +124,4 @@ const SearchUIComplete: React.FC = () => {
   );
 };
 
-export default SearchUIComplete;
+export default RegionSearchUIComplete;
