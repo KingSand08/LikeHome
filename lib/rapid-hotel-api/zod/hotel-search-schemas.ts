@@ -187,8 +187,8 @@ export const hotelSearchParamsSchema = refinePriceAndDateValidationZod(
     domain: domainSchema,
 
     // Optional
-    price_min: z.number().optional(), // Part of booking
-    price_max: z.number().optional(), // Part of booking
+    price_min: z.number().optional(),
+    price_max: z.number().optional(),
     star_rating_ids: z.array(z.number()).optional(), // Ignored for frontend
     guest_rating_min: z.number().optional(), // Ignored for frontend
     children_ages: childrenAgesSchema, // Part of booking

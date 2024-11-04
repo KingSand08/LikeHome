@@ -14,7 +14,7 @@ import { z } from "zod";
 import DomainDropdown from "./SearchComponents/DomainDropdown";
 import LocaleDropdown from "./SearchComponents/LocaleDropdown";
 import SearchBar from "./SearchComponents/SearchBar";
-import FindRegionAPI from "./FindRegionAPI";
+import FindRegionAPI from "../APIs/FindRegionID";
 import RegionListItem from "./RegionListItem";
 
 const RegionSearchUIComplete: React.FC = () => {

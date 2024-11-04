@@ -24,6 +24,7 @@ import AmenitiesCheckbox from "./HotelSearchComponents/AmenitiesCheckbox";
 import MealPlanCheckbox from "./HotelSearchComponents/MealPlanCheckbox";
 import LodgingOptionsCheckbox from "./HotelSearchComponents/LodgingOptionsCheckbox";
 import PaymentTypeCheckbox from "./HotelSearchComponents/PaymentTypeCheckBox";
+import PriceRangeSlider from "./HotelSearchComponents/PriceRangeSlider";
 
 const HotelSearchUIComplete: React.FC = () => {
   // Inputs
@@ -35,6 +36,8 @@ const HotelSearchUIComplete: React.FC = () => {
     paymentType: HotelsSearchPaymentTypeOptionsType[];
     sortOrder: HotelSearchSortOrderOptionsType;
     availableOnly: HotelsSearchAvailableFilterOptionsType[];
+    price_min: number;
+    price_max: number;
   }>({
     accessibilityOptions: DEFAULT_ACCESSIBILITY_OPTIONS,
     amenitiesOptions: DEFAULT_AMENITIES_OPTIONS,
@@ -43,12 +46,9 @@ const HotelSearchUIComplete: React.FC = () => {
     paymentType: DEFAULT_PAYMENT_TYPE_OPTIONS,
     sortOrder: DEFAULT_SORT_ORDER,
     availableOnly: DEFAULT_AVAILABILITY_FILTER_OPTIONS,
+    price_min: 0,
+    price_max: 1000,
   });
-
-  // Output
-  //   const [hotelSearchOutput, setHotelSearchOutput] =
-  //     useState<APIHotelJSONFormatted[] | null>(null);
-  //   const [loading, setLoading] = useState<boolean>(false);
 
   // Handle state changes
   const handleAccessibilityChange = (
@@ -75,27 +75,16 @@ const HotelSearchUIComplete: React.FC = () => {
   ) => {
     setHotelSearchInputs((prev) => ({ ...prev, paymentType: options }));
   };
-
+  const handlePriceChange = (priceRange: {
+    price_min: number;
+    price_max: number;
+  }) => {
+    setHotelSearchInputs((prev) => ({ ...prev, ...priceRange }));
+  };
   const handleSortOrderChange = (
     sortOrder: HotelSearchSortOrderOptionsType
   ) => {
     setHotelSearchInputs((prev) => ({ ...prev, sortOrder }));
-  };
-
-  const handleFindHotels = async () => {
-    // setLoading(true);
-    // try {
-    //   const response = await HotelSearchAPI(hotelSearchInputs);
-    //   if (response.hotels) {
-    //     setHotelSearchOutput(response.hotels);
-    //   } else {
-    //     alert("Failed to fetch hotels: " + response?.error);
-    //   }
-    // } catch (error) {
-    //   alert("An unexpected error occurred. Please try again.");
-    // } finally {
-    //   setLoading(false);
-    // }
   };
 
   return (
@@ -131,7 +120,17 @@ const HotelSearchUIComplete: React.FC = () => {
             {hotelSearchInputs.availableOnly.join(", ") || "N/A"}
           </li>
           <li>
-            <strong>Sort Order:</strong> {hotelSearchInputs.sortOrder || "N/A"}
+            <strong>Price Range:</strong> ${hotelSearchInputs.price_min} - $
+            {hotelSearchInputs.price_max}
+          </li>
+          <li>
+            <strong>Min Price:</strong> ${hotelSearchInputs.price_min}
+          </li>
+          <li>
+            <strong>Max Price:</strong> ${hotelSearchInputs.price_max}
+          </li>
+          <li>
+            <strong>Sort Order:</strong> {hotelSearchInputs.sortOrder}
           </li>
         </ul>
       </div>
@@ -171,38 +170,17 @@ const HotelSearchUIComplete: React.FC = () => {
           />
         </div>
         <div className="flex-1">
-          <SortOrderDropdown
-            selectedSortOrder={hotelSearchInputs.sortOrder}
-            onChange={handleSortOrderChange}
+          <PriceRangeSlider
+            minPrice={0}
+            maxPrice={1000}
+            onPriceChange={handlePriceChange}
           />
         </div>
       </div>
-
-      {/* Find Hotels */}
-      {/* <button
-        onClick={handleFindHotels}
-        className="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        disabled={loading}
-      >
-        {loading ? "Loading..." : "Find Hotels"}
-      </button> */}
-
-      {/* Loading */}
-      {/* {loading && <p className="mt-4 text-blue-600">Loading...</p>} */}
-
-      {/* Output */}
-      {/* {hotelSearchOutput && !loading && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-2">Hotels Found</h3>
-          <ul className="list-disc list-inside text-black">
-            {hotelSearchOutput.map((hotel) => (
-              <li key={hotel.hotel_id} className="mb-2">
-                {hotel.name} - {hotel.address.city}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )} */}
+      <SortOrderDropdown
+        selectedSortOrder={hotelSearchInputs.sortOrder}
+        onChange={handleSortOrderChange}
+      />
     </div>
   );
 };
