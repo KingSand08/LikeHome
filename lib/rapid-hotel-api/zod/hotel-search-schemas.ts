@@ -18,6 +18,8 @@ export const HotelsSearchAccessibilityOptions = [
   "ELEVATOR",
   "ACCESSIBLE_PARKING",
 ] as const;
+export type HotelsSearchAccessibilityOptionsType =
+  (typeof HotelsSearchAccessibilityOptions)[number];
 
 export const HotelsSearchAmenitiesOptions = [
   "SPA_ON_SITE",
@@ -39,6 +41,8 @@ export const HotelsSearchAmenitiesOptions = [
   "CASINO",
   "AIR_CONDITIONING",
 ] as const;
+export type HotelsSearchAmenitiesOptionsType =
+  (typeof HotelsSearchAmenitiesOptions)[number];
 
 export const HotelSearchSortOrderOptions = [
   "REVIEW",
@@ -60,6 +64,8 @@ export const HotelsSearchLodgingOptions = [
   "RYOKAN",
   "BED_AND_BREAKFAST",
 ] as const;
+export type HotelsSearchLodgingOptionsType =
+  (typeof HotelsSearchLodgingOptions)[number];
 
 export const HotelsSearchMealPlanOptions = [
   "ALL_INCLUSIVE",
@@ -67,16 +73,22 @@ export const HotelsSearchMealPlanOptions = [
   "HALF_BOARD",
   "FREE_BREAKFAST",
 ] as const;
+export type HotelsSearchMealPlanOptionsType =
+  (typeof HotelsSearchMealPlanOptions)[number];
 
 export const HotelsSearchAvailableFilterOptions = [
   "SHOW_AVAILABLE_ONLY",
 ] as const;
+export type HotelsSearchAvailableFilterOptionsType =
+  (typeof HotelsSearchAvailableFilterOptions)[number];
 
 export const HotelsSearchPaymentTypeOptions = [
   "GIFT_CARD",
   "PAY_LATER",
   "FREE_CANCELLATION",
 ] as const;
+export type HotelsSearchPaymentTypeOptionsType =
+  (typeof HotelsSearchPaymentTypeOptions)[number];
 
 // Schemas
 const dateRegex = /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/; // YYYY-MM-DD
@@ -93,7 +105,7 @@ export const dateFormatSchema = z
     }
   });
 
-const sortOrderSchema = z
+export const sortOrderSchema = z
   .enum(HotelSearchSortOrderOptions)
   .nullable()
   .default(DEFAULT_SORT_ORDER)
@@ -164,9 +176,9 @@ export function refinePriceAndDateValidationZod<T extends ZodRawShape>(
 export const hotelSearchParamsSchema = refinePriceAndDateValidationZod(
   z.object({
     // Required
-    checkin_date: dateFormatSchema,
-    checkout_date: dateFormatSchema,
-    adults_number: adultsNumberSchema,
+    checkin_date: dateFormatSchema, // Part of booking
+    checkout_date: dateFormatSchema, // Part of booking
+    adults_number: adultsNumberSchema, // Part of booking
     region_id: z.string().min(1, "The 'region_id' is required."),
 
     // Required, but provided default values
@@ -175,12 +187,12 @@ export const hotelSearchParamsSchema = refinePriceAndDateValidationZod(
     domain: domainSchema,
 
     // Optional
-    price_min: z.number().optional(),
-    price_max: z.number().optional(),
-    star_rating_ids: z.array(z.number()).optional(),
-    guest_rating_min: z.number().optional(),
-    children_ages: childrenAgesSchema,
-    page_number: z.number().optional(),
+    price_min: z.number().optional(), // Part of booking
+    price_max: z.number().optional(), // Part of booking
+    star_rating_ids: z.array(z.number()).optional(), // Ignored for frontend
+    guest_rating_min: z.number().optional(), // Ignored for frontend
+    children_ages: childrenAgesSchema, // Part of booking
+    page_number: z.number().optional(), // Ignored for frontend
     accessibility: z.array(z.enum(HotelsSearchAccessibilityOptions)).optional(),
     amenities: z.array(z.enum(HotelsSearchAmenitiesOptions)).optional(),
     lodging_type: z.array(z.enum(HotelsSearchLodgingOptions)).optional(),
