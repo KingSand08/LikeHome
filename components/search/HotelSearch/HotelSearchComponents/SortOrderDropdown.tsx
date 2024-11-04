@@ -4,6 +4,7 @@ import {
   HotelSearchSortOrderOptions,
   sortOrderSchema,
 } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
+import TemplateDropdown from "../../Templates-UI/TemplateDropdown";
 
 type SortOrderDropdownProps = {
   selectedSortOrder: HotelSearchSortOrderOptionsType;
@@ -14,10 +15,9 @@ const SortOrderDropdown: React.FC<SortOrderDropdownProps> = ({
   selectedSortOrder,
   onChange,
 }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = e.target.value as HotelSearchSortOrderOptionsType;
+  const handleChange = (sortOrder: HotelSearchSortOrderOptionsType) => {
     try {
-      const validatedSortOrder = sortOrderSchema.parse(selectedValue);
+      const validatedSortOrder = sortOrderSchema.parse(sortOrder);
       onChange(validatedSortOrder);
     } catch (error) {
       console.error("Invalid sort order selection:", error);
@@ -25,23 +25,15 @@ const SortOrderDropdown: React.FC<SortOrderDropdownProps> = ({
   };
 
   return (
-    <div className="mb-4">
-      <label className="block text-sm font-medium mb-2 text-black">
-        Select Sort Order
-      </label>
-      <select
-        value={selectedSortOrder}
-        onChange={handleChange}
-        className="w-full p-2 border rounded text-white"
-      >
-        <option value="">Select a sort order</option>
-        {HotelSearchSortOrderOptions.map((sortOrder) => (
-          <option key={sortOrder} value={sortOrder}>
-            {sortOrder}
-          </option>
-        ))}
-      </select>
-    </div>
+    <TemplateDropdown
+      title="Select Sort Order"
+      placeholder="Select a sort order"
+      options={
+        [...HotelSearchSortOrderOptions] as HotelSearchSortOrderOptionsType[]
+      }
+      selectedOption={selectedSortOrder}
+      onChange={handleChange}
+    />
   );
 };
 

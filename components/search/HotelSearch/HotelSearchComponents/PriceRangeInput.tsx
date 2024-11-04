@@ -1,14 +1,18 @@
+"use client";
 import React, { useState } from "react";
+import TemplateInput from "../../Templates-UI/TemplateInput";
 
 type PriceRange = {
-  price_min: number;
-  price_max: number;
+  price_min: number | null;
+  price_max: number | null;
 };
 
 type PriceRangeInputProps = {
   selectedPriceRange: PriceRange;
   onChange: (values: PriceRange) => void;
 };
+
+const regex = /^-?\d*$/;
 
 const PriceRangeInput: React.FC<PriceRangeInputProps> = ({
   selectedPriceRange: { price_min, price_max },
@@ -19,51 +23,36 @@ const PriceRangeInput: React.FC<PriceRangeInputProps> = ({
     price_max,
   });
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    isMin: boolean
-  ) => {
-    const value = e.target.value;
-    if (value === "") {
-      const updatedValues = isMin
-        ? { ...values, price_min: value === "" ? 0 : values.price_min }
-        : { ...values, price_max: value === "" ? 0 : values.price_max };
+  const handleInputChange = (value: string, isMin: boolean) => {
+    if (!regex.test(value)) return;
+    const intValue = value === "" ? null : parseInt(value, 10);
 
-      setValues(updatedValues);
-      return;
-    }
-    if (!/^-?\d*$/.test(value)) return;
-    const intValue = parseInt(value, 10);
-    if (!isNaN(intValue)) {
-      const updatedValues = isMin
-        ? { ...values, price_min: intValue }
-        : { ...values, price_max: intValue };
+    const updatedValues = isMin
+      ? { ...values, price_min: intValue }
+      : { ...values, price_max: intValue };
 
-      setValues(updatedValues);
-      onChange(updatedValues);
-    }
+    setValues(updatedValues);
+    onChange(updatedValues);
   };
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="flex flex-col">
-        Min Value:
-        <input
-          type="text"
-          value={values.price_min}
-          onChange={(e) => handleInputChange(e, true)}
-          className="border p-1 rounded text-white"
-        />
-      </label>
-      <label className="flex flex-col">
-        Max Value:
-        <input
-          type="text"
-          value={values.price_max}
-          onChange={(e) => handleInputChange(e, false)}
-          className="border p-1 rounded text-white"
-        />
-      </label>
+      <TemplateInput
+        title="Min Value"
+        placeholder="Enter minimum price"
+        regex={regex}
+        value={values.price_min === null ? "" : values.price_min.toString()}
+        onChange={(value) => handleInputChange(value, true)}
+        required
+      />
+      <TemplateInput
+        title="Max Value"
+        placeholder="Enter maximum price"
+        regex={regex}
+        value={values.price_max === null ? "" : values.price_max.toString()}
+        onChange={(value) => handleInputChange(value, false)}
+        required
+      />
     </div>
   );
 };

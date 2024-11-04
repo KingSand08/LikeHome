@@ -78,11 +78,18 @@ const HotelSearchUIComplete: React.FC = () => {
     setHotelSearchInputs((prev) => ({ ...prev, paymentType: options }));
   };
   const handlePriceRangeChange = (priceRange: {
-    price_min: number;
-    price_max: number;
+    price_min: number | null;
+    price_max: number | null;
   }) => {
-    setHotelSearchInputs((prev) => ({ ...prev, ...priceRange }));
+    setHotelSearchInputs((prev) => ({
+      ...prev,
+      price_min:
+        priceRange.price_min !== null ? priceRange.price_min : prev.price_min,
+      price_max:
+        priceRange.price_max !== null ? priceRange.price_max : prev.price_max,
+    }));
   };
+
   const handleSortOrderChange = (
     sortOrder: HotelSearchSortOrderOptionsType
   ) => {

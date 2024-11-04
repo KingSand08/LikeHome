@@ -4,7 +4,7 @@ import {
   RegionSearchLocaleOptions,
   RegionSearchLocaleType,
 } from "@/lib/rapid-hotel-api/zod/region-search-schemas";
-import React from "react";
+import TemplateDropdown from "../../Templates-UI/TemplateDropdown";
 
 type LocaleDropdownProps = {
   selectedLocale: RegionSearchLocaleType;
@@ -15,11 +15,9 @@ const LocaleDropdown: React.FC<LocaleDropdownProps> = ({
   selectedLocale,
   onChange,
 }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = e.target.value as RegionSearchLocaleType;
-
+  const handleChange = (locale: RegionSearchLocaleType) => {
     try {
-      const validatedLocale = localeSchema.parse(selectedValue);
+      const validatedLocale = localeSchema.parse(locale);
       onChange(validatedLocale);
     } catch (error) {
       console.error("Invalid locale selection:", error);
@@ -27,23 +25,13 @@ const LocaleDropdown: React.FC<LocaleDropdownProps> = ({
   };
 
   return (
-    <div className="mb-4">
-      <label className="block text-sm font-medium mb-2 text-black">
-        Select Locale (Language)
-      </label>
-      <select
-        value={selectedLocale}
-        onChange={handleChange}
-        className="w-full p-2 border rounded text-white"
-      >
-        <option value="">Select a locale</option>
-        {RegionSearchLocaleOptions.map((locale) => (
-          <option key={locale} value={locale}>
-            {locale}
-          </option>
-        ))}
-      </select>
-    </div>
+    <TemplateDropdown
+      title="Select Locale (Language)"
+      placeholder="Select a locale"
+      options={[...RegionSearchLocaleOptions] as RegionSearchLocaleType[]}
+      selectedOption={selectedLocale}
+      onChange={handleChange}
+    />
   );
 };
 
