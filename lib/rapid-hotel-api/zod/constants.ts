@@ -37,3 +37,5 @@ export const DEFAULT_AVAILABILITY_FILTER_OPTIONS: HotelsSearchAvailableFilterOpt
   ["SHOW_AVAILABLE_ONLY"] as const;
 export const DEFAULT_PAYMENT_TYPE_OPTIONS: HotelsSearchPaymentTypeOptionsType[] =
   [] as const;
+export const DEFAULT_MIN_PRICE: number = 0 as const;
+export const DEFAULT_MAX_PRICE: number = 50000 as const;

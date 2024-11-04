@@ -16,7 +16,9 @@ import {
   DEFAULT_AMENITIES_OPTIONS,
   DEFAULT_AVAILABILITY_FILTER_OPTIONS,
   DEFAULT_LODGING_OPTIONS,
+  DEFAULT_MAX_PRICE,
   DEFAULT_MEAL_PLAN_OPTIONS,
+  DEFAULT_MIN_PRICE,
   DEFAULT_PAYMENT_TYPE_OPTIONS,
   DEFAULT_SORT_ORDER,
 } from "@/lib/rapid-hotel-api/zod/constants";
@@ -24,7 +26,7 @@ import AmenitiesCheckbox from "./HotelSearchComponents/AmenitiesCheckbox";
 import MealPlanCheckbox from "./HotelSearchComponents/MealPlanCheckbox";
 import LodgingOptionsCheckbox from "./HotelSearchComponents/LodgingOptionsCheckbox";
 import PaymentTypeCheckbox from "./HotelSearchComponents/PaymentTypeCheckBox";
-import PriceRangeSlider from "./HotelSearchComponents/PriceRangeSlider";
+import PriceRangeInput from "./HotelSearchComponents/PriceRangeInput";
 
 const HotelSearchUIComplete: React.FC = () => {
   // Inputs
@@ -46,8 +48,8 @@ const HotelSearchUIComplete: React.FC = () => {
     paymentType: DEFAULT_PAYMENT_TYPE_OPTIONS,
     sortOrder: DEFAULT_SORT_ORDER,
     availableOnly: DEFAULT_AVAILABILITY_FILTER_OPTIONS,
-    price_min: 0,
-    price_max: 1000,
+    price_min: DEFAULT_MIN_PRICE,
+    price_max: DEFAULT_MAX_PRICE,
   });
 
   // Handle state changes
@@ -75,7 +77,7 @@ const HotelSearchUIComplete: React.FC = () => {
   ) => {
     setHotelSearchInputs((prev) => ({ ...prev, paymentType: options }));
   };
-  const handlePriceChange = (priceRange: {
+  const handlePriceRangeChange = (priceRange: {
     price_min: number;
     price_max: number;
   }) => {
@@ -169,13 +171,13 @@ const HotelSearchUIComplete: React.FC = () => {
             onChange={handlePaymentTypeChange}
           />
         </div>
-        <div className="flex-1">
-          <PriceRangeSlider
-            minPrice={0}
-            maxPrice={1000}
-            onPriceChange={handlePriceChange}
-          />
-        </div>
+        <PriceRangeInput
+          selectedPriceRange={{
+            price_min: hotelSearchInputs.price_min,
+            price_max: hotelSearchInputs.price_max,
+          }}
+          onChange={handlePriceRangeChange}
+        />
       </div>
       <SortOrderDropdown
         selectedSortOrder={hotelSearchInputs.sortOrder}
