@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   RegionSearchDomainType,
   RegionSearchLocaleType,
@@ -13,9 +13,7 @@ import { APIRegionJSONFormatted } from "@/app/api/hotels/region/route";
 import { z } from "zod";
 import DomainDropdown from "./SearchComponents/DomainDropdown";
 import LocaleDropdown from "./SearchComponents/LocaleDropdown";
-import SearchBar from "./SearchComponents/SearchBar";
-import FindRegionAPI from "../APIs/FindRegionID";
-import RegionListItem from "./RegionListItem";
+import RegionSelect from "./RegionSelect";
 
 const RegionSearchUIComplete: React.FC = () => {
   // Inputs
@@ -26,13 +24,8 @@ const RegionSearchUIComplete: React.FC = () => {
     domain: DEFAULT_DOMAIN,
     locale: DEFAULT_LOCALE,
   });
+  const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null);
 
-  // Output
-  const [regionSearchOutput, setRegionSearchOutput] =
-    useState<APIRegionJSONFormatted | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-
-  // Handle state changes
   const handleDomainChange = (domain: RegionSearchDomainType) => {
     setRegionSearchInputs((prev) => ({ ...prev, domain }));
   };
@@ -42,21 +35,8 @@ const RegionSearchUIComplete: React.FC = () => {
   const handleQueryChange = (query: string) => {
     setRegionSearchInputs((prev) => ({ ...prev, query }));
   };
-
-  const handleFindRegion = async () => {
-    setLoading(true);
-    try {
-      const response = await FindRegionAPI(regionSearchInputs);
-      if (response.regionList) {
-        setRegionSearchOutput(response.regionList);
-      } else {
-        alert("Failed to fetch regions: " + response?.error);
-      }
-    } catch (error) {
-      alert("An unexpected error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+  const handleRegionSelect = (regionId: string | null) => {
+    setSelectedRegionId(regionId);
   };
 
   return (
@@ -76,6 +56,9 @@ const RegionSearchUIComplete: React.FC = () => {
           <li>
             <strong>Locale:</strong> {regionSearchInputs.locale}
           </li>
+          <li>
+            <strong>Selected Region ID:</strong> {selectedRegionId}
+          </li>
         </ul>
       </div>
       <div className="flex flex-row justify-between space-x-4">
@@ -92,34 +75,15 @@ const RegionSearchUIComplete: React.FC = () => {
           />
         </div>
       </div>
-      <SearchBar
-        selectedQuery={regionSearchInputs.query}
-        onChange={handleQueryChange}
+
+      {/* Region Select */}
+      <RegionSelect
+        query={regionSearchInputs.query}
+        domain={regionSearchInputs.domain}
+        locale={regionSearchInputs.locale}
+        onQueryChange={handleQueryChange}
+        onRegionSelect={handleRegionSelect} // Pass callback to update selected region
       />
-
-      {/* Find Region */}
-      <button
-        onClick={handleFindRegion}
-        className="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        disabled={loading}
-      >
-        {loading ? "Loading..." : "Find Region"}
-      </button>
-
-      {/* Loading */}
-      {loading && <p className="mt-4 text-blue-600">Loading...</p>}
-
-      {/* Output */}
-      {regionSearchOutput && !loading && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-2">Regions Found</h3>
-          <ul className="list-disc list-inside text-black">
-            {regionSearchOutput.map((region) => (
-              <RegionListItem key={region.region_id} region={region} />
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 };

@@ -1,12 +1,14 @@
+"use client";
 import { APIRegionJSONFormatted } from "@/app/api/hotels/region/route";
 
 type RegionListItemProps = {
   region: APIRegionJSONFormatted[number];
+  onClick: () => void;
 };
 
-const RegionListItem: React.FC<RegionListItemProps> = ({ region }) => {
+const RegionListItem: React.FC<RegionListItemProps> = ({ region, onClick }) => {
   return (
-    <li key={region.region_id} className="mb-2">
+    <li className="mb-2 cursor-pointer" onClick={onClick}>
       <strong>{region.regionNames.displayName}</strong> - {region.type}
       <p className="text-sm text-gray-600">Region ID: {region.region_id}</p>
       <p className="text-sm text-gray-600">
