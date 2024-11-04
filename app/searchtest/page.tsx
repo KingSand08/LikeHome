@@ -1,4 +1,4 @@
-import SearchUIComplete from "@/components/search/SearchUIComplete";
+import SearchUIComplete from "@/components/search/RegionSearchUIComplete";
 
 const TestPage = () => {
   return (
