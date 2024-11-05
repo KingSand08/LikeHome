@@ -1,0 +1,51 @@
+
+// To get the middle ware started, you must first navigate to the like home folder
+// In this folder, open a termina and run "npx prisma generate"
+// Following this, make sure prisma is up to date with the DB by running "npx prisma db pull" *only run this once or it will say smt about Re-Introspection
+// To check if the DB is linked and working run "npx prisma studio" (it will display the database)
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["mongoDb"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+//May need to update model for photos
+model Hotel {
+  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  name                 String
+  location             Location
+  amenities            String[]
+  pricePerNight        Int
+  ratings              Ratings?
+  roomsAvailable       Int
+  description          String
+  singleRoomsAvailable Int
+  doubleRoomsAvailable Int
+  createdAt            DateTime?
+
+  @@map("hotels") // Maps the model to "hotels" collection in MongoDB
+}
+
+type Location {
+  address     String
+  city        String
+  state       String
+  zip         String
+  country     String
+  coordinates Coordinates? // Make coordinates nullable
+}
+
+type Coordinates {
+  latitude  Float
+  longitude Float
+}
+
+type Ratings {
+  average      Float
+  reviewsCount Int
+}

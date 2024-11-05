@@ -2,16 +2,15 @@ import React from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import Image from "next/image";
-import formImage from "../../public/likehome_form_icon.png";
 import OAuthButton from "@/components/OAuthButton";
 
 export default async function SignInPage() {
-  const homePageUrl = "/";
+  const profilePageURL = "/profile";
 
   // redirect user
   const session = await auth();
   if (session) {
-    redirect(homePageUrl);
+    redirect(profilePageURL);
   }
 
   return (
@@ -34,7 +33,7 @@ export default async function SignInPage() {
               {/* Email input field */}
               <div className="pb-4 flex flex-col items-center">
                 <input
-                  className="p-2 border-2 border-gray-600 rounded-md w-full focus:border-purple-600 focus:ring-purple-500 focus:outline-none"
+                  className="text-base-100 p-2 border-2 border-gray-600 rounded-md w-full focus:border-purple-600 focus:ring-purple-500 focus:outline-none"
                   type="email"
                   name="email"
                   placeholder="Enter your email"
@@ -45,7 +44,7 @@ export default async function SignInPage() {
           <div className="relative flex-1">
             <Image
               alt="likehome image"
-              src={formImage}
+              src="/stellarHorizons.png"
               fill
               className="object-cover rounded-lg"
             />
