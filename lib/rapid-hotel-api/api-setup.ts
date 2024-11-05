@@ -49,10 +49,10 @@ export const HOTEL_ROOM_OFFERS_API_URL = "/api/hotels/search/rooms" as const;
 /////
 
 // Find hotel
-export const CUSTOM_HOTEL_SLUG_URL = "/hotel/{hotelId}" as const; // hotelId is slug
+export const CUSTOM_HOTEL_SLUG_URL = "/hotels/{hotelId}" as const; // hotelId is slug (temporary for now)
 
 // Book room in CUSTOM_HOTEL_ROOM_SLUG_URL ==> redirect to CUSTOM_HOTEL_BOOKING_URL. Find specific booking in CUSTOM_HOTEL_BOOKING_URL for authorized users.
-export const CUSTOM_HOTEL_ROOM_SLUG_URL = "/hotel/{hotelId}/{roomId}" as const; // hotelId and roomId are slugs
+export const CUSTOM_HOTEL_ROOM_SLUG_URL = "/hotels/{hotelId}/{roomId}" as const; // hotelId and roomId are slugs
 export const CUSTOM_HOTEL_BOOKING_URL = "/bookings/{id}" as const; // id is a slug
 
 // Final Booking Detail Structure
