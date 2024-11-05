@@ -2,11 +2,10 @@ import React from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import Image from "next/image";
-import formImage from "../../public/likehome_form_icon.png";
 import OAuthButton from "@/components/OAuthButton";
 
 export default async function SignInPage() {
-  const profilePageURL = "/";
+  const profilePageURL = "/profile";
 
   // redirect user
   const session = await auth();
@@ -21,9 +20,9 @@ export default async function SignInPage() {
           <div className="flex-1 text-gray-800 p-20">
             <h1 className="text-3xl pb-4">Let&apos;s get started!</h1>
             <p className="text-lg text-gray-700">
-              Welcome to LikeHome! Sign in Google or provide your email to get started!
-              New users will have a short profile section to fill out once signing in for
-              the first time.
+              Welcome to LikeHome! Sign in with Google or provide your email to get
+              started! New users will have a short profile section to fill out
+              once signing in for the first time.
             </p>
             <div className="mt-14">
               <OAuthButton provider="google" />
@@ -34,7 +33,7 @@ export default async function SignInPage() {
               {/* Email input field */}
               <div className="pb-4 flex flex-col items-center">
                 <input
-                  className="p-2 border-2 border-gray-600 rounded-md w-full focus:border-purple-600 focus:ring-purple-500 focus:outline-none"
+                  className="text-base-100 p-2 border-2 border-gray-600 rounded-md w-full focus:border-purple-600 focus:ring-purple-500 focus:outline-none"
                   type="email"
                   name="email"
                   placeholder="Enter your email"
@@ -45,7 +44,7 @@ export default async function SignInPage() {
           <div className="relative flex-1">
             <Image
               alt="likehome image"
-              src={formImage}
+              src="/stellarHorizons.png"
               fill
               className="object-cover rounded-lg"
             />
@@ -54,6 +53,4 @@ export default async function SignInPage() {
       </div>
     </>
   );
-};
-
-
+}
