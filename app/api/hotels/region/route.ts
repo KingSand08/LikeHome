@@ -58,34 +58,35 @@ export async function GET(req: NextRequest) {
         {
           error: `Failed to fetch data from API: ${response.statusText} & Status code: ${response.status} & Endpoint: ${endpoint}`,
         },
-        { status: response.status }
+        { status: response.status, statusText: response.statusText }
       );
     }
 
     const JSON_DATA: APIRegionSearchResponseJSON = await response.json();
-    const PAYLOAD: APIRegionJSONFormatted = JSON_DATA.data.map(
-      (regionItem) => ({
-        region_id: regionItem.gaiaId,
-        type: regionItem.type,
+    const PAYLOAD: APIRegionJSONFormatted =
+      JSON_DATA.data?.map((regionItem) => ({
+        region_id: regionItem.gaiaId ?? "",
+        type: regionItem.type ?? "Unknown",
         regionNames: {
-          fullName: regionItem.regionNames.fullName,
-          shortName: regionItem.regionNames.shortName,
-          displayName: regionItem.regionNames.displayName, // Would recommend this as the name
-          primaryDisplayName: regionItem.regionNames.primaryDisplayName,
-          secondaryDisplayName: regionItem.regionNames.secondaryDisplayName,
-          lastSearchName: regionItem.regionNames.lastSearchName,
+          fullName: regionItem.regionNames?.fullName ?? "Unknown",
+          shortName: regionItem.regionNames?.shortName ?? "Unknown",
+          displayName: regionItem.regionNames?.displayName ?? "Unknown", // Recommended name
+          primaryDisplayName:
+            regionItem.regionNames?.primaryDisplayName ?? "Unknown",
+          secondaryDisplayName:
+            regionItem.regionNames?.secondaryDisplayName ?? "Unknown",
+          lastSearchName: regionItem.regionNames?.lastSearchName ?? "Unknown",
         },
         coordinates: {
           // Geocode
-          lat: regionItem.coordinates.lat,
-          long: regionItem.coordinates.long,
+          lat: regionItem.coordinates?.lat ?? "0",
+          long: regionItem.coordinates?.long ?? "0",
         },
         country: {
-          name: regionItem.hierarchyInfo.country.name,
-          domain: regionItem.hierarchyInfo.country.isoCode2, // Using isoCode2 as domain.
+          name: regionItem.hierarchyInfo?.country?.name ?? "Unknown",
+          domain: regionItem.hierarchyInfo?.country?.isoCode2 ?? "", // Using isoCode2 as domain.
         },
-      })
-    );
+      })) ?? [];
 
     return NextResponse.json(PAYLOAD, { status: 200 });
   } catch (error) {

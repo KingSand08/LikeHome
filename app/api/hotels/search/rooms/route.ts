@@ -7,13 +7,13 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 import {
   API_HOTEL_ROOM_OFFERS_URL,
-  hotelRoomOffersParamsSchema,
+  hotelRoomOffersParamsRefinedSchema,
 } from "@/lib/rapid-hotel-api/zod/hotel-room-offers-schemas";
 
 function validateSearchParams(
   searchParams: URLSearchParams
 ): validateSearchParamsOutput {
-  const parseResult = hotelRoomOffersParamsSchema.safeParse({
+  const parseResult = hotelRoomOffersParamsRefinedSchema.safeParse({
     // Required
     checkin_date: searchParams.get("checkin_date"),
     checkout_date: searchParams.get("checkout_date"),
@@ -80,25 +80,26 @@ export async function GET(req: NextRequest) {
 
     const JSON_DATA: ApiHotelRoomOffersResponseJSON = await response.json();
     const PAYLOAD: APIHotelRoomOffersJSONFormatted = {
-      hotel_id: JSON_DATA.id,
-      soldOut: JSON_DATA.soldOut,
-      basePrice: JSON_DATA.stickyBar.displayPrice,
-      hotelRoomOffers: JSON_DATA.categorizedListings.map(
-        (categorizedListing) => ({
-          hotel_room_id: categorizedListing.unitId,
+      hotel_id: JSON_DATA.id ?? "",
+      soldOut: JSON_DATA.soldOut ?? false,
+      basePrice: JSON_DATA.stickyBar?.displayPrice ?? "",
+      hotelRoomOffers:
+        JSON_DATA.categorizedListings?.map((categorizedListing) => ({
+          hotel_room_id: categorizedListing.unitId ?? "",
           description:
-            categorizedListing.primarySelections[0].propertyUnit.description,
-          name: categorizedListing.header.text,
+            categorizedListing.primarySelections?.[0]?.propertyUnit
+              ?.description ?? "No description available",
+          name: categorizedListing.header?.text ?? "Unnamed room",
           galleryImages:
-            categorizedListing.primarySelections[0].propertyUnit.unitGallery.gallery.map(
+            categorizedListing.primarySelections?.[0]?.propertyUnit?.unitGallery?.gallery?.map(
               (galleryImage, index) => ({
-                description: galleryImage.image.description,
-                url: galleryImage.image.url,
+                description:
+                  galleryImage.image?.description ?? "No description",
+                url: galleryImage.image?.url ?? "",
                 index: index,
               })
-            ),
-        })
-      ),
+            ) ?? [],
+        })) ?? [],
     };
     return NextResponse.json(PAYLOAD, { status: 200 });
   } catch (error) {
