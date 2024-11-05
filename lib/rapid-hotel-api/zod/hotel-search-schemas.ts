@@ -2,7 +2,12 @@
 // https://rapidapi.com/tipsters/api/hotels-com-provider/playground/apiendpoint_01161e64-954f-4a4e-a331-ffa662e04629
 import { z, ZodObject, ZodRawShape } from "zod";
 import { localeSchema, domainSchema } from "./region-search-schemas";
-import { DEFAULT_SORT_ORDER } from "./constants";
+import {
+  DEFAULT_AVAILABILITY_FILTER_OPTIONS,
+  DEFAULT_MAX_PRICE,
+  DEFAULT_MIN_PRICE,
+  DEFAULT_SORT_ORDER,
+} from "../constants";
 
 export const API_HOTEL_SEARCH_URL =
   "https://hotels-com-provider.p.rapidapi.com/v2/hotels/search" as const;
@@ -173,33 +178,34 @@ export function refinePriceAndDateValidationZod<T extends ZodRawShape>(
     );
 }
 
-export const hotelSearchParamsSchema = refinePriceAndDateValidationZod(
-  z.object({
-    // Required
-    checkin_date: dateFormatSchema, // Part of booking
-    checkout_date: dateFormatSchema, // Part of booking
-    adults_number: adultsNumberSchema, // Part of booking
-    region_id: z.string().min(1, "The 'region_id' is required."),
+export const hotelSearchParamsBasicSchema = z.object({
+  // Required
+  checkin_date: dateFormatSchema, // Part of booking
+  checkout_date: dateFormatSchema, // Part of booking
+  adults_number: adultsNumberSchema, // Part of booking
+  region_id: z.string().min(1, "The 'region_id' is required."),
 
-    // Required, but provided default values
-    sort_order: sortOrderSchema,
-    locale: localeSchema,
-    domain: domainSchema,
+  // Required, but provided default values
+  sort_order: sortOrderSchema,
+  locale: localeSchema,
+  domain: domainSchema,
 
-    // Optional
-    price_min: z.number().optional(),
-    price_max: z.number().optional(),
-    star_rating_ids: z.array(z.number()).optional(), // Ignored for frontend
-    guest_rating_min: z.number().optional(), // Ignored for frontend
-    children_ages: childrenAgesSchema, // Part of booking
-    page_number: z.number().optional(), // Ignored for frontend
-    accessibility: z.array(z.enum(HotelsSearchAccessibilityOptions)).optional(),
-    amenities: z.array(z.enum(HotelsSearchAmenitiesOptions)).optional(),
-    lodging_type: z.array(z.enum(HotelsSearchLodgingOptions)).optional(),
-    meal_plan: z.array(z.enum(HotelsSearchMealPlanOptions)).optional(),
-    payment_type: z.array(z.enum(HotelsSearchPaymentTypeOptions)).optional(),
-    available_filter: z
-      .array(z.enum(HotelsSearchAvailableFilterOptions))
-      .optional(),
-  })
+  // Optional
+  price_min: z.number().default(DEFAULT_MIN_PRICE),
+  price_max: z.number().default(DEFAULT_MAX_PRICE),
+  star_rating_ids: z.array(z.number()).optional(), // Ignored for frontend
+  guest_rating_min: z.number().optional(), // Ignored for frontend
+  children_ages: childrenAgesSchema, // Part of booking
+  page_number: z.number().optional(), // Ignored for frontend
+  accessibility: z.array(z.enum(HotelsSearchAccessibilityOptions)).optional(),
+  amenities: z.array(z.enum(HotelsSearchAmenitiesOptions)).optional(),
+  lodging_type: z.array(z.enum(HotelsSearchLodgingOptions)).optional(),
+  meal_plan: z.array(z.enum(HotelsSearchMealPlanOptions)).optional(),
+  payment_type: z.array(z.enum(HotelsSearchPaymentTypeOptions)).optional(),
+  available_filter: z
+    .array(z.enum(HotelsSearchAvailableFilterOptions))
+    .optional(),
+});
+export const hotelSearchParamsRefinedSchema = refinePriceAndDateValidationZod(
+  hotelSearchParamsBasicSchema
 );

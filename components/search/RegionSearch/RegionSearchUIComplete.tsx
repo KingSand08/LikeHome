@@ -1,40 +1,42 @@
 "use client";
-import { useState } from "react";
 import {
   RegionSearchDomainType,
   RegionSearchLocaleType,
   regionSearchParamsSchema,
 } from "@/lib/rapid-hotel-api/zod/region-search-schemas";
-import {
-  DEFAULT_DOMAIN,
-  DEFAULT_LOCALE,
-} from "@/lib/rapid-hotel-api/zod/constants";
-import { APIRegionJSONFormatted } from "@/app/api/hotels/region/route";
-import { z } from "zod";
 import DomainDropdown from "./SearchComponents/DomainDropdown";
 import LocaleDropdown from "./SearchComponents/LocaleDropdown";
 import RegionSelect from "./RegionSelect";
+import { z } from "zod";
+import RegionSearchDisplay from "../Testing/RegionSearchDisplay";
 
-const RegionSearchUIComplete: React.FC = () => {
-  // Inputs
-  const [regionSearchInputs, setRegionSearchInputs] = useState<
-    z.infer<typeof regionSearchParamsSchema>
-  >({
-    query: "",
-    domain: DEFAULT_DOMAIN,
-    locale: DEFAULT_LOCALE,
-  });
-  const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null);
+type RegionSearchInputs = z.infer<typeof regionSearchParamsSchema>;
 
+type RegionSearchUICompleteProps = {
+  regionSearchInputs: RegionSearchInputs;
+  selectedRegionId: string | null;
+  setRegionSearchInputs: (inputs: RegionSearchInputs) => void;
+  setSelectedRegionId: (regionId: string | null) => void;
+};
+
+const RegionSearchUIComplete: React.FC<RegionSearchUICompleteProps> = ({
+  regionSearchInputs,
+  selectedRegionId,
+  setRegionSearchInputs,
+  setSelectedRegionId,
+}) => {
   const handleDomainChange = (domain: RegionSearchDomainType) => {
-    setRegionSearchInputs((prev) => ({ ...prev, domain }));
+    setRegionSearchInputs({ ...regionSearchInputs, domain });
   };
+
   const handleLocaleChange = (locale: RegionSearchLocaleType) => {
-    setRegionSearchInputs((prev) => ({ ...prev, locale }));
+    setRegionSearchInputs({ ...regionSearchInputs, locale });
   };
+
   const handleQueryChange = (query: string) => {
-    setRegionSearchInputs((prev) => ({ ...prev, query }));
+    setRegionSearchInputs({ ...regionSearchInputs, query });
   };
+
   const handleRegionSelect = (regionId: string | null) => {
     setSelectedRegionId(regionId);
   };
@@ -43,25 +45,14 @@ const RegionSearchUIComplete: React.FC = () => {
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">Region Search</h2>
 
-      {/* Inputs */}
-      <div className="mt-4 p-4 border rounded bg-gray-100">
-        <h3 className="text-lg font-semibold mb-2">Region Search Inputs</h3>
-        <ul className="list-disc list-inside text-black">
-          <li>
-            <strong>Query:</strong> {regionSearchInputs.query || "N/A"}
-          </li>
-          <li>
-            <strong>Domain:</strong> {regionSearchInputs.domain}
-          </li>
-          <li>
-            <strong>Locale:</strong> {regionSearchInputs.locale}
-          </li>
-          <li>
-            <strong>Selected Region ID:</strong> {selectedRegionId}
-          </li>
-        </ul>
-      </div>
-      <div className="flex flex-row justify-between space-x-4">
+      {/* Display Current Inputs */}
+      <RegionSearchDisplay
+        regionSearchInputs={regionSearchInputs}
+        selectedRegionId={selectedRegionId}
+      />
+
+      {/* Dropdown Inputs */}
+      <div className="flex flex-row justify-between space-x-4 mt-4">
         <div className="flex-1">
           <DomainDropdown
             selectedDomain={regionSearchInputs.domain}
@@ -76,13 +67,13 @@ const RegionSearchUIComplete: React.FC = () => {
         </div>
       </div>
 
-      {/* Region Select */}
+      {/* Region Select Component */}
       <RegionSelect
         query={regionSearchInputs.query}
         domain={regionSearchInputs.domain}
         locale={regionSearchInputs.locale}
         onQueryChange={handleQueryChange}
-        onRegionSelect={handleRegionSelect} // Pass callback to update selected region
+        onRegionSelect={handleRegionSelect}
       />
     </div>
   );

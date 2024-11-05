@@ -3,7 +3,7 @@ import { APIRegionJSONFormatted } from "@/app/api/hotels/region/route";
 import RegionListItem from "./RegionListItem";
 
 type RegionListProps = {
-  regions: APIRegionJSONFormatted | null;
+  regions: APIRegionJSONFormatted;
   onRegionSelect: (region: APIRegionJSONFormatted[number]) => void;
 };
 

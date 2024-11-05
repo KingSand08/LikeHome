@@ -4,7 +4,7 @@ import TemplateInput from "../../Templates-UI/TemplateInput";
 import {
   DEFAULT_MAX_ADULTS_NUMBER,
   DEFAULT_MIN_ADULTS_NUMBER,
-} from "@/lib/rapid-hotel-api/zod/constants";
+} from "@/lib/rapid-hotel-api/constants";
 
 type AdultsNumberInputProps = {
   selectedNumber: number;
@@ -30,7 +30,7 @@ const AdultsNumberInput: React.FC<AdultsNumberInputProps> = ({
         onChange(intValue);
       } else if (inputValue === "") {
         setValue(inputValue);
-        onChange(0);
+        onChange(DEFAULT_MIN_ADULTS_NUMBER);
       }
     }
   };

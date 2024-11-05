@@ -3,28 +3,35 @@
 import { z } from "zod";
 import {
   refinePriceAndDateValidationZod,
-  dateFormatSchema,
-  adultsNumberSchema,
-  childrenAgesSchema,
+  hotelSearchParamsBasicSchema,
 } from "./hotel-search-schemas";
-import { localeSchema, domainSchema } from "./region-search-schemas";
 
 export const API_HOTEL_ROOM_OFFERS_URL =
   "https://hotels-com-provider.p.rapidapi.com/v2/hotels/offers" as const;
 
-export const hotelRoomOffersParamsSchema = refinePriceAndDateValidationZod(
-  z.object({
-    // Required
-    checkin_date: dateFormatSchema,
-    checkout_date: dateFormatSchema,
-    adults_number: adultsNumberSchema,
-    hotel_id: z.string().min(1, "The 'hotel_id' is required."),
-
-    // Required, but provided default values
-    locale: localeSchema,
-    domain: domainSchema,
-
-    // Optional
-    children_ages: childrenAgesSchema,
+const hotelRoomOffersParamsBasicSchema = hotelSearchParamsBasicSchema
+  .pick({
+    checkin_date: true,
+    checkout_date: true,
+    adults_number: true,
+    locale: true,
+    domain: true,
   })
-);
+  .extend({
+    hotel_id: z.string().min(1, "The 'hotel_id' is required."),
+  });
+export const hotelRoomOffersParamsRefinedSchema =
+  refinePriceAndDateValidationZod(hotelRoomOffersParamsBasicSchema);
+
+export const bookingInfoBasicSchema = hotelSearchParamsBasicSchema
+  .pick({
+    checkin_date: true,
+    checkout_date: true,
+    adults_number: true,
+    region_id: true,
+  })
+  .extend({
+    hotel_id: z.string().min(1, "The 'hotel_id' is required."),
+    room_id: z.string().min(1, "The 'room_id' is required."),
+    numDays: z.number(),
+  });

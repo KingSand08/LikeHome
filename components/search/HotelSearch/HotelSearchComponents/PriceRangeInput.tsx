@@ -12,7 +12,7 @@ type PriceRangeInputProps = {
   onChange: (values: PriceRange) => void;
 };
 
-const regex = /^-?\d*$/;
+const numberRegex = /^-?\d*$/;
 
 const PriceRangeInput: React.FC<PriceRangeInputProps> = ({
   selectedPriceRange: { price_min, price_max },
@@ -24,7 +24,7 @@ const PriceRangeInput: React.FC<PriceRangeInputProps> = ({
   });
 
   const handleInputChange = (value: string, isMin: boolean) => {
-    if (!regex.test(value)) return;
+    if (!numberRegex.test(value)) return;
     const intValue = value === "" ? null : parseInt(value, 10);
 
     const updatedValues = isMin
@@ -40,7 +40,7 @@ const PriceRangeInput: React.FC<PriceRangeInputProps> = ({
       <TemplateInput
         title="Min Value"
         placeholder="Enter minimum price"
-        regex={regex}
+        regex={numberRegex}
         value={values.price_min === null ? "" : values.price_min.toString()}
         onChange={(value) => handleInputChange(value, true)}
         required
@@ -48,7 +48,7 @@ const PriceRangeInput: React.FC<PriceRangeInputProps> = ({
       <TemplateInput
         title="Max Value"
         placeholder="Enter maximum price"
-        regex={regex}
+        regex={numberRegex}
         value={values.price_max === null ? "" : values.price_max.toString()}
         onChange={(value) => handleInputChange(value, false)}
         required

@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { APIRegionJSONFormatted } from "@/app/api/hotels/region/route";
-import FindRegionAPI from "../APIs/FindRegionID";
 import TemplateInput from "../Templates-UI/TemplateInput";
 import RegionList from "./SearchComponents/RegionList/RegionList";
 import RegionListItem from "./SearchComponents/RegionList/RegionListItem";
@@ -9,6 +8,7 @@ import {
   RegionSearchDomainType,
   RegionSearchLocaleType,
 } from "@/lib/rapid-hotel-api/zod/region-search-schemas";
+import { REGION_SEARCH_API_URL } from "@/lib/rapid-hotel-api/api-setup";
 
 type RegionSelectProps = {
   query: string;
@@ -48,12 +48,22 @@ const RegionSelect: React.FC<RegionSelectProps> = ({
     setLoading(true);
     setSelectedRegionDetails(null);
     try {
-      const response = await FindRegionAPI({ query, domain, locale });
-      if (response.regionList) {
-        setRegionSearchOutput(response.regionList);
-      } else {
-        alert("Failed to fetch regions: " + response?.error);
+      const urlParams = new URLSearchParams();
+      urlParams.append("query", query);
+      urlParams.append("domain", domain);
+      urlParams.append("locale", locale);
+      const response = await fetch(
+        `${REGION_SEARCH_API_URL}?${urlParams.toString()}`
+      );
+      if (!response.ok) {
+        alert(
+          `Failed to fetch regions. Status: ${response?.status}. StatusText: ${response?.statusText}`
+        );
         setRegionSearchOutput(null);
+      } else {
+        const REGION_DATA: APIRegionJSONFormatted = await response.json();
+
+        setRegionSearchOutput(REGION_DATA);
       }
     } catch (error) {
       alert("An unexpected error occurred. Please try again.");
@@ -64,7 +74,7 @@ const RegionSelect: React.FC<RegionSelectProps> = ({
   };
 
   return (
-    <div className="region-select">
+    <div>
       <TemplateInput
         title="Region Search Query"
         placeholder="Enter region search query"

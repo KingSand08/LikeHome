@@ -5,9 +5,9 @@ import {
 } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
 import React, { useState } from "react";
 import { z } from "zod";
-import { generateDefaultDates } from "../APIs/GenerateDefaultDates";
+import { generateDefaultDates } from "../../../lib/DateFunctions";
 import BookingDateInput from "./SearchComponents/BookingDateInput";
-import { DEFAULT_BOOKING_NUM_DAYS } from "@/lib/rapid-hotel-api/zod/constants";
+import { DEFAULT_BOOKING_NUM_DAYS } from "@/lib/rapid-hotel-api/constants";
 
 // Date validation using Zod
 const dateSchema = z.object({
@@ -17,12 +17,10 @@ const dateSchema = z.object({
 const validatedDateSchema = refinePriceAndDateValidationZod(dateSchema);
 
 type BookingDateRangeProps = {
-  numDays: number;
   onChange: (dates: { checkinDate: string; checkoutDate: string }) => void;
 };
 
 const BookingDateRange: React.FC<BookingDateRangeProps> = ({
-  numDays = DEFAULT_BOOKING_NUM_DAYS,
   onChange,
 }) => {
   const { DEFAULT_CHECKIN_BOOKING_DATE, DEFAULT_CHECKOUT_BOOKING_DATE } =

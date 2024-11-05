@@ -21,7 +21,7 @@ const TemplateCheckbox = <T extends string>({
 
   return (
     <div className="mb-4">
-      <label className="block text-sm font-medium mb-2 text-black">
+      <label className="block text-sm font-medium mb-2 text-white">
         {title}
       </label>
       <div className="border p-2 rounded bg-white max-h-60 overflow-y-auto">

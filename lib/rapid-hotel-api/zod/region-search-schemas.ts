@@ -1,7 +1,7 @@
 // Region Search API
 // https://rapidapi.com/tipsters/api/hotels-com-provider/playground/apiendpoint_8decc805-015f-4163-95e4-f3e0d276eb06
 import { z } from "zod";
-import { DEFAULT_DOMAIN, DEFAULT_LOCALE } from "./constants";
+import { DEFAULT_DOMAIN, DEFAULT_LOCALE } from "../constants";
 
 export const API_REGION_SEARCH_URL =
   "https://hotels-com-provider.p.rapidapi.com/v2/regions" as const;
