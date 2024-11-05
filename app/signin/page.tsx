@@ -20,12 +20,12 @@ export default async function SignInPage() {
           <div className="flex-1 text-gray-800 p-20">
             <h1 className="text-3xl pb-4">Let&apos;s get started!</h1>
             <p className="text-lg text-gray-700">
-              Welcome to LikeHome! Sign in with Google or provide your email to get
+              Welcome to LikeHome! Sign in Google or provide your email to get
               started! New users will have a short profile section to fill out
               once signing in for the first time.
             </p>
             <div className="mt-14">
-              <OAuthButton provider="google" />
+              <OAuthButton />
               {/* Section divider input field */}
               <div>
                 <p className="mt-4 mb-4 text-center text-lg">or</p>
