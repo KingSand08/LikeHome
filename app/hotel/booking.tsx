@@ -1,9 +1,8 @@
-// app/hotel/booking.tsx
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import Link from 'next/link';
+import axios from 'axios';
 import RegionSelector from '../../components/regionSelector';
 
 interface Hotel {
@@ -18,14 +17,18 @@ interface Hotel {
 
 const BookingPage: React.FC = () => {
   const [hotels, setHotels] = useState<Hotel[]>([]);
-  const [regionId, setRegionId] = useState<string>('602703');
-  //const [regionId, setRegionId] = useState<string>(''); // State for selected region ID
+  //const [regionId, setRegionId] = useState<string>('602703');
+  const [regionId, setRegionId] = useState<string>(''); // State for selected region ID
 
   useEffect(() => {
     const fetchHotels = async () => {
       if (!regionId) return;
       try {
         const response = await axios.get(`/api/hotels/search?region_id=${regionId}`);
+        // const response = await fetch(`/api/hotels/search?region_id=${regionId}`);
+        //   if (!response.ok) {
+        //     return new Response("response",{status:200})
+        //   } This is for when I change to nextjs fetching instead of axios
         setHotels(response.data.properties);
       } catch (error) {
         console.error('Failed to fetch hotels:', error);
