@@ -1,7 +1,8 @@
 import React from "react";
 
-const BookingDetailsPage = ({ params }: { params: { id: string } }) => {
-  return <div>Information about booking: {params.id}</div>;
+const BookingDetailsPage = () => {
+  return <div>BookingDetailsPage</div>;
+  // trigger vercel rebuild
 };
 
 export default BookingDetailsPage;
