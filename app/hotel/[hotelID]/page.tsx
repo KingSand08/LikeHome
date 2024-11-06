@@ -1,64 +1,61 @@
-import { PrismaClient } from '@prisma/client';
-import ReservationForm from '@/components/ReservationForm'; // Import client component
-import React from 'react';
+// app/hotel/[hotelID]/reservation.tsx
+"use client";
 
-const prisma = new PrismaClient();
+import React, { useState } from 'react';
+import { useParams } from 'next/navigation'; // Import useParams from next/navigation
 
-async function getHotelData(hotelID: string) {
-  const hotel = await prisma.hotel.findUnique({
-    where: {
-      id: hotelID,
-    },
-    select: {
-      name: true,
-      description: true,
-      pricePerNight: true,
-      singleRoomsAvailable: true,
-      doubleRoomsAvailable: true,
-      location: {
-        select: {
-          address: true,
-          city: true,
-          state: true,
-          zip: true,
-        },
-      },
-    },
-  });
+const ReservationPage: React.FC = () => {
+  const { hotelID } = useParams(); // Get hotelID from the URL parameters
+  const [adultsNumber, setAdultsNumber] = useState<number>(1);
+  const [numDays, setNumDays] = useState<number>(1);
 
-  return hotel;
-}
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const bookingDetails = {
+      account_id: "<account ID>", // Need to route with users ID
+      date_created: new Date().toISOString(),
+      checkin_date: new Date().toISOString(),
+      checkout_date: new Date(new Date().setDate(new Date().getDate() + numDays)).toISOString(),
+      adults_number: adultsNumber,
+      numDays: numDays, locale: "en-US",
+      domain: window.location.hostname,
+      region_id: "<region ID>", // need to set this based data flow
+      hotel_id: hotelID, // Use the hotelID from the route
+      room_id: "<room ID>" // need to get room id from data flow
+    };
 
-type HotelPageProps = {
-  params: {
-    hotelID: string;
+    // send booking details to payment system for amount of days
+    console.log('Booking Details:', bookingDetails);
   };
-};
-
-export default async function HotelPage({ params }: HotelPageProps) {
-  const hotel = await getHotelData(params.hotelID);
-
-  if (!hotel) {
-    return <div className="text-center p-6">Hotel not found.</div>;
-  }
 
   return (
-    <div className="bg-base-200 min-h-screen flex flex-col items-center justify-center">
-      <div className="container max-w-6xl p-10 space-y-8">
-        <h1 className="text-5xl font-bold text-base-content mb-4">{hotel.name}</h1>
-        <p className="text-xl text-base-content mb-4">{hotel.description}</p>
-        <p className="text-lg text-gray-600 mb-4">
-          Location: {hotel.location.address}, {hotel.location.city}, {hotel.location.state}, {hotel.location.zip}
-        </p>
-        <p className="text-3xl font-bold text-primary mb-6">${hotel.pricePerNight} / night</p>
-
-        {/* Pass hotel data to the ReservationForm client component */}
-        <ReservationForm
-          pricePerNight={hotel.pricePerNight}
-          singleRoomsAvailable={hotel.singleRoomsAvailable}
-          doubleRoomsAvailable={hotel.doubleRoomsAvailable}
-        />
-      </div>
+    <div>
+      <h1>Reserve a Room at Hotel ID: {hotelID}</h1>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Number of Adults:
+          <input
+            type="number"
+            value={adultsNumber}
+            onChange={(e) => setAdultsNumber(Number(e.target.value))}
+            min="1"
+          />
+        </label>
+        <br />
+        <label>
+          Number of Days:
+          <input
+            type="number"
+            value={numDays}
+            onChange={(e) => setNumDays(Number(e.target.value))}
+            min="1"
+          />
+        </label>
+        <br />
+        <button type="submit">Confirm Booking</button>
+      </form>
     </div>
   );
-}
+};
+
+export default ReservationPage;
