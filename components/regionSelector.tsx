@@ -10,7 +10,7 @@ interface Region {
   };
 }
 
-const regionSelector: React.FC<{ onSelectRegion: (regionId: string) => void }> = ({ onSelectRegion }) => {
+const RegionSelector: React.FC<{ onSelectRegion: (regionId: string) => void }> = ({ onSelectRegion }) => {
   const [regions, setRegions] = useState<Region[]>([]);
 
   useEffect(() => {
@@ -38,4 +38,4 @@ const regionSelector: React.FC<{ onSelectRegion: (regionId: string) => void }> =
   );
 };
 
-export default regionSelector;
+export default RegionSelector;
