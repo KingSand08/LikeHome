@@ -2,11 +2,15 @@ import React from 'react';
 import Card from '@/components/layout/Card';
 import SearchBox from '@/components/layout/SearchBox';
 import { PrismaClient } from '@prisma/client';
+import { headers } from 'next/headers'; // Access headers in a Server Component
 
 const prisma = new PrismaClient();
 
-// Fetch hotel data and display without filtering
 export default async function HomePage() {
+  // Access headers if needed for request-specific logic
+  const headersList = headers();
+  const userAgent = headersList.get('user-agent'); // Example usage if required
+
   // Fetch hotel data from Prisma
   const hotels = await prisma.hotel.findMany({
     select: {
@@ -26,7 +30,7 @@ export default async function HomePage() {
     <main className="">
       {/* Hero Section */}
       <div
-        className="hero h-64 relative flex flex-col justify-center items-center"
+        className="hero min-h-[50vh] relative flex flex-col justify-center items-center"
         style={{
           backgroundImage:
             "url(https://img.daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.webp)",
@@ -50,8 +54,6 @@ export default async function HomePage() {
           <p className="text-lg mt-2 text-base-content">Choose from our wide variety of rooms</p>
         </div>
 
-        <SearchBox />
-
         {/* Cards Container */}
         <div className="w-full flex justify-center">
           <div className="max-w-7xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4 sm:px-6 lg:px-8">
@@ -62,7 +64,7 @@ export default async function HomePage() {
                 description={hotel.description}
                 price={hotel.pricePerNight}
                 location={hotel.location.state}
-                imageUrl="/hotelRoom.jpg" // Default image for now
+                imageUrl="/hotelRoom.jpg"
                 hotelId={hotel.id}
               />
             ))}
