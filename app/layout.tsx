@@ -1,7 +1,7 @@
 import { Providers } from "@/components/providers/providers";
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
-
+import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
