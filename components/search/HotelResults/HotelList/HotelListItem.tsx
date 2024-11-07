@@ -35,32 +35,48 @@ const HotelListItem: React.FC<HotelListItemProps> = ({
 
   return (
     <Link href={`${CustomHotelLink}?${finalBookingParams.toString()}`}>
-      <li className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow mb-4 cursor-pointer">
-        <strong className="text-lg font-semibold text-gray-800">
-          {hotel.name}
-        </strong>
-        <div className="flex items-center mt-2">
+      <div className="p-5 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 mb-6 cursor-pointer border border-gray-200 hover:border-gray-300">
+        <div className="flex items-start">
           <Image
             src={hotel.image.url}
             alt={hotel.image.alt ?? hotel.image.description ?? ""}
             width={100}
             height={100}
-            className="w-20 h-20 rounded-lg mr-4 object-cover"
+            className="w-24 h-24 rounded-xl mr-6 object-cover"
           />
-          <div>
-            <p className="text-sm text-gray-600">
-              Review Score: {hotel.reviews.score} ({hotel.reviews.totalReviews}{" "}
-              reviews)
+          <div className="flex-1">
+            <strong className="text-xl font-semibold text-gray-900">
+              {hotel.name}
+            </strong>
+            <p className="text-sm text-gray-700 mt-2">
+              <span className="font-medium text-gray-900">Review Score: </span>
+              {hotel.reviews.score}
+              <span className="text-gray-500">
+                {" "}
+                ({hotel.reviews.totalReviews} reviews)
+              </span>
             </p>
-            <p className="text-sm text-gray-600">
-              Custom URL (for testing only): {CustomHotelLink}
+            <p className="text-sm text-gray-700 mt-2">
+              <span className="font-medium text-gray-900">Starting at Price: </span>
+              {`${hotel.price.currency.symbol} ${hotel.price.amount}`}
+            </p>
+            <p className="text-sm text-gray-700 mt-2">
+              <span className="font-medium text-gray-900">Currency: </span>
+              {`${hotel.price.currency.code}`}
+            </p>
+            <p className="text-xs text-gray-400 mt-3 italic">
+              <span className="underline text-blue-500">Testing URL:</span>{" "}
+              {CustomHotelLink}
             </p>
           </div>
         </div>
-        <p className="text-sm text-gray-500 mt-2">
-          Duration of stay: {numDays} {numDays > 1 ? "nights" : "night"}
-        </p>
-      </li>
+        <div className="flex justify-end mt-4">
+          <p className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">
+            Duration of stay: <span className="font-medium">{numDays}</span>{" "}
+            {numDays > 1 ? "nights" : "night"}
+          </p>
+        </div>
+      </div>
     </Link>
   );
 };

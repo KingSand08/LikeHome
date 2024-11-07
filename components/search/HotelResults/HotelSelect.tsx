@@ -87,7 +87,7 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
       {/* Hotel List Display */}
       <div className="mt-6">
         {loading ? (
-          <p className="text-blue-600">Loading...</p>
+          null
         ) : hotelsData && hotelsData.properties.length > 0 ? (
           <HotelList hotelsData={hotelsData} bookingParams={bookingParams} />
         ) : (

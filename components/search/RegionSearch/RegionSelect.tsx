@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { APIRegionJSONFormatted } from "@/app/api/hotels/region/route";
+import { APIRegionArrayFormatted } from "@/app/api/hotels/region/route";
 import TemplateInput from "../Templates-UI/TemplateInput";
 import RegionList from "./SearchComponents/RegionList/RegionList";
 import RegionListItem from "./SearchComponents/RegionList/RegionListItem";
@@ -28,13 +28,13 @@ const RegionSelect: React.FC<RegionSelectProps> = ({
   onRegionSelect,
 }) => {
   const [regionSearchOutput, setRegionSearchOutput] =
-    useState<APIRegionJSONFormatted | null>(null);
+    useState<APIRegionArrayFormatted | null>(null);
   const [selectedRegionDetails, setSelectedRegionDetails] = useState<
-    APIRegionJSONFormatted[number] | null
+    APIRegionArrayFormatted[number] | null
   >(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleRegionClick = (region: APIRegionJSONFormatted[number]) => {
+  const handleRegionClick = (region: APIRegionArrayFormatted[number]) => {
     setSelectedRegionDetails(region);
     onRegionSelect(region.region_id);
   };
@@ -61,7 +61,7 @@ const RegionSelect: React.FC<RegionSelectProps> = ({
         );
         setRegionSearchOutput(null);
       } else {
-        const REGION_DATA: APIRegionJSONFormatted = await response.json();
+        const REGION_DATA: APIRegionArrayFormatted = await response.json();
 
         setRegionSearchOutput(REGION_DATA);
       }
@@ -83,13 +83,15 @@ const RegionSelect: React.FC<RegionSelectProps> = ({
         onChange={onQueryChange}
         required
       />
-      <button
-        onClick={handleFindRegion}
-        className="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        disabled={loading}
-      >
-        {loading ? "Loading..." : "Find Region"}
-      </button>
+      {!selectedRegionDetails?.region_id ? (
+        <button
+          onClick={handleFindRegion}
+          className="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          disabled={loading}
+        >
+          {loading ? "Loading..." : "Find Region"}
+        </button>
+      ) : null}
 
       {selectedRegionDetails ? (
         <div className="mt-6">
@@ -104,9 +106,8 @@ const RegionSelect: React.FC<RegionSelectProps> = ({
         </div>
       ) : (
         <div className="mt-6">
-          {loading ? (
-            <p className="text-blue-600">Loading...</p>
-          ) : regionSearchOutput && regionSearchOutput.length > 0 ? (
+          {loading ? null : regionSearchOutput &&
+            regionSearchOutput.length > 0 ? (
             <RegionList
               regions={regionSearchOutput}
               onRegionSelect={handleRegionClick}

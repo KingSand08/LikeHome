@@ -13,8 +13,7 @@ const HotelResultUIComplete: React.FC<HotelResultUICompleteProps> = ({
   validRegionId,
 }) => {
   return (
-    <div className="hotel-result-ui-complete">
-      {/* Pass bookingParams to HotelSelect component */}
+    <div className="container mx-auto p-4">
       <HotelSelect
         bookingParams={bookingParams}
         validRegionId={validRegionId}

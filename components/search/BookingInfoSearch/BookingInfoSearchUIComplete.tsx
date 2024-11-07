@@ -43,14 +43,12 @@ const BookingInfoUISearchComplete: React.FC<
       <h2 className="text-2xl font-bold mb-4">Booking Information</h2>
 
       {/* Display Current Booking Info */}
-      <BookingInfoDisplay bookingInfo={bookingInfo} />
+      {/* <BookingInfoDisplay bookingInfo={bookingInfo} /> */}
 
       {/* Booking Date Range Input */}
       <div className="mt-6">
         <h3 className="text-lg font-semibold mb-4">Booking Dates</h3>
-        <BookingDateRange
-          onChange={handleDateChange}
-        />
+        <BookingDateRange onChange={handleDateChange} />
       </div>
 
       {/* Adults Number Input */}

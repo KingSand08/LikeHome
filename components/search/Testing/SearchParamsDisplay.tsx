@@ -11,8 +11,10 @@ const SearchParamsDisplay: React.FC<SearchParamsDisplayProps> = ({
   searchParams,
 }) => {
   return (
-    <div className="mt-8 p-4 border rounded bg-gray-100">
-      <h3 className="text-lg font-semibold mb-4 text-black">Current Search Parameters</h3>
+    <div className="container mx-auto p-4">
+      <h3 className="text-lg font-semibold mb-4 text-white">
+        Current Search Parameters
+      </h3>
 
       {/* Region Search Display */}
       <RegionSearchDisplay

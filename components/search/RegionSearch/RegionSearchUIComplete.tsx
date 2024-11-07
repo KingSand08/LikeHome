@@ -46,10 +46,10 @@ const RegionSearchUIComplete: React.FC<RegionSearchUICompleteProps> = ({
       <h2 className="text-2xl font-bold mb-4">Region Search</h2>
 
       {/* Display Current Inputs */}
-      <RegionSearchDisplay
+      {/* <RegionSearchDisplay
         regionSearchInputs={regionSearchInputs}
         selectedRegionId={selectedRegionId}
-      />
+      /> */}
 
       {/* Dropdown Inputs */}
       <div className="flex flex-row justify-between space-x-4 mt-4">

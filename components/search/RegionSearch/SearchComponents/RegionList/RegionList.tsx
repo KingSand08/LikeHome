@@ -1,10 +1,10 @@
 "use client";
-import { APIRegionJSONFormatted } from "@/app/api/hotels/region/route";
+import { APIRegionArrayFormatted } from "@/app/api/hotels/region/route";
 import RegionListItem from "./RegionListItem";
 
 type RegionListProps = {
-  regions: APIRegionJSONFormatted;
-  onRegionSelect: (region: APIRegionJSONFormatted[number]) => void;
+  regions: APIRegionArrayFormatted;
+  onRegionSelect: (region: APIRegionArrayFormatted[number]) => void;
 };
 
 const RegionList: React.FC<RegionListProps> = ({ regions, onRegionSelect }) => {
@@ -13,7 +13,7 @@ const RegionList: React.FC<RegionListProps> = ({ regions, onRegionSelect }) => {
   }
 
   return (
-    <ul className="list-disc list-inside text-black">
+    <div className="list-disc list-inside text-black">
       {regions.map((region) => (
         <RegionListItem
           key={region.region_id}
@@ -21,7 +21,7 @@ const RegionList: React.FC<RegionListProps> = ({ regions, onRegionSelect }) => {
           onClick={() => onRegionSelect(region)}
         />
       ))}
-    </ul>
+    </div>
   );
 };
 

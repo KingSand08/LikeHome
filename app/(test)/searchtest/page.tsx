@@ -105,8 +105,11 @@ const FinalSearchTest: React.FC = () => {
   ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
 
   return (
-    <div className="bg-slate-gray">
+    <div className="bg-slate-gray container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Final Search Test</h1>
+      <h2 className="text-xl font-bold mb-4">
+        This will end up in / (the landing/browsing page)
+      </h2>
 
       {/* RegionSearch Component */}
       <RegionSearchUIComplete
@@ -132,6 +135,7 @@ const FinalSearchTest: React.FC = () => {
         }
       />
 
+      <hr></hr>
       {/* BookingInfo Component */}
       <BookingInfoUISearchComplete
         bookingInfo={{
@@ -155,6 +159,7 @@ const FinalSearchTest: React.FC = () => {
         }
       />
 
+      <hr></hr>
       {/* HotelSearch Component */}
       <HotelSearchUIComplete
         hotelSearchInputs={{
@@ -183,9 +188,11 @@ const FinalSearchTest: React.FC = () => {
         }
       />
 
+      <hr></hr>
       {/* Displaying all search parameters */}
       <SearchParamsDisplay searchParams={searchParams} />
 
+      <hr></hr>
       {/* HotelSelectUIComplete Component */}
       <HotelResultUIComplete
         bookingParams={{

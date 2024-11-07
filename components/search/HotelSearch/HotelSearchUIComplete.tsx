@@ -90,7 +90,7 @@ const HotelSearchUIComplete: React.FC<HotelSearchUICompleteProps> = ({
       <h2 className="text-2xl font-bold mb-4">Hotel Search</h2>
 
       {/* Display current hotel search inputs */}
-      <HotelSearchDisplay
+      {/* <HotelSearchDisplay
         hotelSearchInputs={{
           accessibilityOptions: hotelSearchInputs.accessibilityOptions,
           amenitiesOptions: hotelSearchInputs.amenitiesOptions,
@@ -102,7 +102,7 @@ const HotelSearchUIComplete: React.FC<HotelSearchUICompleteProps> = ({
           price_max: hotelSearchInputs.price_max,
           sortOrder: hotelSearchInputs.sortOrder,
         }}
-      />
+      /> */}
 
       {/* Interactive Inputs */}
       <div className="flex flex-row justify-between space-x-4">
