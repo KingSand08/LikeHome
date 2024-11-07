@@ -84,22 +84,24 @@ export async function GET(req: NextRequest) {
       soldOut: JSON_DATA.soldOut ?? false,
       basePrice: JSON_DATA.stickyBar?.displayPrice ?? "",
       hotelRoomOffers:
-        JSON_DATA.categorizedListings?.map((categorizedListing) => ({
-          hotel_room_id: categorizedListing.unitId ?? "",
-          description:
-            categorizedListing.primarySelections?.[0]?.propertyUnit
-              ?.description ?? "No description available",
-          name: categorizedListing.header?.text ?? "Unnamed room",
-          galleryImages:
-            categorizedListing.primarySelections?.[0]?.propertyUnit?.unitGallery?.gallery?.map(
-              (galleryImage, index) => ({
-                description:
-                  galleryImage.image?.description ?? "No description",
-                url: galleryImage.image?.url ?? "",
-                index: index,
-              })
-            ) ?? [],
-        })) ?? [],
+        JSON_DATA.categorizedListings?.map(
+          (categorizedListing): HotelRoom => ({
+            hotel_room_id: categorizedListing.unitId ?? "",
+            description:
+              categorizedListing.primarySelections?.[0]?.propertyUnit
+                ?.description ?? "No description available",
+            name: categorizedListing.header?.text ?? "Unnamed room",
+            galleryImages:
+              categorizedListing.primarySelections?.[0]?.propertyUnit?.unitGallery?.gallery?.map(
+                (galleryImage, index): Images => ({
+                  description:
+                    galleryImage.image?.description ?? "No description",
+                  url: galleryImage.image?.url ?? "",
+                  index: index,
+                })
+              ) ?? [],
+          })
+        ) ?? [],
     };
     return NextResponse.json(PAYLOAD, { status: 200 });
   } catch (error) {
@@ -127,4 +129,5 @@ type HotelRoom = {
 type Images = {
   description: string;
   url: string;
+  index: number;
 };

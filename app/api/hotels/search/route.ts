@@ -161,27 +161,40 @@ export async function GET(req: NextRequest) {
         matchedPropertiesSize: JSON_DATA.summary?.matchedPropertiesSize ?? 0,
       },
       properties:
-        JSON_DATA.properties?.map((propertyItem) => ({
-          region_id: propertyItem.regionId ?? "",
-          hotel_id: propertyItem.id ?? "",
-          name: propertyItem.name ?? "Unknown",
-          image: {
-            description:
-              propertyItem.propertyImage?.image?.description ??
-              "No description",
-            url: propertyItem.propertyImage?.image?.url ?? "",
-            alt: propertyItem.propertyImage?.alt ?? "No alternative text",
-          },
-          coordinates: {
-            lat: propertyItem.mapMarker?.latLong?.latitude ?? 0,
-            long: propertyItem.mapMarker?.latLong?.longitude ?? 0,
-          },
-          reviews: {
-            score: propertyItem.reviews?.score ?? 0,
-            totalReviews: propertyItem.reviews?.total ?? 0,
-            starRating: propertyItem.star ?? 0,
-          },
-        })) ?? [],
+        JSON_DATA.properties?.map(
+          (propertyItem): APIHotelSearchHotelInfo => ({
+            region_id: propertyItem.regionId ?? "",
+            hotel_id: propertyItem.id ?? "",
+            name: propertyItem.name ?? "Unknown",
+            image: {
+              description:
+                propertyItem.propertyImage?.image?.description ??
+                "No description",
+              url: propertyItem.propertyImage?.image?.url ?? "",
+              alt: propertyItem.propertyImage?.alt ?? "No alternative text",
+            },
+            coordinates: {
+              lat: propertyItem.mapMarker?.latLong?.latitude ?? 0,
+              long: propertyItem.mapMarker?.latLong?.longitude ?? 0,
+            },
+            reviews: {
+              score: propertyItem.reviews?.score ?? 0,
+              totalReviews: propertyItem.reviews?.total ?? 0,
+              starRating: propertyItem.star ?? 0,
+            },
+            availability: {
+              available: propertyItem.availability?.available ?? false,
+              minRoomsLeft: propertyItem.availability?.minRoomsLeft ?? 0,
+            },
+            price: {
+              amount: propertyItem.price?.lead?.amount ?? 0,
+              currency: {
+                code: propertyItem.price?.lead?.currencyInfo?.code ?? "",
+                symbol: propertyItem.price?.lead?.currencyInfo?.symbol ?? "",
+              },
+            },
+          })
+        ) ?? [],
     };
 
     return NextResponse.json(PAYLOAD, { status: 200 });
@@ -200,12 +213,13 @@ export type APIHotelSearchJSONFormatted = {
     maxPrice: number;
     minPrice: number;
   };
-  properties: APIHotelSearchHotelInfo[];
+  properties: APIHotelSearchHotelInfo[] | [];
   summary: {
     matchedPropertiesSize: number;
   };
 };
 export type APIHotelSearchHotelInfo = {
+  region_id: string;
   hotel_id: string;
   name: string;
   image: {
@@ -218,9 +232,20 @@ export type APIHotelSearchHotelInfo = {
     lat: number;
     long: number;
   };
+  availability: {
+    available: boolean;
+    minRoomsLeft: number;
+  };
   reviews: {
     score: number;
     totalReviews: number;
     starRating: number;
+  };
+  price: {
+    amount: number;
+    currency: {
+      code: string;
+      symbol: string;
+    };
   };
 };
