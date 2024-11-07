@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
-import RegionSelector from '../../components/regionSelector';
 
 interface Hotel {
   hotel_id: string;
@@ -41,7 +40,6 @@ const BookingPage: React.FC = () => {
   return (
     <div>
       <h1>Available Hotels</h1>
-      <RegionSelector onSelectRegion={setRegionId} />
       <div>
         {hotels.length > 0 ? (
           hotels.map((hotel) => (
