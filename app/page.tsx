@@ -7,9 +7,6 @@ import { headers } from 'next/headers'; // Access headers in a Server Component
 const prisma = new PrismaClient();
 
 export default async function HomePage() {
-  // Access headers if needed for request-specific logic
-  const headersList = headers();
-  const userAgent = headersList.get('user-agent'); // Example usage if required
 
   // Fetch hotel data from Prisma
   const hotels = await prisma.hotel.findMany({
