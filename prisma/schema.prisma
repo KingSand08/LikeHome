@@ -3,43 +3,48 @@
 // Following this, make sure prisma is up to date with the DB by running "npx prisma db pull" *only run this once or it will say smt about Re-Introspection
 // To check if the DB is linked and working run "npx prisma studio" (it will display the database)
 
-// prisma/schema.prisma
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["mongoDb"]
+}
+
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
-model Region {
-  id     String  @id @default(auto()) @map("_id") @db.ObjectId
-  name   String
-  hotels Hotel[]
-}
-
+//May need to update model for photos
 model Hotel {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  regionId String @db.ObjectId
-  region   Region @relation(fields: [regionId], references: [id])
-  rooms    Room[]
+  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  name                 String
+  location             Location
+  amenities            String[]
+  pricePerNight        Int
+  ratings              Ratings?
+  roomsAvailable       Int
+  description          String
+  singleRoomsAvailable Int
+  doubleRoomsAvailable Int
+  createdAt            DateTime?
+
+  @@map("hotels") // Maps the model to "hotels" collection in MongoDB
 }
 
-model Room {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  name    String
-  hotelId String @db.ObjectId
-  hotel   Hotel  @relation(fields: [hotelId], references: [id])
-  price   Float
+type Location {
+  address     String
+  city        String
+  state       String
+  zip         String
+  country     String
+  coordinates Coordinates? // Make coordinates nullable
 }
 
-model Reservation {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  hotelId  String   @db.ObjectId
-  roomId   String   @db.ObjectId
-  userId   String
-  checkIn  DateTime
-  checkOut DateTime
+type Coordinates {
+  latitude  Float
+  longitude Float
+}
+
+type Ratings {
+  average      Float
+  reviewsCount Int
 }
