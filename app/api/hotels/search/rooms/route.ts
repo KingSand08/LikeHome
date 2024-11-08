@@ -82,10 +82,11 @@ export async function GET(req: NextRequest) {
     const PAYLOAD: APIHotelRoomOffersJSONFormatted = {
       hotel_id: JSON_DATA.id ?? "",
       soldOut: JSON_DATA.soldOut ?? false,
-      basePrice: JSON_DATA.stickyBar?.displayPrice ?? "",
+      basePricePerNight: JSON_DATA.stickyBar?.displayPrice ?? "",
       hotelRoomOffers:
         JSON_DATA.categorizedListings?.map(
-          (categorizedListing): HotelRoom => ({
+          (categorizedListing): HotelRoomOffer => ({
+            hotel_id: JSON_DATA.id ?? "",
             hotel_room_id: categorizedListing.unitId ?? "",
             description:
               categorizedListing.primarySelections?.[0]?.propertyUnit
@@ -93,13 +94,29 @@ export async function GET(req: NextRequest) {
             name: categorizedListing.header?.text ?? "Unnamed room",
             galleryImages:
               categorizedListing.primarySelections?.[0]?.propertyUnit?.unitGallery?.gallery?.map(
-                (galleryImage, index): Images => ({
+                (galleryImage, index): Image => ({
                   description:
                     galleryImage.image?.description ?? "No description",
                   url: galleryImage.image?.url ?? "",
+                  alt: galleryImage.image?.description ?? "",
                   index: index,
                 })
               ) ?? [],
+            pricePerNight: {
+              amount:
+                categorizedListing.primarySelections?.[0]?.propertyUnit
+                  ?.ratePlans?.[0]?.priceDetails?.[0].price?.lead?.amount ?? 0,
+              currency: {
+                code:
+                  categorizedListing.primarySelections?.[0]?.propertyUnit
+                    ?.ratePlans?.[0]?.priceDetails?.[0].price?.lead
+                    ?.currencyInfo?.code ?? "",
+                symbol:
+                  categorizedListing.primarySelections?.[0]?.propertyUnit
+                    ?.ratePlans?.[0]?.priceDetails?.[0].price?.lead
+                    ?.currencyInfo?.symbol ?? "",
+              },
+            },
           })
         ) ?? [],
     };
@@ -114,20 +131,29 @@ export async function GET(req: NextRequest) {
   }
 }
 
-type APIHotelRoomOffersJSONFormatted = {
+export type APIHotelRoomOffersJSONFormatted = {
   hotel_id: string;
   soldOut: boolean;
-  basePrice: string;
-  hotelRoomOffers: HotelRoom[];
+  basePricePerNight: string;
+  hotelRoomOffers: HotelRoomOffer[];
 };
-type HotelRoom = {
+export type HotelRoomOffer = {
+  hotel_id: string;
   hotel_room_id: string;
   description: string;
   name: string;
-  galleryImages: Images[];
+  galleryImages: Image[];
+  pricePerNight: {
+    amount: number;
+    currency: {
+      code: string;
+      symbol: string;
+    };
+  };
 };
-type Images = {
+type Image = {
   description: string;
   url: string;
+  alt: string;
   index: number;
 };

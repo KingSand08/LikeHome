@@ -3,7 +3,6 @@
 import { z, ZodObject, ZodRawShape } from "zod";
 import { localeSchema, domainSchema } from "./region-search-schemas";
 import {
-  DEFAULT_AVAILABILITY_FILTER_OPTIONS,
   DEFAULT_MAX_PRICE,
   DEFAULT_MIN_PRICE,
   DEFAULT_SORT_ORDER,

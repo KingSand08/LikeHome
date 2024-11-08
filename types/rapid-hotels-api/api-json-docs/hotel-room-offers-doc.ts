@@ -135,11 +135,17 @@ type PriceDetail = {
   pricePresentationDialog?: any | null;
   pointsApplied?: any | null;
   price?: {
-    total?: {
-      __typename?: string;
+    _typename?: string;
+    lead?: {
+      _typename?: string;
       amount?: number;
-    };
-  };
+      currencyInfo?: {
+        _typename?: string;
+        code: string;
+        symbol: string;
+      }
+    }
+  }
   priceAfterLoyaltyPointsApplied?: any;
   pricingScheme?: any;
   propertyNaturalKeys?: any[];

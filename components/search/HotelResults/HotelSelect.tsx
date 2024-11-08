@@ -5,6 +5,7 @@ import HotelList from "./HotelList/HotelList";
 import { z } from "zod";
 import { hotelSearchParamsRefinedSchema } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
 import { HOTEL_SEARCH_API_URL } from "@/lib/rapid-hotel-api/api-setup";
+import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 
 export type bookingParamsType = z.infer<typeof hotelSearchParamsRefinedSchema>;
 
@@ -32,21 +33,7 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
     setLoading(true);
     setHotelsData(null);
     try {
-      const urlParams = new URLSearchParams();
-      Object.entries(bookingParams).forEach(([key, value]) => {
-        if (
-          value !== undefined &&
-          value !== null &&
-          value !== "" &&
-          (!Array.isArray(value) || value.length > 0)
-        ) {
-          if (Array.isArray(value)) {
-            urlParams.append(key, value.join(","));
-          } else {
-            urlParams.append(key, value.toString());
-          }
-        }
-      });
+      const urlParams = JSONToURLSearchParams(bookingParams);
 
       const response = await fetch(
         `${HOTEL_SEARCH_API_URL}?${urlParams.toString()}`

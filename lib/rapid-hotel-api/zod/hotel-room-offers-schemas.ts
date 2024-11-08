@@ -9,7 +9,7 @@ import {
 export const API_HOTEL_ROOM_OFFERS_URL =
   "https://hotels-com-provider.p.rapidapi.com/v2/hotels/offers" as const;
 
-const hotelRoomOffersParamsBasicSchema = hotelSearchParamsBasicSchema
+export const hotelRoomOffersParamsBasicSchema = hotelSearchParamsBasicSchema
   .pick({
     checkin_date: true,
     checkout_date: true,
@@ -35,3 +35,6 @@ export const bookingInfoBasicSchema = hotelSearchParamsBasicSchema
     room_id: z.string().min(1, "The 'room_id' is required."),
     numDays: z.number(),
   });
+export const bookingInfoRefinedSchema = refinePriceAndDateValidationZod(
+  bookingInfoBasicSchema
+);

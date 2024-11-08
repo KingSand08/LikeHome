@@ -1,5 +1,5 @@
 import { APIHotelSearchHotelInfo } from "@/app/api/hotels/search/route";
-import { CUSTOM_HOTEL_SLUG_URL } from "@/lib/rapid-hotel-api/api-setup";
+import { CUSTOM_HOTEL_DETAILS_SLUG_URL } from "@/lib/rapid-hotel-api/api-setup";
 import Image from "next/image";
 import Link from "next/link";
 import { calculateNumDays } from "@/lib/DateFunctions";
@@ -14,7 +14,7 @@ const HotelListItem: React.FC<HotelListItemProps> = ({
   hotel,
   bookingParams,
 }) => {
-  const CustomHotelLink = CUSTOM_HOTEL_SLUG_URL.replace(
+  const CustomHotelLink = CUSTOM_HOTEL_DETAILS_SLUG_URL.replace(
     "{hotelId}",
     hotel.hotel_id
   );
@@ -57,8 +57,8 @@ const HotelListItem: React.FC<HotelListItemProps> = ({
               </span>
             </p>
             <p className="text-sm text-gray-700 mt-2">
-              <span className="font-medium text-gray-900">Starting at Price: </span>
-              {`${hotel.price.currency.symbol} ${hotel.price.amount}`}
+              <span className="font-medium text-gray-900">Starting at </span>
+              {`${hotel.price.currency.symbol}${hotel.price.amount}`} per night
             </p>
             <p className="text-sm text-gray-700 mt-2">
               <span className="font-medium text-gray-900">Currency: </span>

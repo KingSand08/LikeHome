@@ -9,6 +9,7 @@ import {
   RegionSearchLocaleType,
 } from "@/lib/rapid-hotel-api/zod/region-search-schemas";
 import { REGION_SEARCH_API_URL } from "@/lib/rapid-hotel-api/api-setup";
+import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 
 type RegionSelectProps = {
   query: string;
@@ -48,10 +49,12 @@ const RegionSelect: React.FC<RegionSelectProps> = ({
     setLoading(true);
     setSelectedRegionDetails(null);
     try {
-      const urlParams = new URLSearchParams();
-      urlParams.append("query", query);
-      urlParams.append("domain", domain);
-      urlParams.append("locale", locale);
+      const urlParams = JSONToURLSearchParams({
+        "query": query,
+        "domain": domain,
+        "locale": locale,
+      });
+      
       const response = await fetch(
         `${REGION_SEARCH_API_URL}?${urlParams.toString()}`
       );
