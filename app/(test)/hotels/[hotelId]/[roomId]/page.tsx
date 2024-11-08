@@ -3,7 +3,8 @@ import {
   APIHotelRoomOffersJSONFormatted,
   HotelRoomOffer,
 } from "@/app/api/hotels/search/rooms/route";
-import { HOTEL_ROOM_OFFERS_API_URL } from "@/lib/rapid-hotel-api/api-setup";
+import { FINAL_BOOKING_DETAILS } from "@/lib/rapid-hotel-api/api-setup";
+import { HOTEL_ROOM_OFFERS_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";

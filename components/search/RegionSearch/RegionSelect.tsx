@@ -8,7 +8,7 @@ import {
   RegionSearchDomainType,
   RegionSearchLocaleType,
 } from "@/lib/rapid-hotel-api/zod/region-search-schemas";
-import { REGION_SEARCH_API_URL } from "@/lib/rapid-hotel-api/api-setup";
+import { REGION_SEARCH_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 
 type RegionSelectProps = {

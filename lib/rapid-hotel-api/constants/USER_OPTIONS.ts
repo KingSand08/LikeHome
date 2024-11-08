@@ -1,7 +1,7 @@
 import {
   RegionSearchDomainType,
   RegionSearchLocaleType,
-} from "./zod/region-search-schemas";
+} from "../zod/region-search-schemas";
 import {
   HotelSearchSortOrderOptionsType,
   HotelsSearchAccessibilityOptionsType,
@@ -10,7 +10,7 @@ import {
   HotelsSearchLodgingOptionsType,
   HotelsSearchMealPlanOptionsType,
   HotelsSearchPaymentTypeOptionsType,
-} from "./zod/hotel-search-schemas";
+} from "../zod/hotel-search-schemas";
 
 // Region search
 export const DEFAULT_QUERY: string = "San Jose" as const;

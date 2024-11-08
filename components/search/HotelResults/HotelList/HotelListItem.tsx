@@ -1,5 +1,5 @@
 import { APIHotelSearchHotelInfo } from "@/app/api/hotels/search/route";
-import { CUSTOM_HOTEL_DETAILS_SLUG_URL } from "@/lib/rapid-hotel-api/api-setup";
+import { CUSTOM_HOTEL_DETAILS_SLUG_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import Image from "next/image";
 import Link from "next/link";
 import { calculateNumDays } from "@/lib/DateFunctions";

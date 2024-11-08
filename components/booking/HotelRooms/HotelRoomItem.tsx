@@ -1,12 +1,12 @@
 "use client";
 import { HotelRoomOffer } from "@/app/api/hotels/search/rooms/route";
 import { calculateNumDays } from "@/lib/DateFunctions";
-import { CUSTOM_HOTEL_ROOM_SLUG_URL } from "@/lib/rapid-hotel-api/api-setup";
+import { CUSTOM_HOTEL_ROOM_SLUG_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,
-} from "@/lib/rapid-hotel-api/constants";
+} from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";

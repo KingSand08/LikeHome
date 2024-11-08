@@ -6,7 +6,7 @@ import {
   DEFAULT_MAX_PRICE,
   DEFAULT_MIN_PRICE,
   DEFAULT_SORT_ORDER,
-} from "../constants";
+} from "../constants/USER_OPTIONS";
 
 export const API_HOTEL_SEARCH_URL =
   "https://hotels-com-provider.p.rapidapi.com/v2/hotels/search" as const;

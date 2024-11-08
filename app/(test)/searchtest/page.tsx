@@ -15,7 +15,7 @@ import {
   DEFAULT_MIN_PRICE,
   DEFAULT_MAX_PRICE,
   DEFAULT_QUERY,
-} from "@/lib/rapid-hotel-api/constants";
+} from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import {
   RegionSearchDomainType,
   RegionSearchLocaleType,

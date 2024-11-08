@@ -1,7 +1,7 @@
 import {
   DEFAULT_BOOKING_NUM_DAYS,
   DEFAULT_DAYS_FROM_TODAY,
-} from "@/lib/rapid-hotel-api/constants";
+} from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 
 // Format to YYYY-MM-DD
 const formatDate = (date: Date): string => {

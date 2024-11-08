@@ -4,7 +4,7 @@ import { APIHotelSearchJSONFormatted } from "@/app/api/hotels/search/route";
 import HotelList from "./HotelList/HotelList";
 import { z } from "zod";
 import { hotelSearchParamsRefinedSchema } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
-import { HOTEL_SEARCH_API_URL } from "@/lib/rapid-hotel-api/api-setup";
+import { HOTEL_SEARCH_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 
 export type bookingParamsType = z.infer<typeof hotelSearchParamsRefinedSchema>;

@@ -4,7 +4,7 @@ import TemplateInput from "../../Templates-UI/TemplateInput";
 import {
   DEFAULT_MAX_ADULTS_NUMBER,
   DEFAULT_MIN_ADULTS_NUMBER,
-} from "@/lib/rapid-hotel-api/constants";
+} from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 
 type AdultsNumberInputProps = {
   selectedNumber: number;

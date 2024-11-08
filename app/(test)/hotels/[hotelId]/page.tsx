@@ -6,13 +6,13 @@ import { APIHotelDetailsJSONFormatted } from "@/app/api/hotels/details/route";
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import {
   HOTEL_DETAILS_API_URL,
-  HOTEL_ROOM_OFFERS_API_URL,
-} from "@/lib/rapid-hotel-api/api-setup";
+  HOTEL_ROOM_OFFERS_API_URL
+} from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { APIHotelRoomOffersJSONFormatted } from "@/app/api/hotels/search/rooms/route";
 import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,
-} from "@/lib/rapid-hotel-api/constants";
+} from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import Image from "next/image";
 
 type CompleteHotelInfo = {
@@ -104,12 +104,7 @@ const HotelIDPage: React.FC = () => {
       {/* Hotel Header */}
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold mb-2">{hotelDetails?.name}</h1>
-        <h2
-          className="text-xl text-white
-        "
-        >
-          {hotelDetails?.tagline}
-        </h2>
+        <h2 className="text-xl text-white">{hotelDetails?.tagline}</h2>
       </div>
 
       {/* Hotel Location */}

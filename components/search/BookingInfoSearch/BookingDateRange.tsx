@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import { z } from "zod";
 import { generateDefaultDates } from "../../../lib/DateFunctions";
 import BookingDateInput from "./SearchComponents/BookingDateInput";
-import { DEFAULT_BOOKING_NUM_DAYS } from "@/lib/rapid-hotel-api/constants";
+import { DEFAULT_BOOKING_NUM_DAYS } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 
 // Date validation using Zod
 const dateSchema = z.object({
