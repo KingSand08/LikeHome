@@ -1,9 +1,12 @@
-// Regions search API
+// Region Search API
 // https://rapidapi.com/tipsters/api/hotels-com-provider/playground/apiendpoint_8decc805-015f-4163-95e4-f3e0d276eb06
+import { z } from "zod";
+import { DEFAULT_DOMAIN, DEFAULT_LOCALE } from "../constants/USER_OPTIONS";
 
-export const REGION_SEARCH_URL =
+export const API_REGION_SEARCH_URL =
   "https://hotels-com-provider.p.rapidapi.com/v2/regions" as const;
 
+// Options
 export const RegionSearchDomainOptions = [
   "AR",
   "AS",
@@ -144,11 +147,21 @@ export const RegionSearchLocaleOptions = [
 export type RegionSearchDomainType = (typeof RegionSearchDomainOptions)[number];
 export type RegionSearchLocaleType = (typeof RegionSearchLocaleOptions)[number];
 
-export interface RegionsSearchQuery {
-  query: string;
-  domain: RegionSearchDomainType;
-  locale: RegionSearchLocaleType;
-}
+// Schemas
+export const domainSchema = z
+  .enum(RegionSearchDomainOptions)
+  .nullable()
+  .default(DEFAULT_DOMAIN)
+  .transform((val) => val ?? DEFAULT_DOMAIN);
 
-export const DEFAULT_DOMAIN: RegionSearchDomainType = "US" as const;
-export const DEFAULT_LOCALE: RegionSearchLocaleType = "en_US" as const;
+export const localeSchema = z
+  .enum(RegionSearchLocaleOptions)
+  .nullable()
+  .default(DEFAULT_LOCALE)
+  .transform((val) => val ?? DEFAULT_LOCALE);
+
+export const regionSearchParamsSchema = z.object({
+  query: z.string().min(1, "The 'query' is required."),
+  domain: domainSchema,
+  locale: localeSchema,
+});
