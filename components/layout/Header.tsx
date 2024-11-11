@@ -1,14 +1,7 @@
 import Image from "next/image";
-import ThemeSwitch from "./ThemeSwitch";
 import React from "react";
-import SignOutButton from "../SignOutButton";
 import { auth } from "../../auth";
 import Link from "next/link";
-
-const loginPageURL = "/signin";
-const homePageURL = "/";
-const contactPageURL = "/";
-const roomsPageURL = "/";
 
 export default async function Header() {
   const session = await auth();
