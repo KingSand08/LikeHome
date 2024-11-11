@@ -98,11 +98,11 @@ export default function LandingPage() {
                 <h3 className=" text-lg font-semibold text-neutral-700 dark:text-neutral-300 mb-2 ml-20">
                 Explore Your Dream Location Now
                 </h3>
-                <Link href="/">
+                <a href="/">
                 <button className="bg-black text-white dark:bg-white dark:text-black text-sm px-3 py-3 rounded-md border border-black ">
                     Start Your Journey
                 </button>
-                </Link>
+                </a>
             </div>
             </footer>
         </div>
