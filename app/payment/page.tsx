@@ -19,6 +19,7 @@ export default function Home() {
   // Need to change to make it dynamic for based on the reservation
   const [pricePerDay, setPricePerDay] = useState(100);
   const [numberOfDays, setNumberOfDays] = useState(1);
+  // Need to add tax system here
 
   const amount = pricePerDay * numberOfDays; 
 
