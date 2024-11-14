@@ -138,7 +138,7 @@ export default function CheckoutInfo({
         options={{
           mode: "payment",
           amount: convertToSubcurrency(totalAmount),
-          currency: currencyCode || "usd",
+          currency: currencyCode.toLowerCase(),
         }}
       >
         <CheckoutPage amount={totalAmount} />

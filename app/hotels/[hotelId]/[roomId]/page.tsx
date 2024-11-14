@@ -155,8 +155,12 @@ const HotelRoomIDPage: React.FC = () => {
           currencySymbol={hotelRoomData.pricePerNight.currency.symbol}
           currencyCode={hotelRoomData.pricePerNight.currency.code}
         />
+      ) : loading ? (
+        <h1 className="text-red-500 font-bold">Loading payment details...</h1>
       ) : (
-        <h1 className="text-red-500 font-bold">No valid hotel room data suited for booking</h1>
+        <h1 className="text-red-500 font-bold">
+          No valid hotel room data suited for booking
+        </h1>
       )}
     </div>
   );
