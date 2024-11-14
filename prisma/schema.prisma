@@ -1,4 +1,3 @@
-
 // To get the middle ware started, you must first navigate to the like home folder
 // In this folder, open a termina and run "npx prisma generate"
 // Following this, make sure prisma is up to date with the DB by running "npx prisma db pull" *only run this once or it will say smt about Re-Introspection
