@@ -33,20 +33,3 @@ export type validateSearchParamsOutput = {
   endpoint: string | null;
   error?: string | null;
 };
-
-// Final Booking Detail Structure
-export type FINAL_BOOKING_DETAILS = {
-  account_id: string;
-  date_created: string;
-  checkin_date: string;
-  checkout_date: string;
-  adults_number: string;
-  numDays: string;
-  locale: string; 
-  domain: string;
-  region_id: string;
-  hotel_id: string;
-  hotel_room_id: string;
-  // price: number;
-  // currency_code: string;
-};

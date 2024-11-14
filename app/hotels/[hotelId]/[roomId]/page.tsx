@@ -3,11 +3,12 @@ import {
   APIHotelRoomOffersJSONFormatted,
   HotelRoomOffer,
 } from "@/app/api/hotels/search/rooms/route";
-import { FINAL_BOOKING_DETAILS } from "@/lib/rapid-hotel-api/api-setup";
 import { HOTEL_ROOM_OFFERS_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import CheckoutInfo from "@/components/checkout/CheckoutInfo";
+import { calculateNumDays } from "@/lib/DateFunctions";
 
 const HotelRoomIDPage: React.FC = () => {
   const { hotelId: hotelIdSlug, roomId: roomIdSlug } = useParams();
@@ -128,10 +129,10 @@ const HotelRoomIDPage: React.FC = () => {
         )}
       </div>
 
-      {/* Booking Details Section */}
+      {/* Booking Details about the Hotel Section */}
       <div className="mt-8 p-6 bg-white rounded-lg shadow-lg">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
-          Booking Details
+          Booking Details (about hotel)
         </h2>
         <ul className="space-y-3 text-center">
           {Object.entries(bookingDetails).map(([key, value]) => (
@@ -141,14 +142,22 @@ const HotelRoomIDPage: React.FC = () => {
             </li>
           ))}
         </ul>
-        <button
-          className="mt-8 w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-          aria-label="Reserve now to hold this room!"
-          onClick={() => alert("Redirect to payment page")}
-        >
-          Reserve now to hold this room!
-        </button>
       </div>
+
+      {/* Booking Info and Checkout Section */}
+      {hotelRoomData && bookingDetails ? (
+        <CheckoutInfo
+          pricePerDay={hotelRoomData.pricePerNight.amount}
+          numberOfDays={calculateNumDays(
+            bookingDetails.checkin_date!,
+            bookingDetails.checkout_date!
+          )}
+          currencySymbol={hotelRoomData.pricePerNight.currency.symbol}
+          currencyCode={hotelRoomData.pricePerNight.currency.code}
+        />
+      ) : (
+        <h1 className="text-red-500 font-bold">No valid hotel room data suited for booking</h1>
+      )}
     </div>
   );
 };
