@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import Page from "../app/page";
+import Page from "../app/(old)/home/page";
 import exp from "constants";
 
 describe("h1", () => {
