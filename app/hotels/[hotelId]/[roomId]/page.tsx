@@ -10,6 +10,18 @@ import { useEffect, useState } from "react";
 import CheckoutInfo from "@/components/checkout/CheckoutInfo";
 import { calculateNumDays } from "@/lib/DateFunctions";
 
+export type BookingDetailsType = {
+  checkin_date: string,
+  checkout_date: string,
+  adults_number: string,
+  numDays: string,
+  locale?: string,
+  domain?: string,
+  region_id: string
+  hotel_id: string,
+  hotel_room_id: string,
+}
+
 const HotelRoomIDPage: React.FC = () => {
   const { hotelId: hotelIdSlug, roomId: roomIdSlug } = useParams();
   const searchParams = useSearchParams();
@@ -57,16 +69,16 @@ const HotelRoomIDPage: React.FC = () => {
   };
 
   // Collect searchParams into an object for display
-  const bookingDetails = {
-    checkin_date: searchParams.get("checkin_date"),
-    checkout_date: searchParams.get("checkout_date"),
-    adults_number: searchParams.get("adults_number"),
-    numDays: searchParams.get("numDays"),
-    locale: searchParams.get("locale"),
-    domain: searchParams.get("domain"),
-    region_id: searchParams.get("region_id"),
-    hotel_id: hotelIdSlug,
-    hotel_room_id: roomIdSlug,
+  const bookingDetails: BookingDetailsType = {
+    checkin_date: searchParams.get("checkin_date")!,
+    checkout_date: searchParams.get("checkout_date")!,
+    adults_number: searchParams.get("adults_number")!,
+    numDays: searchParams.get("numDays")!,
+    locale: searchParams.get("locale")!,
+    domain: searchParams.get("domain")!,
+    region_id: searchParams.get("region_id")!,
+    hotel_id: hotelIdSlug[0],
+    hotel_room_id: roomIdSlug[0],
   };
 
   return (
@@ -154,6 +166,8 @@ const HotelRoomIDPage: React.FC = () => {
           )}
           currencySymbol={hotelRoomData.pricePerNight.currency.symbol}
           currencyCode={hotelRoomData.pricePerNight.currency.code}
+          hotelRoomOffer={hotelRoomData}
+          bookingDetails={bookingDetails}
         />
       ) : loading ? (
         <h1 className="text-red-500 font-bold">Loading payment details...</h1>

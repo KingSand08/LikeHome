@@ -1,7 +1,10 @@
 "use client";
 
-import CheckoutPage from "@/components/checkout/checkoutPage";
+import { APIHotelRoomOffersJSONFormatted, HotelRoomOffer } from "@/app/api/hotels/search/rooms/route";
+import { BookingDetailsType } from "@/app/hotels/[hotelId]/[roomId]/page";
+import CheckoutConfirmation from "@/components/checkout/CheckoutConfirmation";
 import convertToSubcurrency from "@/lib/convertPrice";
+import { FINAL_PAYMENT_INFO } from "@/lib/rapid-hotel-api/api-setup";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useState } from "react";
@@ -17,6 +20,8 @@ type CheckoutInfoProps = {
   numberOfDays: number;
   currencySymbol?: string;
   currencyCode?: string;
+  hotelRoomOffer: HotelRoomOffer;
+  bookingDetails: BookingDetailsType;
 };
 
 export default function CheckoutInfo({
@@ -24,9 +29,11 @@ export default function CheckoutInfo({
   numberOfDays,
   currencySymbol = "$",
   currencyCode = "usd",
+  hotelRoomOffer,
+  bookingDetails,
 }: CheckoutInfoProps) {
   // User information in a single state object
-  const [userInfo, setUserInfo] = useState({
+  const [userInfo, setUserInfo] = useState<FINAL_PAYMENT_INFO>({
     firstName: "",
     lastName: "",
     billingAddress: "",
@@ -141,7 +148,7 @@ export default function CheckoutInfo({
           currency: currencyCode.toLowerCase(),
         }}
       >
-        <CheckoutPage amount={totalAmount} />
+        <CheckoutConfirmation totalAmount={totalAmount} hotelRoomOffer={hotelRoomOffer} bookingDetails={bookingDetails} paymentInfo={userInfo}  />
       </Elements>
     </div>
   );

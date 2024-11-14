@@ -33,3 +33,30 @@ export type validateSearchParamsOutput = {
   endpoint: string | null;
   error?: string | null;
 };
+
+// Payment System and Reservations/Bookings
+export type FINAL_PAYMENT_INFO = {
+  firstName: string;
+  lastName: string;
+  billingAddress: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  email: string;
+};
+
+export type FINAL_STRIPE_TRANSACTION_INFO = {
+  dateCreated: string;
+  transactionId: string;
+};
+
+export type FINAL_BOOKING_INFO = {
+  checkin_date: string;
+  checkout_date: string;
+  adults_number: string;
+  numDays: string;
+  hotel_id: string;
+  room_id: string;
+  payment_info: FINAL_PAYMENT_INFO;
+  transaction_info: FINAL_STRIPE_TRANSACTION_INFO;
+};
