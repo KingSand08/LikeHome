@@ -84,6 +84,9 @@ const CheckoutConfirmation = ({
 
       // IF successful, call to API and rewrite
       const FINAL_BOOKING_DETAILS: FINAL_BOOKING_INFO = {
+        // Need to retrieve accountId using NextAuth? Link LikeHome account with this booking
+        account_id: "", // we need to retrieve LikeHome account identifier to link this transaction too
+        bookingId: bookingId,
         checkin_date: bookingDetails.checkin_date,
         checkout_date: bookingDetails.checkout_date,
         adults_number: bookingDetails.adults_number,
@@ -101,13 +104,12 @@ const CheckoutConfirmation = ({
         },
         transaction_info: {
           dateCreated: Date.toString(),
-          bookingId: bookingId,
           stripePaymentId: "", // Will be updated in payment page
         },
       };
 
       // Update the DB:
-      // Add new reservation with the following informatiom above FINAL_BOOKING_DETAILS
+      // Add new reservation with the following infomation above FINAL_BOOKING_DETAILS
     }
 
     setLoading(false);

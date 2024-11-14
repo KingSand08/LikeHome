@@ -44,14 +44,14 @@ export type FINAL_PAYMENT_INFO = {
   zipCode: string;
   email: string;
 };
-
 export type FINAL_STRIPE_TRANSACTION_INFO = {
   dateCreated: string;
-  bookingId: string;
   stripePaymentId: string;
 };
 
 export type FINAL_BOOKING_INFO = {
+  account_id: string;
+  bookingId: string;
   checkin_date: string;
   checkout_date: string;
   adults_number: string;
