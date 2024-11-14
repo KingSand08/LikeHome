@@ -47,7 +47,8 @@ export type FINAL_PAYMENT_INFO = {
 
 export type FINAL_STRIPE_TRANSACTION_INFO = {
   dateCreated: string;
-  transactionId: string;
+  bookingId: string;
+  stripePaymentId: string;
 };
 
 export type FINAL_BOOKING_INFO = {

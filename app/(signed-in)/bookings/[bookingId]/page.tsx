@@ -5,7 +5,6 @@ import React from "react";
 const Page = () => {
   const { bookingId: bookingIdSlug } = useParams();
   const searchParams = useSearchParams();
-
   const isBookingSuccessful = searchParams.get("success") === "true";
 
   return (
@@ -24,7 +23,9 @@ const Page = () => {
           </div>
         ) : (
           <div>
-            <h1 className="text-3xl font-extrabold mb-2">Thank you!</h1>
+            <h1 className="text-3xl font-extrabold mb-2">
+              Thank you! Here are your reservation details.
+            </h1>
             <h2 className="text-2xl">Enjoy Your Stay!</h2>
           </div>
         )}

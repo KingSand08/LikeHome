@@ -7,13 +7,13 @@ import {
   PaymentElement,
 } from "@stripe/react-stripe-js";
 import convertToSubcurrency from "@/lib/convertPrice";
-import { CUSTOM_HOTEL_BOOKINGS_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { HotelRoomOffer } from "@/app/api/hotels/search/rooms/route";
 import { BookingDetailsType } from "@/app/hotels/[hotelId]/[roomId]/page";
 import {
   FINAL_BOOKING_INFO,
   FINAL_PAYMENT_INFO,
 } from "@/lib/rapid-hotel-api/api-setup";
+import { generateBookingId } from "@/lib/BookingFunctions";
 
 type CheckoutConfirmationProps = {
   paymentInfo: FINAL_PAYMENT_INFO;
@@ -62,9 +62,11 @@ const CheckoutConfirmation = ({
       return;
     }
 
+    const bookingId = generateBookingId();
+
     const currentUrl =
       typeof window !== "undefined" ? window.location.origin : "";
-    const returnUrl = `${currentUrl}/payment`;
+    const returnUrl = `${currentUrl}/payment?bookingId=${bookingId}`;
     const { error } = await stripe.confirmPayment({
       elements,
       clientSecret,
@@ -80,11 +82,7 @@ const CheckoutConfirmation = ({
     } else {
       // The payment UI automatically closes
 
-
-      // IF successful, redirect to payment page to finish writing to DB
-
-      const transactionId = "123123123123"
-
+      // IF successful, call to API and rewrite
       const FINAL_BOOKING_DETAILS: FINAL_BOOKING_INFO = {
         checkin_date: bookingDetails.checkin_date,
         checkout_date: bookingDetails.checkout_date,
@@ -103,9 +101,13 @@ const CheckoutConfirmation = ({
         },
         transaction_info: {
           dateCreated: Date.toString(),
-          transactionId: transactionId,
+          bookingId: bookingId,
+          stripePaymentId: "", // Will be updated in payment page
         },
       };
+
+      // Update the DB:
+      // Add new reservation with the following informatiom above FINAL_BOOKING_DETAILS
     }
 
     setLoading(false);
