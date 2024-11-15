@@ -9,18 +9,19 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CheckoutInfo from "@/components/checkout/CheckoutInfo";
 import { calculateNumDays } from "@/lib/DateFunctions";
+import Image from "next/image";
 
 export type BookingDetailsType = {
-  checkin_date: string,
-  checkout_date: string,
-  adults_number: string,
-  numDays: string,
-  locale?: string,
-  domain?: string,
-  region_id: string
-  hotel_id: string,
-  hotel_room_id: string,
-}
+  checkin_date: string;
+  checkout_date: string;
+  adults_number: string;
+  numDays: string;
+  locale?: string;
+  domain?: string;
+  region_id: string;
+  hotel_id: string;
+  hotel_room_id: string;
+};
 
 const HotelRoomIDPage: React.FC = () => {
   const { hotelId: hotelIdSlug, roomId: roomIdSlug } = useParams();
@@ -34,7 +35,7 @@ const HotelRoomIDPage: React.FC = () => {
 
   useEffect(() => {
     handleFindValidHotelRoom();
-  }, []);
+  });
 
   const handleFindValidHotelRoom = async () => {
     setLoading(true);
@@ -124,10 +125,12 @@ const HotelRoomIDPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               {hotelRoomData.galleryImages.map((image) => (
                 <div key={image.index} className="flex flex-col items-center">
-                  <img
+                  <Image
                     src={image.url}
                     alt={image.alt}
                     className="w-full h-48 object-cover rounded-lg shadow-md"
+                    width={500}
+                    height={500}
                   />
                   <p className="text-sm text-gray-500 mt-2 text-center">
                     {image.description}

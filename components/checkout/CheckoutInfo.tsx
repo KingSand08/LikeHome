@@ -1,6 +1,9 @@
 "use client";
 
-import { APIHotelRoomOffersJSONFormatted, HotelRoomOffer } from "@/app/api/hotels/search/rooms/route";
+import {
+  APIHotelRoomOffersJSONFormatted,
+  HotelRoomOffer,
+} from "@/app/api/hotels/search/rooms/route";
 import { BookingDetailsType } from "@/app/hotels/[hotelId]/[roomId]/page";
 import CheckoutConfirmation from "@/components/checkout/CheckoutConfirmation";
 import convertToSubcurrency from "@/lib/convertPrice";
@@ -148,7 +151,12 @@ export default function CheckoutInfo({
           currency: currencyCode.toLowerCase(),
         }}
       >
-        <CheckoutConfirmation totalAmount={totalAmount} hotelRoomOffer={hotelRoomOffer} bookingDetails={bookingDetails} paymentInfo={userInfo}  />
+        <CheckoutConfirmation
+          totalAmount={totalAmount}
+          hotelRoomOffer={hotelRoomOffer}
+          bookingDetails={bookingDetails}
+          paymentInfo={userInfo}
+        />
       </Elements>
     </div>
   );

@@ -6,7 +6,7 @@ import { APIHotelDetailsJSONFormatted } from "@/app/api/hotels/details/route";
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import {
   HOTEL_DETAILS_API_URL,
-  HOTEL_ROOM_OFFERS_API_URL
+  HOTEL_ROOM_OFFERS_API_URL,
 } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { APIHotelRoomOffersJSONFormatted } from "@/app/api/hotels/search/rooms/route";
 import {
@@ -29,7 +29,7 @@ const HotelIDPage: React.FC = () => {
 
   useEffect(() => {
     findValidHotelDetails();
-  }, []);
+  });
 
   const findValidHotelDetails = async () => {
     setLoading(true);
