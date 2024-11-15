@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import { auth } from "../../auth";
+import { auth, signOut } from "../../auth";
 import Link from "next/link";
 
 export default async function Header() {
@@ -52,28 +52,47 @@ export default async function Header() {
             {!loginStatus ? (
               <>
                 <Link
-                  className="btn px-4 py-2 btn-secondary text-secondary-content rounded"
+                  className="btn w-fit px-4 py-2 btn-primary text-secondary-content rounded"
                   href="/signin"
                 >
                   {" "}
                   {/* Sign In Button */}
                   SIGN IN
                 </Link>
-                <button className="btn px-4 py-2 btn-primary text-primary-content rounded ">
+                <button
+                  className="btn w-fit px-4 py-2 btn-secondary text-secondary-content rounded"
+                >
                   {" "}
                   {/* Register Button */}
                   REGISTER
                 </button>
               </>
             ) : (
-              <Link
-                className="btn px-4 py-2 btn-primary text-primary-content rounded"
-                href="/profile"
-              >
-                {" "}
-                {/* Register Button */}
-                Profile
-              </Link>
+              <>
+                <Link
+                  className="btn w-fit px-4 py-2 btn-primary text-secondary-content rounded"
+                  href="/profile"
+                >
+                  {" "}
+                  {/* Register Button */}
+                  Profile
+                </Link>
+                <form
+                  action={async () => {
+                    "use server"
+                    await signOut()
+                  }}
+                  className="w-full"
+                >
+                  <button
+                    type="submit"
+                    className="btn w-fit px-4 py-2 btn-secondary text-secondary-content rounded"
+                  >
+                    {/* Sign In Button */}
+                    SIGN OUT
+                  </button>
+                </form>
+              </>
             )}
             {/* sign in & registe4r */}
 

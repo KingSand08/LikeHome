@@ -27,26 +27,16 @@ export default async function SignInPage() {
             <div className="mt-14">
               <OAuthButton />
               {/* Section divider input field */}
-              <div>
-                <p className="mt-4 mb-4 text-center text-lg">or</p>
-              </div>
-              {/* Email input field */}
-              <div className="pb-4 flex flex-col items-center">
-                <input
-                  className="text-base-100 p-2 border-2 border-gray-600 rounded-md w-full focus:border-purple-600 focus:ring-purple-500 focus:outline-none"
-                  type="email"
-                  name="email"
-                  placeholder="Enter your email"
-                />
-              </div>
             </div>
           </div>
-          <div className="relative flex-1">
+          <div className="relative flex-1 flex justify-center items-center">
             <Image
               alt="likehome image"
-              src="/stellarHorizons.png"
-              fill
-              className="object-cover rounded-lg"
+              src="/likehome_form_icon.png"
+              layout="fill" // Make it fill the container
+              objectFit="contain" // Ensures the image maintains aspect ratio and fits within the container
+              quality={100}
+              className="rounded-lg" // Ensure the image is 100% height and auto-adjusts width
             />
           </div>
         </div>
