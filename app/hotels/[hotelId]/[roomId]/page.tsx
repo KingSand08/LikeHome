@@ -35,7 +35,7 @@ const HotelRoomIDPage: React.FC = () => {
 
   useEffect(() => {
     handleFindValidHotelRoom();
-  });
+  }, [hotelIdSlug, roomIdSlug, searchParams]);
 
   const handleFindValidHotelRoom = async () => {
     setLoading(true);
@@ -53,7 +53,7 @@ const HotelRoomIDPage: React.FC = () => {
         `${HOTEL_ROOM_OFFERS_API_URL}?${urlParams.toString()}`
       );
       if (!response.ok) {
-        setError(true);
+        throw new Error("Failed to retrieve hotel room offers");
       } else {
         const HOTEL_ROOM_DATA: APIHotelRoomOffersJSONFormatted =
           await response.json();

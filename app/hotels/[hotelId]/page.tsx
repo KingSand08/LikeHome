@@ -29,7 +29,7 @@ const HotelIDPage: React.FC = () => {
 
   useEffect(() => {
     findValidHotelDetails();
-  });
+  }, [hotelIdSlug, searchParams]);
 
   const findValidHotelDetails = async () => {
     setLoading(true);
@@ -47,17 +47,19 @@ const HotelIDPage: React.FC = () => {
         `${HOTEL_DETAILS_API_URL}?${urlParams.toString()}`
       );
       if (!response.ok) {
-        setError(true);
-      } else {
-        const HOTEL_DETAILS_DATA: APIHotelDetailsJSONFormatted =
-          await response.json();
-        setHotelData({
-          hotelDetails: HOTEL_DETAILS_DATA,
-          hotelRooms: null,
-        });
-        await handleFindValidHotelRoom(); // Call room API only if hotel details are successfully fetched
+        throw new Error(
+          `Failed to retrieve hotel details. ${response.statusText} ${response.status}`
+        );
       }
+      const HOTEL_DETAILS_DATA: APIHotelDetailsJSONFormatted =
+        await response.json();
+      setHotelData({
+        hotelDetails: HOTEL_DETAILS_DATA,
+        hotelRooms: null,
+      });
+      await handleFindValidHotelRoom(); // Call room API only if hotel details are successfully fetched
     } catch (error) {
+      alert(error);
       setError(true);
     } finally {
       setLoading(false); // Ensure loading is set to false after fetch completion
@@ -77,15 +79,14 @@ const HotelIDPage: React.FC = () => {
         `${HOTEL_ROOM_OFFERS_API_URL}?${urlParams.toString()}`
       );
       if (!response.ok) {
-        setError(true);
-      } else {
-        const HOTEL_ROOM_DATA: APIHotelRoomOffersJSONFormatted =
-          await response.json();
-        setHotelData((prev) => ({
-          hotelDetails: prev?.hotelDetails!,
-          hotelRooms: HOTEL_ROOM_DATA,
-        }));
+        throw new Error("Failed to retrieve hotel room offers");
       }
+      const HOTEL_ROOM_DATA: APIHotelRoomOffersJSONFormatted =
+        await response.json();
+      setHotelData((prev) => ({
+        hotelDetails: prev?.hotelDetails!,
+        hotelRooms: HOTEL_ROOM_DATA,
+      }));
     } catch (error) {
       setError(true);
     }

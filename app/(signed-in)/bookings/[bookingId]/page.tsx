@@ -1,11 +1,16 @@
 "use client";
 import { useParams, useSearchParams } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 
 const Page = () => {
   const { bookingId: bookingIdSlug } = useParams();
   const searchParams = useSearchParams();
   const isBookingSuccessful = searchParams.get("success") === "true";
+
+  useEffect(() => {
+    // Retrieve booking information from DB.
+    // Call hoteldetails and hotelroom API for hotel information.
+  }, [searchParams, searchParams]);
 
   return (
     <div>
