@@ -2,6 +2,7 @@ import Image from "next/image";
 import React from "react";
 import { auth, signOut } from "../../auth";
 import Link from "next/link";
+import SignOutButton from "../auth/SignOutButton";
 
 export default async function Header() {
   const session = await auth();
@@ -59,13 +60,6 @@ export default async function Header() {
                   {/* Sign In Button */}
                   SIGN IN
                 </Link>
-                <button
-                  className="btn w-fit px-4 py-2 btn-secondary text-secondary-content rounded"
-                >
-                  {" "}
-                  {/* Register Button */}
-                  REGISTER
-                </button>
               </>
             ) : (
               <>
@@ -73,25 +67,9 @@ export default async function Header() {
                   className="btn w-fit px-4 py-2 btn-primary text-secondary-content rounded"
                   href="/profile"
                 >
-                  {" "}
-                  {/* Register Button */}
                   Profile
                 </Link>
-                <form
-                  action={async () => {
-                    "use server"
-                    await signOut()
-                  }}
-                  className="w-full"
-                >
-                  <button
-                    type="submit"
-                    className="btn w-fit px-4 py-2 btn-secondary text-secondary-content rounded"
-                  >
-                    {/* Sign In Button */}
-                    SIGN OUT
-                  </button>
-                </form>
+                <SignOutButton />
               </>
             )}
             {/* sign in & registe4r */}
