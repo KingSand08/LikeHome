@@ -47,7 +47,8 @@ export default function CheckoutInfo({
   });
 
   // Calculate total amount
-  const totalAmount = pricePerDay * numberOfDays;
+  const totalAmount = pricePerDay * numberOfDays + (pricePerDay * numberOfDays * 0.1);
+  const roundedTotalAmount = parseFloat(totalAmount.toFixed(2));
 
   // Handle input change for user information fields
   const handleUserInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +76,7 @@ export default function CheckoutInfo({
           <span className="font-bold">
             {" "}
             {currencySymbol}
-            {totalAmount}{" "}
+            {roundedTotalAmount}{" "}
           </span>
         </h2>
       </div>
@@ -147,12 +148,12 @@ export default function CheckoutInfo({
         stripe={stripePromise}
         options={{
           mode: "payment",
-          amount: convertToSubcurrency(totalAmount),
+          amount: convertToSubcurrency(roundedTotalAmount),
           currency: currencyCode.toLowerCase(),
         }}
       >
         <CheckoutConfirmation
-          totalAmount={totalAmount}
+          totalAmount={roundedTotalAmount}
           hotelRoomOffer={hotelRoomOffer}
           bookingDetails={bookingDetails}
           paymentInfo={userInfo}
