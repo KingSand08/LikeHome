@@ -8,7 +8,7 @@ const Footer = () => {
           {/* logo */}
           <div className="flex items-center gap-5 justify-center xl:w-max">
             <Image
-              src="/stellarHorizons.png"
+              src="/icons/app/stellarHorizons.png"
               alt="Stellar Horizons Logo"
               width={55}
               height={20}
