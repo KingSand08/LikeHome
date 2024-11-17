@@ -7,12 +7,13 @@ export default async function Header() {
   const session = await auth();
   console.log("Session:", session);
 
-  const user = !session?.user;
+  const user = session?.user;
 
-  var loginStatus = false;
-
-  if (!user) {
-    loginStatus = true;
+  let displayName = user?.name || "";
+  const nameParts = displayName.split(" ");
+  if (nameParts.length === 2) {
+    const [lastName, firstName] = nameParts;
+    displayName = `${firstName} ${lastName}`;
   }
 
   return (
@@ -31,8 +32,7 @@ export default async function Header() {
               />
               <span className="ml-2 text-lg font-bold text-base-content">
                 LikeHome
-              </span>{" "}
-              {/* Text displayed next to image */}
+              </span>
             </div>
           </Link>
           <div className="flex items-center gap-8 ">
@@ -43,41 +43,45 @@ export default async function Header() {
               className="input input-primary text-neutral w-full max-w-xs"
             />
             <Link className="flex items-center gap-8" href="/about">
-              {" "}
-              {/* Flex container for navigation items */}
               <div className="text-base-content hover:text-accent cursor-pointer">
                 About
               </div>
             </Link>
-            {!loginStatus ? (
+            {!user ? (
               <>
                 <Link
                   className="btn px-4 py-2 btn-secondary text-secondary-content rounded"
                   href="/signin"
                 >
-                  {" "}
-                  {/* Sign In Button */}
                   SIGN IN
                 </Link>
                 <button className="btn px-4 py-2 btn-primary text-primary-content rounded ">
-                  {" "}
-                  {/* Register Button */}
                   REGISTER
                 </button>
               </>
             ) : (
-              <Link
-                className="btn px-4 py-2 btn-primary text-primary-content rounded"
-                href="/profile"
-              >
-                {" "}
-                {/* Register Button */}
-                Profile
-              </Link>
+              <>
+                {/* Avatar as Profile Button */}
+                <Link href="/profile">
+                  <div className="flex flex-col items-center gap-2 cursor-pointer">
+                    {/* Avatar */}
+                    {user?.image && (
+                      <Image
+                        src={user.image}
+                        alt="User Avatar"
+                        width={40}
+                        height={40}
+                        className="rounded-full"
+                      />
+                    )}
+                    {/* Username below the avatar */}
+                    <span className="text-sm font-semibold text-base-content text-center whitespace-nowrap">
+                      {displayName}
+                    </span>
+                  </div>
+                </Link>
+              </>
             )}
-            {/* sign in & registe4r */}
-
-            {/* <ThemeSwitch /> */}
           </div>
         </div>
       </div>
