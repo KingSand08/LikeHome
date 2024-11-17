@@ -22,7 +22,7 @@ const HotelSearchDisplay: React.FC<HotelSearchDisplayProps> = ({
       <h3 className="text-lg font-semibold mb-2 text-black">Hotel Search Inputs</h3>
       <ul className="list-disc list-inside text-black">
         <li>
-          <strong>Accessibility Optiosns:</strong>{" "}
+          <strong>Accessibility Options:</strong>{" "}
           {hotelSearchInputs.accessibilityOptions.join(", ") || "N/A"}
         </li>
         <li>

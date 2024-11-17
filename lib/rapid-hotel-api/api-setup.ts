@@ -34,19 +34,30 @@ export type validateSearchParamsOutput = {
   error?: string | null;
 };
 
-// Final Booking Detail Structure
-export type FINAL_BOOKING_DETAILS = {
+// Payment System and Reservations/Bookings
+export type FINAL_PAYMENT_INFO = {
+  firstName: string;
+  lastName: string;
+  billingAddress: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  email: string;
+};
+export type FINAL_STRIPE_TRANSACTION_INFO = {
+  dateCreated: string;
+  stripePaymentId: string;
+};
+
+export type FINAL_BOOKING_INFO = {
   account_id: string;
-  date_created: string;
+  bookingId: string;
   checkin_date: string;
   checkout_date: string;
   adults_number: string;
   numDays: string;
-  locale: string; 
-  domain: string;
-  region_id: string;
   hotel_id: string;
-  hotel_room_id: string;
-  // price: number;
-  // currency_code: string;
+  room_id: string;
+  payment_info: FINAL_PAYMENT_INFO;
+  transaction_info: FINAL_STRIPE_TRANSACTION_INFO;
 };

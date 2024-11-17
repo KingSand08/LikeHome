@@ -54,11 +54,8 @@ export async function GET(req: NextRequest) {
     const response = await fetch(endpoint!, API_OPTIONS);
 
     if (!response.ok) {
-      return NextResponse.json(
-        {
-          error: `Failed to fetch data from API: ${response.statusText} & Status code: ${response.status} & Endpoint: ${endpoint}`,
-        },
-        { status: response.status, statusText: response.statusText }
+      throw new Error(
+        `Failed to fetch data from API: ${response.statusText} & Status code: ${response.status} & Endpoint: ${endpoint}`
       );
     }
 
@@ -92,7 +89,7 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       {
-        error: `An error occurred while fetching data | query: ${query} | endpoint: ${endpoint}`,
+        error: `An error occurred while fetching data | query: ${query} | endpoint: ${endpoint} | Custom error message: ${error}`,
       },
       { status: 500 }
     );

@@ -6,7 +6,7 @@ import { APIHotelDetailsJSONFormatted } from "@/app/api/hotels/details/route";
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import {
   HOTEL_DETAILS_API_URL,
-  HOTEL_ROOM_OFFERS_API_URL
+  HOTEL_ROOM_OFFERS_API_URL,
 } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { APIHotelRoomOffersJSONFormatted } from "@/app/api/hotels/search/rooms/route";
 import {
@@ -28,27 +28,26 @@ const HotelIDPage: React.FC = () => {
   const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
-    findValidHotelDetails();
-  }, []);
+    const findValidHotelDetails = async () => {
+      setLoading(true);
+      setHotelData(null);
 
-  const findValidHotelDetails = async () => {
-    setLoading(true);
-    setHotelData(null);
+      const hotelDetailsJSON = {
+        domain: searchParams.get("domain") || DEFAULT_DOMAIN,
+        locale: searchParams.get("locale") || DEFAULT_LOCALE,
+        hotel_id: hotelIdSlug,
+      };
+      const urlParams = JSONToURLSearchParams(hotelDetailsJSON);
 
-    const hotelDetailsJSON = {
-      domain: searchParams.get("domain") || DEFAULT_DOMAIN,
-      locale: searchParams.get("locale") || DEFAULT_LOCALE,
-      hotel_id: hotelIdSlug,
-    };
-    const urlParams = JSONToURLSearchParams(hotelDetailsJSON);
-
-    try {
-      const response = await fetch(
-        `${HOTEL_DETAILS_API_URL}?${urlParams.toString()}`
-      );
-      if (!response.ok) {
-        setError(true);
-      } else {
+      try {
+        const response = await fetch(
+          `${HOTEL_DETAILS_API_URL}?${urlParams.toString()}`
+        );
+        if (!response.ok) {
+          throw new Error(
+            `Failed to retrieve hotel details. ${response.statusText} ${response.status}`
+          );
+        }
         const HOTEL_DETAILS_DATA: APIHotelDetailsJSONFormatted =
           await response.json();
         setHotelData({
@@ -56,40 +55,42 @@ const HotelIDPage: React.FC = () => {
           hotelRooms: null,
         });
         await handleFindValidHotelRoom(); // Call room API only if hotel details are successfully fetched
-      }
-    } catch (error) {
-      setError(true);
-    } finally {
-      setLoading(false); // Ensure loading is set to false after fetch completion
-    }
-  };
-
-  const handleFindValidHotelRoom = async () => {
-    const queryParams = Object.fromEntries(searchParams.entries());
-    const hotelRoomJSON = {
-      ...queryParams,
-      hotel_id: hotelIdSlug,
-    };
-    const urlParams = JSONToURLSearchParams(hotelRoomJSON);
-
-    try {
-      const response = await fetch(
-        `${HOTEL_ROOM_OFFERS_API_URL}?${urlParams.toString()}`
-      );
-      if (!response.ok) {
+      } catch (error) {
+        alert(error);
         setError(true);
-      } else {
+      } finally {
+        setLoading(false); // Ensure loading is set to false after fetch completion
+      }
+    };
+
+    const handleFindValidHotelRoom = async () => {
+      const queryParams = Object.fromEntries(searchParams.entries());
+      const hotelRoomJSON = {
+        ...queryParams,
+        hotel_id: hotelIdSlug,
+      };
+      const urlParams = JSONToURLSearchParams(hotelRoomJSON);
+
+      try {
+        const response = await fetch(
+          `${HOTEL_ROOM_OFFERS_API_URL}?${urlParams.toString()}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to retrieve hotel room offers");
+        }
         const HOTEL_ROOM_DATA: APIHotelRoomOffersJSONFormatted =
           await response.json();
         setHotelData((prev) => ({
           hotelDetails: prev?.hotelDetails!,
           hotelRooms: HOTEL_ROOM_DATA,
         }));
+      } catch (error) {
+        setError(true);
       }
-    } catch (error) {
-      setError(true);
-    }
-  };
+    };
+
+    findValidHotelDetails();
+  }, [hotelIdSlug, searchParams]);
 
   if (loading) {
     return <p>Loading...</p>;

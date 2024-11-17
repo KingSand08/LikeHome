@@ -1,4 +1,4 @@
-import { searchParamsType } from "@/app/(test)/searchtest/page";
+import { searchParamsType } from "@/app/page";
 import RegionSearchDisplay from "./RegionSearchDisplay";
 import BookingInfoDisplay from "./BookingInfoDisplay";
 import HotelSearchDisplay from "./HotelSearchDisplay";

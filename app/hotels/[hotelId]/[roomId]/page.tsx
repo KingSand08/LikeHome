@@ -3,11 +3,25 @@ import {
   APIHotelRoomOffersJSONFormatted,
   HotelRoomOffer,
 } from "@/app/api/hotels/search/rooms/route";
-import { FINAL_BOOKING_DETAILS } from "@/lib/rapid-hotel-api/api-setup";
 import { HOTEL_ROOM_OFFERS_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import CheckoutInfo from "@/components/checkout/CheckoutInfo";
+import { calculateNumDays } from "@/lib/DateFunctions";
+import Image from "next/image";
+
+export type BookingDetailsType = {
+  checkin_date: string;
+  checkout_date: string;
+  adults_number: string;
+  numDays: string;
+  locale?: string;
+  domain?: string;
+  region_id: string;
+  hotel_id: string;
+  hotel_room_id: string;
+};
 
 const HotelRoomIDPage: React.FC = () => {
   const { hotelId: hotelIdSlug, roomId: roomIdSlug } = useParams();
@@ -20,52 +34,52 @@ const HotelRoomIDPage: React.FC = () => {
   const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
-    handleFindValidHotelRoom();
-  }, []);
+    const handleFindValidHotelRoom = async () => {
+      setLoading(true);
+      setError(false);
 
-  const handleFindValidHotelRoom = async () => {
-    setLoading(true);
-    setError(false);
+      const queryParams = Object.fromEntries(searchParams.entries());
+      const hotelRoomJSON = {
+        ...queryParams,
+        hotel_id: hotelIdSlug,
+      };
+      const urlParams = JSONToURLSearchParams(hotelRoomJSON);
 
-    const queryParams = Object.fromEntries(searchParams.entries());
-    const hotelRoomJSON = {
-      ...queryParams,
-      hotel_id: hotelIdSlug,
-    };
-    const urlParams = JSONToURLSearchParams(hotelRoomJSON);
-
-    try {
-      const response = await fetch(
-        `${HOTEL_ROOM_OFFERS_API_URL}?${urlParams.toString()}`
-      );
-      if (!response.ok) {
-        setError(true);
-      } else {
-        const HOTEL_ROOM_DATA: APIHotelRoomOffersJSONFormatted =
-          await response.json();
-        const room = HOTEL_ROOM_DATA.hotelRoomOffers.find(
-          (offer) => offer.hotel_room_id === roomIdSlug
+      try {
+        const response = await fetch(
+          `${HOTEL_ROOM_OFFERS_API_URL}?${urlParams.toString()}`
         );
-        setHotelRoomData(room || null);
+        if (!response.ok) {
+          throw new Error("Failed to retrieve hotel room offers");
+        } else {
+          const HOTEL_ROOM_DATA: APIHotelRoomOffersJSONFormatted =
+            await response.json();
+          const room = HOTEL_ROOM_DATA.hotelRoomOffers.find(
+            (offer) => offer.hotel_room_id === roomIdSlug
+          );
+          setHotelRoomData(room || null);
+        }
+      } catch (error) {
+        setError(true);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    handleFindValidHotelRoom();
+  }, [hotelIdSlug, roomIdSlug, searchParams]);
 
   // Collect searchParams into an object for display
-  const bookingDetails = {
-    checkin_date: searchParams.get("checkin_date"),
-    checkout_date: searchParams.get("checkout_date"),
-    adults_number: searchParams.get("adults_number"),
-    numDays: searchParams.get("numDays"),
-    locale: searchParams.get("locale"),
-    domain: searchParams.get("domain"),
-    region_id: searchParams.get("region_id"),
-    hotel_id: hotelIdSlug,
-    hotel_room_id: roomIdSlug,
+  const bookingDetails: BookingDetailsType = {
+    checkin_date: searchParams.get("checkin_date")!,
+    checkout_date: searchParams.get("checkout_date")!,
+    adults_number: searchParams.get("adults_number")!,
+    numDays: searchParams.get("numDays")!,
+    locale: searchParams.get("locale")!,
+    domain: searchParams.get("domain")!,
+    region_id: searchParams.get("region_id")!,
+    hotel_id: hotelIdSlug[0],
+    hotel_room_id: roomIdSlug[0],
   };
 
   return (
@@ -111,10 +125,12 @@ const HotelRoomIDPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               {hotelRoomData.galleryImages.map((image) => (
                 <div key={image.index} className="flex flex-col items-center">
-                  <img
+                  <Image
                     src={image.url}
                     alt={image.alt}
                     className="w-full h-48 object-cover rounded-lg shadow-md"
+                    width={500}
+                    height={500}
                   />
                   <p className="text-sm text-gray-500 mt-2 text-center">
                     {image.description}
@@ -128,10 +144,10 @@ const HotelRoomIDPage: React.FC = () => {
         )}
       </div>
 
-      {/* Booking Details Section */}
+      {/* Booking Details about the Hotel Section */}
       <div className="mt-8 p-6 bg-white rounded-lg shadow-lg">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
-          Booking Details
+          Booking Details (about hotel)
         </h2>
         <ul className="space-y-3 text-center">
           {Object.entries(bookingDetails).map(([key, value]) => (
@@ -141,14 +157,28 @@ const HotelRoomIDPage: React.FC = () => {
             </li>
           ))}
         </ul>
-        <button
-          className="mt-8 w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-          aria-label="Reserve now to hold this room!"
-          onClick={() => alert("Redirect to payment page")}
-        >
-          Reserve now to hold this room!
-        </button>
       </div>
+
+      {/* Booking Info and Checkout Section */}
+      {hotelRoomData && bookingDetails ? (
+        <CheckoutInfo
+          pricePerDay={hotelRoomData.pricePerNight.amount}
+          numberOfDays={calculateNumDays(
+            bookingDetails.checkin_date!,
+            bookingDetails.checkout_date!
+          )}
+          currencySymbol={hotelRoomData.pricePerNight.currency.symbol}
+          currencyCode={hotelRoomData.pricePerNight.currency.code}
+          hotelRoomOffer={hotelRoomData}
+          bookingDetails={bookingDetails}
+        />
+      ) : loading ? (
+        <h1 className="text-red-500 font-bold">Loading payment details...</h1>
+      ) : (
+        <h1 className="text-red-500 font-bold">
+          No valid hotel room data suited for booking
+        </h1>
+      )}
     </div>
   );
 };

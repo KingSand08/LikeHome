@@ -1,48 +1,67 @@
 "use client";
+import { CUSTOM_HOTEL_BOOKINGS_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-import CheckoutPage from "@/components/checkout/checkoutPage";
-import convertToSubcurrency from "@/lib/convertPrice";
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
-import { useState } from "react";
+const PaymentRedirectPage = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter(); // Use the router from next/navigation
+  const payment_intent = searchParams.get("payment_intent");
+  const payment_intent_client_secret = searchParams.get(
+    "payment_intent_client_secret"
+  );
+  const bookingId = searchParams.get("bookingId");
 
-// Need to connect the reveservation components to this page in order to get amount
-// Webiste to do that: https://www.geeksforgeeks.org/how-to-pass-data-from-one-component-to-other-component-in-reactjs/#approach-3-passing-data-between-siblings
+  useEffect(() => {
+    if (payment_intent && payment_intent_client_secret && bookingId) {
+      // Update the existing booking entry in DB. Update variable stripePaymentId with payment_intent
 
-if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
-  throw new Error("Public Key not defined");
-}
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY);
-
-export default function Home() {
-
-  // Need to change to make it dynamic for based on the reservation
-  const [pricePerDay, setPricePerDay] = useState(100);
-  const [numberOfDays, setNumberOfDays] = useState(1);
-  // Need to add tax system here
-
-  const amount = pricePerDay * numberOfDays; 
+      router.replace(
+        `${CUSTOM_HOTEL_BOOKINGS_URL.replace(
+          "{bookingId}",
+          bookingId
+        )}?success=true`
+      );
+    } else {
+      router.replace("/error");
+    }
+  }, [payment_intent, payment_intent_client_secret, bookingId, router]);
 
   return (
-    <main className="max-w-xl mx-auto p-10 text-white text-center border m-10 rounded-md bg-gradient-to-tr from-teal-500 to-purple-500">
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold mb-2">Payment</h1>
-        <h2 className="text-2xl">
-          Amount Due: 
-          <span className="font-bold"> ${amount}</span>
+    <div className="flex items-center justify-center h-screen bg-gray-100">
+      <div className="text-center">
+        <div className="mb-4">
+          {/* Loading spinner */}
+          <svg
+            className="animate-spin h-12 w-12 text-blue-600"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"
+            ></path>
+          </svg>
+        </div>
+        <h2 className="text-lg font-semibold text-gray-700">
+          Processing your payment...
         </h2>
+        <p className="text-gray-500">
+          Please do not refresh or close this page.
+        </p>
       </div>
-
-      <Elements
-        stripe={stripePromise}
-        options={{
-          mode: "payment",
-          amount: convertToSubcurrency(amount),
-          currency: "usd",
-        }}
-      >
-        <CheckoutPage amount={amount} />
-      </Elements>
-    </main>
+    </div>
   );
-}
+};
+
+export default PaymentRedirectPage;
