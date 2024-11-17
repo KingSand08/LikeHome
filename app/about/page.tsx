@@ -1,48 +1,55 @@
 import Image from "next/image";
 import React from "react";
 
+const DEFAULT_IMAGE = "/icons/app/stellarHorizons.png" as const;
+
 const team = [
   {
     name: "Mauricio Curiel",
-    image: "/stellarHorizons.png",
+    image: DEFAULT_IMAGE,
     description:
       "Project Manager overseeing development and project milestones",
   },
   {
     name: "Ahsan Ali",
-    image: "/stellarHorizons.png",
+    image: DEFAULT_IMAGE,
     description:
       "Backend Developer specializing in server-side development and testing.",
   },
   {
     name: "Ali Altimimi",
-    image: "/stellarHorizons.png",
+    image: DEFAULT_IMAGE,
     description:
       "Backend Developer focused on database architecture and optimization.",
   },
   {
     name: "Connor Linville",
-    image: "/stellarHorizons.png",
+    image: DEFAULT_IMAGE,
     description:
       "Backend Developer with expertise in deployment strategies and user authentication systems.",
   },
   {
     name: "Steven Lu",
-    image: "/stellarHorizons.png",
+    image: DEFAULT_IMAGE,
     description:
       "Frontend Developer responsible for implementing designs from Figma into a responsive UI.",
   },
   {
     name: "Raymund Mercader",
-    image: "/stellarHorizons.png",
+    image: DEFAULT_IMAGE,
     description:
       "Full Stack Developer experienced in both backend and frontend development.",
   },
   {
     name: "Minh Nguyen",
-    image: "/stellarHorizons.png",
+    image: DEFAULT_IMAGE,
     description:
       "UI/UX Designer skilled in creating intuitive user interfaces using Figma.",
+  },
+  {
+    name: "Ryan Tang",
+    image: DEFAULT_IMAGE,
+    description: "Backend Developer with expertise in payment systems.",
   },
 ];
 

@@ -27,7 +27,7 @@ export default async function Header() {
             <div className="flex items-center gap-5 justify-center xl:w-max">
               {/* Replace with product logo later */}
               <Image
-                src="/stellarHorizons.png"
+                src="/icons/app/stellarHorizons.png"
                 alt="LikeHome Logo"
                 width={55}
                 height={20}

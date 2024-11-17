@@ -62,7 +62,7 @@ const SigninPage = (props: Props) => {
                 <div className="relative flex items-center justify-end ml-auto">
                     <Image
                         alt="likehome image"
-                        src="/icons/likehome_form_icon.png"
+                        src="/icons/app/likehome_form_icon.png"
                         width={1000}
                         height={1000}
                         quality={100}
