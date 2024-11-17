@@ -34,40 +34,40 @@ const HotelRoomIDPage: React.FC = () => {
   const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
+    const handleFindValidHotelRoom = async () => {
+      setLoading(true);
+      setError(false);
+
+      const queryParams = Object.fromEntries(searchParams.entries());
+      const hotelRoomJSON = {
+        ...queryParams,
+        hotel_id: hotelIdSlug,
+      };
+      const urlParams = JSONToURLSearchParams(hotelRoomJSON);
+
+      try {
+        const response = await fetch(
+          `${HOTEL_ROOM_OFFERS_API_URL}?${urlParams.toString()}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to retrieve hotel room offers");
+        } else {
+          const HOTEL_ROOM_DATA: APIHotelRoomOffersJSONFormatted =
+            await response.json();
+          const room = HOTEL_ROOM_DATA.hotelRoomOffers.find(
+            (offer) => offer.hotel_room_id === roomIdSlug
+          );
+          setHotelRoomData(room || null);
+        }
+      } catch (error) {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     handleFindValidHotelRoom();
   }, [hotelIdSlug, roomIdSlug, searchParams]);
-
-  const handleFindValidHotelRoom = async () => {
-    setLoading(true);
-    setError(false);
-
-    const queryParams = Object.fromEntries(searchParams.entries());
-    const hotelRoomJSON = {
-      ...queryParams,
-      hotel_id: hotelIdSlug,
-    };
-    const urlParams = JSONToURLSearchParams(hotelRoomJSON);
-
-    try {
-      const response = await fetch(
-        `${HOTEL_ROOM_OFFERS_API_URL}?${urlParams.toString()}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to retrieve hotel room offers");
-      } else {
-        const HOTEL_ROOM_DATA: APIHotelRoomOffersJSONFormatted =
-          await response.json();
-        const room = HOTEL_ROOM_DATA.hotelRoomOffers.find(
-          (offer) => offer.hotel_room_id === roomIdSlug
-        );
-        setHotelRoomData(room || null);
-      }
-    } catch (error) {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Collect searchParams into an object for display
   const bookingDetails: BookingDetailsType = {

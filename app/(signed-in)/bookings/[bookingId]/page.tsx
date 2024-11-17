@@ -10,7 +10,7 @@ const Page = () => {
   useEffect(() => {
     // Retrieve booking information from DB.
     // Call hoteldetails and hotelroom API for hotel information.
-  }, [searchParams, searchParams]);
+  }, [bookingIdSlug, searchParams]);
 
   return (
     <div>

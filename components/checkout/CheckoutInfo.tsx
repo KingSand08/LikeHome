@@ -72,7 +72,7 @@ export default function CheckoutInfo({
           </span>
         </h2>
         <h2 className="text-2xl">
-          Total Amount Due:
+          Total Amount due with 10% tax included:
           <span className="font-bold">
             {" "}
             {currencySymbol}
