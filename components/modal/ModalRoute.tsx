@@ -10,11 +10,11 @@ type ModalProps = {
     show?: boolean;
 };
 
-const Modal: React.FC<ModalProps> = ({ children, onClose, callbackUrl = "/", show = true }) => {
+const ModalRoute: React.FC<ModalProps> = ({ children, onClose, callbackUrl = "/", show = true }) => {
     const router = useRouter();
 
     const handleClose = useCallback(() => {
-        const modal = document.getElementById("custom_modal") as HTMLDialogElement;
+        const modal = document.getElementById("modal") as HTMLDialogElement;
         if (modal) modal.close();
 
         if (onClose) {
@@ -29,7 +29,7 @@ const Modal: React.FC<ModalProps> = ({ children, onClose, callbackUrl = "/", sho
     }, [onClose, router, callbackUrl]);
 
     useEffect(() => {
-        const modal = document.getElementById("custom_modal") as HTMLDialogElement;
+        const modal = document.getElementById("modal") as HTMLDialogElement;
         if (modal && show) {
             modal.showModal();
         }
@@ -50,20 +50,22 @@ const Modal: React.FC<ModalProps> = ({ children, onClose, callbackUrl = "/", sho
     }, [handleClose]);
 
     return (
-        <dialog id="custom_modal" className="modal">
-            <div className="modal-box relative">
+        <dialog id="modal" className="modal">
+            <div className="modal-box relative max-w-5xl">
                 {/* Close button */}
                 <button
-                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                    className="bg-black hover:bg-gray-700 btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                     onClick={handleClose}
                 >
                     ✕
                 </button>
-                {/* Render children content inside the modal */}
-                {children}
+                <div className="mt-8">
+                    {/* Render children content inside the modal */}
+                    {children}
+                </div>
             </div>
-        </dialog>
+        </dialog >
     );
 };
 
-export default Modal;
+export default ModalRoute;

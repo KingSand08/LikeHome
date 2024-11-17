@@ -3,6 +3,7 @@ import { signIn } from 'next-auth/react';
 import React, { useRef } from 'react';
 import OAuthButton from './OAuthButton';
 import Image from 'next/image';
+import CancelButton from '../buttons/CancelButton';
 
 type Props = {
     className?: string;
@@ -10,7 +11,7 @@ type Props = {
     error?: string;
 };
 
-const Signin = (props: Props) => {
+const SigninPage = (props: Props) => {
     console.log(props.callbackUrl);
 
     const email = useRef("");
@@ -21,16 +22,16 @@ const Signin = (props: Props) => {
             email: email.current,
             password: password.current,
             redirect: true,
-            callbackUrl: props.callbackUrl ?? "http://localhost:300"
+            callbackUrl: props.callbackUrl ?? "http://localhost:3001"
         });
     };
 
     return (
-        <div className={`h-[75vh] flex items-center justify-center`}>
+        <div className="flex items-center justify-center">
             {/* Wrapper */}
-            <div className={`${props.className} flex bg-white rounded-lg shadow-lg w-3/4`}>
+            <div className="flex bg-white rounded-lg shadow-lg">
                 {/* Left Section */}
-                <div className="flex-1 p-10 text-gray-800">
+                <div className="flex-1 p-10 text-gray-800 w-[40em]">
                     <h1 className="text-3xl pb-4">Let&apos;s get started!</h1>
                     <p className="text-lg text-gray-700">
                         Welcome to LikeHome! Sign in with Google or provide your email to get
@@ -39,7 +40,8 @@ const Signin = (props: Props) => {
                     </p>
                     {/* OAuth Buttons */}
                     <div className="mt-14 flex flex-col items-center gap-4">
-                        <OAuthButton callbackUrl={props.callbackUrl} />
+                        <OAuthButton callbackUrl={props.callbackUrl} provider="google" />
+                        <OAuthButton callbackUrl={props.callbackUrl} provider="discord" />
                     </div>
                     {/* Error Message */}
                     {!!props.error && (
@@ -49,17 +51,22 @@ const Signin = (props: Props) => {
                             </p>
                         </div>
                     )}
+                    {/* Form User Choice Section */}
+                    <div className="mt-8 flex flex-col items-center gap-4">
+                        <CancelButton props={{
+                            callbackUrl: props.callbackUrl ?? "/"
+                        }} />
+                    </div>
                 </div>
-
-                {/* Right Section - Image */}
-                <div className="relative flex items-center justify-end w-1/2">
+                {/* Right (Image) Section */}
+                <div className="relative flex items-center justify-end ml-auto">
                     <Image
                         alt="likehome image"
-                        src="/likehome_form_icon.png"
-                        layout="fill" // Ensures the image fills the container
-                        objectFit="contain" // Maintains aspect ratio
+                        src="/icons/likehome_form_icon.png"
+                        width={1000}
+                        height={1000}
                         quality={100}
-                        className="rounded-lg" // Adds rounded corners
+                        className="rounded-lg w-[30em]"
                     />
                 </div>
             </div>
@@ -67,4 +74,4 @@ const Signin = (props: Props) => {
     );
 };
 
-export default Signin;
+export default SigninPage;

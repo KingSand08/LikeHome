@@ -3,6 +3,8 @@ import React from "react";
 import { auth, signOut } from "../../auth";
 import Link from "next/link";
 import SignOutButton from "../auth/SignOutButton";
+import SigninButton from "../auth/SigninButton";
+import Avatar from "../auth/Avatar";
 
 export default async function Header() {
   const session = await auth();
@@ -44,7 +46,6 @@ export default async function Header() {
               className="input input-primary text-neutral w-full max-w-xs"
             />
             <Link className="flex items-center gap-8" href="/about">
-              {" "}
               {/* Flex container for navigation items */}
               <div className="text-base-content hover:text-accent cursor-pointer">
                 About
@@ -52,14 +53,7 @@ export default async function Header() {
             </Link>
             {!loginStatus ? (
               <>
-                <Link
-                  className="btn w-fit px-4 py-2 btn-primary text-secondary-content rounded"
-                  href="/signin"
-                >
-                  {" "}
-                  {/* Sign In Button */}
-                  SIGN IN
-                </Link>
+                <SigninButton />
               </>
             ) : (
               <>
@@ -70,11 +64,9 @@ export default async function Header() {
                   Profile
                 </Link>
                 <SignOutButton />
+                <Avatar image={session?.user.image ?? undefined} imgSize={"12"} />
               </>
             )}
-            {/* sign in & registe4r */}
-
-            {/* <ThemeSwitch /> */}
           </div>
         </div>
       </div>
