@@ -1,114 +1,73 @@
-import { validateDateFormatAndDateRange } from "@/lib/rapid-hotel-api/validateDates";
-import { validateDomainAndLocale } from "@/lib/rapid-hotel-api/validateDomainLocale";
 import { ApiHotelRoomOffersResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotel-room-offers-doc";
-import { API_OPTIONS } from "@/types/rapid-hotels-api/api-types";
-import { HOTEL_ROOM_OFFERS_URL } from "@/types/rapid-hotels-api/hotel-room-offers-types";
 import {
-  DEFAULT_LOCALE,
-  DEFAULT_DOMAIN,
-} from "@/types/rapid-hotels-api/region-search-types";
+  API_OPTIONS,
+  buildURLSearchParams,
+  validateSearchParamsOutput,
+} from "@/lib/rapid-hotel-api/api-setup";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  API_HOTEL_ROOM_OFFERS_URL,
+  hotelRoomOffersParamsRefinedSchema,
+} from "@/lib/rapid-hotel-api/zod/hotel-room-offers-schemas";
 
-function validateSearchParams(searchParams: URLSearchParams) {
-  const requiredSearchParams = [
-    "checkin_date",
-    "checkout_date",
-    "adults_number",
-    "hotel_id",
-  ];
-  const requiredWithDefaultSearchParams = {
-    locale: searchParams.get("locale") || DEFAULT_LOCALE,
-    domain: searchParams.get("domain") || DEFAULT_DOMAIN,
-  };
-  const optionalSearchParams = ["children_ages"];
-  let errors: string[] = [];
+function validateSearchParams(
+  searchParams: URLSearchParams
+): validateSearchParamsOutput {
+  const parseResult = hotelRoomOffersParamsRefinedSchema.safeParse({
+    // Required
+    checkin_date: searchParams.get("checkin_date"),
+    checkout_date: searchParams.get("checkout_date"),
+    adults_number: searchParams.get("adults_number")
+      ? parseInt(searchParams.get("adults_number")!, 10)
+      : undefined,
+    hotel_id: searchParams.get("hotel_id"),
 
-  // Validate required searchParams and check for missing searchParams.
-  requiredSearchParams.forEach((searchParam) => {
-    if (!searchParams.has(searchParam) || !searchParams.get(searchParam)) {
-      errors.push(`Missing required searchParams: ${searchParam}`);
-    }
+    // Required with default values
+    locale: searchParams.get("locale"),
+    domain: searchParams.get("domain"),
+
+    // Optional
+    children_ages: searchParams.get("children_ages")
+      ? searchParams
+          .get("children_ages")!
+          .split(",")
+          .map((age) => parseInt(age), 10)
+      : undefined,
   });
+  if (!parseResult.success) {
+    const errorMessages = parseResult.error.errors
+      .map((err) => `searchParam: ${err.path.join(" ")} - ${err.message}`)
+      .join(" & ");
 
-  // Validate check-in and check-out date formatting/range.
-  const checkinDate = searchParams.get("checkin_date");
-  const checkoutDate = searchParams.get("checkout_date");
-  const dateErrors = validateDateFormatAndDateRange(checkinDate, checkoutDate);
-  if (dateErrors) errors = [...errors, ...dateErrors];
-
-  // Validate domain and locale
-  const domainLocaleErrors = validateDomainAndLocale(
-    requiredWithDefaultSearchParams.domain,
-    requiredWithDefaultSearchParams.locale
-  );
-  if (domainLocaleErrors) errors = [...errors, ...domainLocaleErrors];
-
-  // Check for errors in required searchParams
-  if (errors.length > 0) {
     return {
       query: searchParams.toString(),
       endpoint: null,
-      error: errors.join(" | "),
+      error: `Errors: ${errorMessages}`,
     };
   }
 
   // Create endpoint
-  const validatedSearchParams = new URLSearchParams();
-
-  Object.entries(requiredWithDefaultSearchParams).forEach(([key, value]) => {
-    if (!searchParams.has(key)) {
-      searchParams.set(key, value);
-    }
-  });
-
-  searchParams.forEach((value, key) => {
-    if (
-      requiredSearchParams.includes(key) ||
-      optionalSearchParams.includes(key) ||
-      Object.keys(requiredWithDefaultSearchParams).includes(key)
-    ) {
-      validatedSearchParams.append(key, value);
-    }
-  });
-  const endpoint = `${HOTEL_ROOM_OFFERS_URL}?${validatedSearchParams.toString()}`;
-
+  const combinedSearchParams = buildURLSearchParams(parseResult.data);
   return {
-    query: validatedSearchParams.toString(),
-    endpoint,
-    error: null,
+    query: searchParams.toString(),
+    endpoint: `${API_HOTEL_ROOM_OFFERS_URL}?${combinedSearchParams.toString()}`,
   };
 }
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  if (!searchParams.toString()) {
-    return NextResponse.json(
-      {
-        error: `Empty searchParams`,
-      },
-      {
-        status: 400,
-      }
-    );
-  }
-
   const { query, endpoint, error } = validateSearchParams(searchParams);
-  if (!endpoint || !query || error) {
+  if (error) {
     return NextResponse.json(
       {
-        error: `Invalid input given searchParam(s): ${query}. Error: ${error}`,
+        error,
       },
-      {
-        status: 400,
-      }
+      { status: 400 }
     );
   }
-
-  // For testing
-  // return NextResponse.json({ data: endpoint }, { status: 200 });
 
   try {
-    const response = await fetch(endpoint, API_OPTIONS);
+    const response = await fetch(endpoint!, API_OPTIONS);
 
     if (!response.ok) {
       return NextResponse.json(
@@ -120,26 +79,46 @@ export async function GET(req: NextRequest) {
     }
 
     const JSON_DATA: ApiHotelRoomOffersResponseJSON = await response.json();
-    const PAYLOAD: HotelRoomOffersResult = {
-      hotel_id: JSON_DATA.id,
-      soldOut: JSON_DATA.soldOut,
-      basePrice: JSON_DATA.stickyBar.displayPrice,
-      hotelRoomOffers: JSON_DATA.categorizedListings.map(
-        (categorizedListing) => ({
-          hotel_room_id: categorizedListing.unitId,
-          description:
-            categorizedListing.primarySelections[0].propertyUnit.description,
-          name: categorizedListing.header.text,
-          galleryImages:
-            categorizedListing.primarySelections[0].propertyUnit.unitGallery.gallery.map(
-              (galleryImage, index) => ({
-                description: galleryImage.image.description,
-                url: galleryImage.image.url,
-                index: index,
-              })
-            ),
-        })
-      ),
+    const PAYLOAD: APIHotelRoomOffersJSONFormatted = {
+      hotel_id: JSON_DATA.id ?? "",
+      soldOut: JSON_DATA.soldOut ?? false,
+      basePricePerNight: JSON_DATA.stickyBar?.displayPrice ?? "",
+      hotelRoomOffers:
+        JSON_DATA.categorizedListings?.map(
+          (categorizedListing): HotelRoomOffer => ({
+            hotel_id: JSON_DATA.id ?? "",
+            hotel_room_id: categorizedListing.unitId ?? "",
+            description:
+              categorizedListing.primarySelections?.[0]?.propertyUnit
+                ?.description ?? "No description available",
+            name: categorizedListing.header?.text ?? "Unnamed room",
+            galleryImages:
+              categorizedListing.primarySelections?.[0]?.propertyUnit?.unitGallery?.gallery?.map(
+                (galleryImage, index): Image => ({
+                  description:
+                    galleryImage.image?.description ?? "No description",
+                  url: galleryImage.image?.url ?? "",
+                  alt: galleryImage.image?.description ?? "",
+                  index: index,
+                })
+              ) ?? [],
+            pricePerNight: {
+              amount:
+                categorizedListing.primarySelections?.[0]?.propertyUnit
+                  ?.ratePlans?.[0]?.priceDetails?.[0].price?.lead?.amount ?? 0,
+              currency: {
+                code:
+                  categorizedListing.primarySelections?.[0]?.propertyUnit
+                    ?.ratePlans?.[0]?.priceDetails?.[0].price?.lead
+                    ?.currencyInfo?.code ?? "",
+                symbol:
+                  categorizedListing.primarySelections?.[0]?.propertyUnit
+                    ?.ratePlans?.[0]?.priceDetails?.[0].price?.lead
+                    ?.currencyInfo?.symbol ?? "",
+              },
+            },
+          })
+        ) ?? [],
     };
     return NextResponse.json(PAYLOAD, { status: 200 });
   } catch (error) {
@@ -152,21 +131,29 @@ export async function GET(req: NextRequest) {
   }
 }
 
-type HotelRoomOffersResult = {
+export type APIHotelRoomOffersJSONFormatted = {
   hotel_id: string;
   soldOut: boolean;
-  basePrice: string;
-  hotelRoomOffers: HotelRoom[];
+  basePricePerNight: string;
+  hotelRoomOffers: HotelRoomOffer[];
 };
-
-type HotelRoom = {
+export type HotelRoomOffer = {
+  hotel_id: string;
   hotel_room_id: string;
   description: string;
   name: string;
-  galleryImages: Images[];
+  galleryImages: Image[];
+  pricePerNight: {
+    amount: number;
+    currency: {
+      code: string;
+      symbol: string;
+    };
+  };
 };
-
-type Images = {
+type Image = {
   description: string;
   url: string;
+  alt: string;
+  index: number;
 };
