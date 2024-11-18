@@ -1,101 +1,131 @@
-import React, { Dispatch, SetStateAction } from "react";
+"use client";
 
-interface AccountInformationProps {
-  userName: string;
-  userEmail: string; // Add state for user email
-  setUserName: Dispatch<SetStateAction<string>>;
-  setUserEmail: Dispatch<SetStateAction<string>>; // Add setter for user email
-  editNameMode: boolean; // Separate state for Name edit mode
-  setEditNameMode: Dispatch<SetStateAction<boolean>>; // Setter for Name edit mode
-  editEmailMode: boolean; // Separate state for Email edit mode
-  setEditEmailMode: Dispatch<SetStateAction<boolean>>; // Setter for Email edit mode
-  setError: Dispatch<SetStateAction<string>>;
-}
+import React, { useState, ChangeEvent } from "react";
+import AccountInformation from "@/components/ProfilePage/AccountInformation";
+import Rewards from "@/components/ProfilePage/Rewards";
+import { useSession } from "next-auth/react";
 
-const AccountInformation: React.FC<AccountInformationProps> = ({
-  userName,
-  userEmail,
-  setUserName,
-  setUserEmail,
-  editNameMode,
-  setEditNameMode,
-  editEmailMode,
-  setEditEmailMode,
-  setError,
-}) => {
+const ProfilePage: React.FC = () => {
+  const { data: session } = useSession(); // Get session data
+  const user = session?.user;
+
+  const [userName, setUserName] = useState<string>(user?.name || "Anonymous");
+  const [userEmail, setUserEmail] = useState<string>(user?.email || "example@example.com");
+  const [editNameMode, setEditNameMode] = useState<boolean>(false);
+  const [editEmailMode, setEditEmailMode] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<string>("account");
+
+  const handlePhotoUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => setProfilePhoto(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
-    <div>
-      <h3 className="text-2xl font-bold mb-4">Account Information</h3>
-
-      {/* Editable Name Section */}
-      <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700">Name</label>
-        
-        {/* Container for Name input and button */}
-        <div className="mt-2 flex items-center space-x-2">
-          {/* Name input container */}
-          <div
-            className="flex-1 border border-gray-300 rounded-lg p-2 bg-white"
-            style={{ width: "250px" }}
-          >
-            {editNameMode ? (
-              <input
-                type="text"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                className="flex-1 p-2 border border-gray-300 rounded-md"
-                placeholder="Enter your name"
-              />
-            ) : (
-              <span className="text-lg font-medium text-gray-800">{userName}</span>
-            )}
-          </div>
-
-          {/* Edit button for Name */}
-          <button
-            onClick={() => setEditNameMode(!editNameMode)} // Toggle Name edit mode
-            className="px-4 py-2 text-white bg-black rounded-lg ml-4"
-          >
-            {editNameMode ? "Save" : "Edit"}
-          </button>
+    <div className="flex h-screen">
+      {/* Left Side Section: Profile Photo and Navigation */}
+      <div className="flex flex-col w-1.5/4 p-6 border-gray-300" style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start" }}>
+        <label htmlFor="profilePhoto" style={{ cursor: "pointer" }}>
+          {profilePhoto ? (
+            <img
+              src={profilePhoto}
+              alt="Profile"
+              style={{
+                width: "150px",
+                height: "150px",
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: "2px solid #ccc",
+                marginBottom: "20px",
+                marginLeft: "50px",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: "120px",
+                height: "120px",
+                borderRadius: "50%",
+                backgroundColor: "#f0f0f0",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#999",
+                fontSize: "16px",
+                border: "2px solid #ccc",
+                marginBottom: "20px",
+                marginLeft: "50px",
+              }}
+            >
+              Upload Photo
+            </div>
+          )}
+        </label>
+        <input
+          type="file"
+          id="profilePhoto"
+          accept="image/*"
+          onChange={handlePhotoUpload}
+          style={{ display: "none" }}
+        />
+        {/* Account Information and Rewards Section */}
+        <div
+          className="flex-grow w-full max-w-xs border border-gray-300 rounded-lg p-6 bg-blue-50"
+          style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: "calc(100vh - 230px)" }}
+        >
+          <ul className="space-y-4 text-left">
+            <li
+              className="cursor-pointer hover:bg-blue-200 active:bg-blue-300 focus:bg-blue-200 focus:ring-2 focus:ring-blue-500 py-2 px-4"
+              onClick={() => {
+                setActiveSection("account");
+              }}
+            >
+              Account Information
+            </li>
+            <li
+              className="cursor-pointer hover:bg-blue-200 active:bg-blue-300 focus:bg-blue-200 focus:ring-2 focus:ring-blue-500 py-2 px-4"
+              onClick={() => {
+                setActiveSection("rewards");
+              }}
+            >
+              Rewards
+            </li>
+          </ul>
         </div>
       </div>
 
-      {/* Editable Email Section */}
-      <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700">Email</label>
-        
-        {/* Container for Email input and button */}
-        <div className="mt-2 flex items-center space-x-2">
-          {/* Email input container */}
-          <div
-            className="flex-1 border border-gray-300 rounded-lg p-2 bg-white"
-            style={{ width: "250px" }}
-          >
-            {editEmailMode ? (
-              <input
-                type="email"
-                value={userEmail}
-                onChange={(e) => setUserEmail(e.target.value)}
-                className="flex-1 p-2 border border-gray-300 rounded-md"
-                placeholder="Enter your email"
+      {/* Right Side Section: Content Area */}
+      <div className="flex-grow p-6 gray" style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start" }}>
+        <div className="w-2.5/4 bg-gray-50">
+          {activeSection === "account" ? (
+            <div className="mb-6">
+              <AccountInformation
+            userName={userName}
+            userEmail={userEmail}
+            setUserName={setUserName}
+            setUserEmail={setUserEmail}
+            editNameMode={editNameMode}
+            setEditNameMode={setEditNameMode}
+            editEmailMode={editEmailMode}
+            setEditEmailMode={setEditEmailMode}
+            setError={setError}
               />
-            ) : (
-              <span className="text-lg font-medium text-gray-800">{userEmail}</span>
-            )}
-          </div>
-
-          {/* Edit button for Email */}
-          <button
-            onClick={() => setEditEmailMode(!editEmailMode)} // Toggle Email edit mode
-            className="px-4 py-2 text-white bg-black rounded-lg ml-4"
-          >
-            {editEmailMode ? "Save" : "Edit"}
-          </button>
+            </div>
+          ) : (
+            <div className="mb-6">
+              <Rewards />
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default AccountInformation;
+export default ProfilePage;
