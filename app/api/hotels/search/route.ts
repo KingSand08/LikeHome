@@ -1,143 +1,146 @@
-import { validateDateFormatAndDateRange } from "@/lib/rapid-hotel-api/validateDates";
-import { validateDomainAndLocale } from "@/lib/rapid-hotel-api/validateDomainLocale";
-import { validatePriceRange } from "@/lib/rapid-hotel-api/validatePriceRange";
 import { ApiHotelSearchResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotels-search-doc";
-import { API_OPTIONS } from "@/lib/rapid-hotel-api/api-setup";
 import {
-  DEFAULT_SORT_ORDER,
-  HOTEL_ROOM_SEARCH_URL,
-} from "@/types/rapid-hotels-api/hotel-search-types";
-import {
-  DEFAULT_DOMAIN,
-  DEFAULT_LOCALE,
-} from "@/types/rapid-hotels-api/region-search-types";
+  API_OPTIONS,
+  buildURLSearchParams,
+  validateSearchParamsOutput,
+} from "@/lib/rapid-hotel-api/api-setup";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  API_HOTEL_SEARCH_URL,
+  hotelSearchParamsRefinedSchema,
+  HotelsSearchAccessibilityOptions,
+  HotelsSearchAmenitiesOptions,
+  HotelsSearchAvailableFilterOptions,
+  HotelsSearchLodgingOptions,
+  HotelsSearchMealPlanOptions,
+  HotelsSearchPaymentTypeOptions,
+} from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
 
-interface validateSearchParams {
-  query: string | null;
-  endpoint: string | null;
-  error?: string | null;
-}
+function validateSearchParams(
+  searchParams: URLSearchParams
+): validateSearchParamsOutput {
+  const parseResult = hotelSearchParamsRefinedSchema.safeParse({
+    // Required
+    checkin_date: searchParams.get("checkin_date"),
+    checkout_date: searchParams.get("checkout_date"),
+    adults_number: searchParams.get("adults_number")
+      ? parseInt(searchParams.get("adults_number")!, 10)
+      : undefined,
+    region_id: searchParams.get("region_id"),
 
-function validateSearchParams(searchParams: URLSearchParams) {
-  const requiredSearchParams = [
-    "checkin_date",
-    "checkout_date",
-    "adults_number",
-    "region_id", // Also known as gaiaId in region search api.
-  ];
-  const requiredWithDefaultSearchParams = {
-    sort_order: searchParams.get("sort_order") || DEFAULT_SORT_ORDER,
-    locale: searchParams.get("locale") || DEFAULT_LOCALE,
-    domain: searchParams.get("domain") || DEFAULT_DOMAIN,
-  };
-  const optionalSearchParams = [
-    "price_min",
-    "price_max",
-    "star_rating_ids",
-    "guest_rating_min",
-    "children_ages",
-    "page_number",
-    "accessibility",
-    "amenities",
-    "lodging_type",
-    "meal_plan",
-    "available_filter",
-  ];
-  let errors: string[] = [];
+    // Required with default values
+    sort_order: searchParams.get("sort_order"),
+    locale: searchParams.get("locale"),
+    domain: searchParams.get("domain"),
 
-  // Validate required searchParams and check for missing searchParams.
-  requiredSearchParams.forEach((searchParam) => {
-    if (!searchParams.has(searchParam) || !searchParams.get(searchParam)) {
-      errors.push(`Missing required searchParams: ${searchParam}`);
-    }
+    // Optional
+    price_min: searchParams.get("price_min")
+      ? parseInt(searchParams.get("price_min")!, 10)
+      : undefined,
+    price_max: searchParams.get("price_max")
+      ? parseInt(searchParams.get("price_max")!, 10)
+      : undefined,
+    star_rating_ids: searchParams.get("star_rating_ids")
+      ? searchParams
+          .get("star_rating_ids")!
+          .split(",")
+          .map((id) => parseInt(id, 10))
+      : undefined,
+    guest_rating_min: searchParams.get("guest_rating_min")
+      ? parseFloat(searchParams.get("guest_rating_min")!)
+      : undefined,
+    children_ages: searchParams.get("children_ages")
+      ? searchParams
+          .get("children_ages")!
+          .split(",")
+          .map((age) => parseInt(age, 10))
+      : undefined,
+    page_number: searchParams.get("page_number")
+      ? parseInt(searchParams.get("page_number")!, 10)
+      : undefined,
+    accessibility: searchParams.get("accessibility")
+      ? (searchParams
+          .get("accessibility")!
+          .split(",") as (typeof HotelsSearchAccessibilityOptions)[number][])
+      : undefined,
+    amenities: searchParams.get("amenities")
+      ? (searchParams
+          .get("amenities")!
+          .split(",") as (typeof HotelsSearchAmenitiesOptions)[number][])
+      : undefined,
+    lodging_type: searchParams.get("lodging_type")
+      ? (searchParams
+          .get("lodging_type")!
+          .split(",") as (typeof HotelsSearchLodgingOptions)[number][])
+      : undefined,
+    meal_plan: searchParams.get("meal_plan")
+      ? (searchParams
+          .get("meal_plan")!
+          .split(",") as (typeof HotelsSearchMealPlanOptions)[number][])
+      : undefined,
+    payment_type: searchParams.get("payment_type")
+      ? (searchParams
+          .get("payment_type")!
+          .split(",") as (typeof HotelsSearchPaymentTypeOptions)[number][])
+      : undefined,
+    available_filter: searchParams.get("available_filter")
+      ? (searchParams
+          .get("available_filter")!
+          .split(",") as (typeof HotelsSearchAvailableFilterOptions)[number][])
+      : undefined,
   });
 
-  // Validate check-in and check-out date formatting/range.
-  const checkinDate = searchParams.get("checkin_date");
-  const checkoutDate = searchParams.get("checkout_date");
-  const dateErrors = validateDateFormatAndDateRange(checkinDate, checkoutDate);
-  if (dateErrors) errors = [...errors, ...dateErrors];
+  if (!parseResult.success) {
+    const errorMessages = parseResult.error.errors
+      .map((err) => `searchParam: ${err.path.join("")} - ${err.message}`)
+      .join(" & ");
 
-  // Validate min and max price range.
-  const minPrice = searchParams.get("price_min");
-  const maxPrice = searchParams.get("price_max");
-  const priceRangeError = validatePriceRange(minPrice, maxPrice);
-  if (priceRangeError) errors.push(priceRangeError);
-
-  // Validate domain and locale
-  const domainLocaleErrors = validateDomainAndLocale(
-    requiredWithDefaultSearchParams.domain,
-    requiredWithDefaultSearchParams.locale
-  );
-  if (domainLocaleErrors) errors = [...errors, ...domainLocaleErrors];
-
-  // Check for errors in required searchParams
-  if (errors.length > 0) {
     return {
       query: searchParams.toString(),
       endpoint: null,
-      error: errors.join(" | "),
+      error: `Errors: ${errorMessages}`,
     };
   }
 
-  // Create endpoint
-  const validatedSearchParams = new URLSearchParams();
+  const validParams = Object.entries(parseResult.data)
+    .filter(
+      ([_, value]) =>
+        value !== undefined &&
+        value !== null &&
+        value !== "" &&
+        (!Array.isArray(value) || value.length > 0)
+    )
+    .reduce((acc, [key, value]) => {
+      if (Array.isArray(value)) {
+        acc[key] = value.map((item) => item.toString()).join(",");
+      } else {
+        acc[key] = value;
+      }
+      return acc;
+    }, {} as Record<string, string | number | boolean>);
 
-  Object.entries(requiredWithDefaultSearchParams).forEach(([key, value]) => {
-    if (!searchParams.has(key)) {
-      searchParams.set(key, value);
-    }
-  });
-
-  searchParams.forEach((value, key) => {
-    if (
-      requiredSearchParams.includes(key) ||
-      optionalSearchParams.includes(key) ||
-      Object.keys(requiredWithDefaultSearchParams).includes(key)
-    ) {
-      validatedSearchParams.append(key, value);
-    }
-  });
-  const endpoint = `${HOTEL_ROOM_SEARCH_URL}?${validatedSearchParams.toString()}`;
-
+  // Create URLSearchParams only with valid parameters
+  const combinedSearchParams = buildURLSearchParams(validParams);
   return {
-    query: validatedSearchParams.toString(),
-    endpoint,
-    error: null,
+    query: searchParams.toString(),
+    endpoint: `${API_HOTEL_SEARCH_URL}?${combinedSearchParams.toString()}`,
   };
 }
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  if (!searchParams.toString()) {
-    return NextResponse.json(
-      {
-        error: `Empty searchParams`,
-      },
-      {
-        status: 400,
-      }
-    );
-  }
-
   const { query, endpoint, error } = validateSearchParams(searchParams);
-  if (!endpoint || !query || error) {
+  if (error) {
     return NextResponse.json(
       {
-        error: `Invalid input given searchParam(s): ${query}. Error: ${error}`,
+        error,
       },
-      {
-        status: 400,
-      }
+      { status: 400 }
     );
   }
-
-  // For testing
-  // return NextResponse.json({data: endpoint}, {status: 200})
 
   try {
-    const response = await fetch(endpoint, API_OPTIONS);
+    const response = await fetch(endpoint!, API_OPTIONS);
 
     if (!response.ok) {
       return NextResponse.json(
@@ -149,34 +152,49 @@ export async function GET(req: NextRequest) {
     }
 
     const JSON_DATA: ApiHotelSearchResponseJSON = await response.json();
-    const PAYLOAD: HotelsSearchResult = {
+    const PAYLOAD: APIHotelSearchJSONFormatted = {
       priceRange: {
-        maxPrice: JSON_DATA.filterMetadata.priceRange.max,
-        minPrice: JSON_DATA.filterMetadata.priceRange.min,
+        maxPrice: JSON_DATA.filterMetadata?.priceRange?.max ?? 0,
+        minPrice: JSON_DATA.filterMetadata?.priceRange?.min ?? 0,
       },
       summary: {
-        matchedPropertiesSize: JSON_DATA.summary.matchedPropertiesSize,
+        matchedPropertiesSize: JSON_DATA.summary?.matchedPropertiesSize ?? 0,
       },
-      properties: JSON_DATA.properties.map((propertyItem) => ({
-        region_id: propertyItem.regionId,
-        hotel_id: propertyItem.id,
-        name: propertyItem.name,
-        image: {
-          description: propertyItem.propertyImage.image.description,
-          url: propertyItem.propertyImage.image.url,
-          alt: propertyItem.propertyImage.alt,
-        },
-        coordinates: {
-          // Geocode
-          lat: propertyItem.mapMarker.latLong.latitude,
-          long: propertyItem.mapMarker.latLong.longitude,
-        },
-        reviews: {
-          score: propertyItem.reviews.score,
-          totalReviews: propertyItem.reviews.total,
-          starRating: propertyItem.star,
-        },
-      })),
+      properties:
+        JSON_DATA.properties?.map(
+          (propertyItem): APIHotelSearchHotelInfo => ({
+            region_id: propertyItem.regionId ?? "",
+            hotel_id: propertyItem.id ?? "",
+            name: propertyItem.name ?? "Unknown",
+            image: {
+              description:
+                propertyItem.propertyImage?.image?.description ??
+                "No description",
+              url: propertyItem.propertyImage?.image?.url ?? "",
+              alt: propertyItem.propertyImage?.alt ?? "No alternative text",
+            },
+            coordinates: {
+              lat: propertyItem.mapMarker?.latLong?.latitude ?? 0,
+              long: propertyItem.mapMarker?.latLong?.longitude ?? 0,
+            },
+            reviews: {
+              score: propertyItem.reviews?.score ?? 0,
+              totalReviews: propertyItem.reviews?.total ?? 0,
+              starRating: propertyItem.star ?? 0,
+            },
+            availability: {
+              available: propertyItem.availability?.available ?? false,
+              minRoomsLeft: propertyItem.availability?.minRoomsLeft ?? 0,
+            },
+            price: {
+              amount: propertyItem.price?.lead?.amount ?? 0,
+              currency: {
+                code: propertyItem.price?.lead?.currencyInfo?.code ?? "",
+                symbol: propertyItem.price?.lead?.currencyInfo?.symbol ?? "",
+              },
+            },
+          })
+        ) ?? [],
     };
 
     return NextResponse.json(PAYLOAD, { status: 200 });
@@ -185,23 +203,23 @@ export async function GET(req: NextRequest) {
       {
         error: `An error occurred while fetching data | query: ${query} | endpoint: ${endpoint}`,
       },
-      { status: 500 }
+      { status: 500, statusText: "No Idea" }
     );
   }
 }
 
-type HotelsSearchResult = {
+export type APIHotelSearchJSONFormatted = {
   priceRange: {
     maxPrice: number;
     minPrice: number;
   };
-  properties: HotelInfo[];
+  properties: APIHotelSearchHotelInfo[] | [];
   summary: {
     matchedPropertiesSize: number;
   };
 };
-
-type HotelInfo = {
+export type APIHotelSearchHotelInfo = {
+  region_id: string;
   hotel_id: string;
   name: string;
   image: {
@@ -214,9 +232,20 @@ type HotelInfo = {
     lat: number;
     long: number;
   };
+  availability: {
+    available: boolean;
+    minRoomsLeft: number;
+  };
   reviews: {
     score: number;
     totalReviews: number;
     starRating: number;
+  };
+  price: {
+    amount: number;
+    currency: {
+      code: string;
+      symbol: string;
+    };
   };
 };

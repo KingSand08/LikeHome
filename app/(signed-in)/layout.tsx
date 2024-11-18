@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import SignInPage from "../signin/page";
+import { SessionProvider } from "next-auth/react";
 
 export default async function RootLayout({
   children,
@@ -8,5 +9,9 @@ export default async function RootLayout({
 }>) {
   const session = await auth();
 
-  return <>{session ? children : <SignInPage />}</>;
+  return (
+    <SessionProvider session={session}>
+      {session ? children : <SignInPage />}
+    </SessionProvider>
+  );
 }
