@@ -68,7 +68,7 @@ const AboutPage = () => {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Contact Us Form */}
         <div className="bg-white p-6 rounded-lg shadow-lg flex-[1] lg:flex-[0.4]">
-          <h2 className="text-3xl font-bold mb-4 text-center">Contact Us</h2>
+          <h2 className="text-3xl font-bold mb-4 text-center">Contact Us!</h2>
           <form>
             <div className="mb-4 ">
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
