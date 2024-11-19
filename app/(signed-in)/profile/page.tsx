@@ -24,7 +24,7 @@ const ProfilePage: React.FC = () => {
     }
   };
   return (
-    <div className="flex h-screen">
+    <div className="flex">
       {/* Left Side Section: Profile Photo and Navigation */}
       <div className="flex flex-col w-1.5/4 p-6 border-gray-300" style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start" }}>
         <label htmlFor="profilePhoto" style={{ cursor: "pointer" }}>
