@@ -4,7 +4,16 @@ const ContactUs = () => {
   return (
     <div className="bg-white p-6 mt-10 rounded-lg shadow-lg flex-[1] lg:flex-[0.4] max-w-screen-md ml-auto mr-auto">
       <h2 className="text-3xl font-bold mb-4 text-center">Contact Us!</h2>
-      <form>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          const formData = new FormData(e.currentTarget);
+          fetch("/api/contact-us", {
+            method: "POST",
+            body: formData,
+          });
+        }}
+      >
         <div className="mb-4 ">
           <label
             htmlFor="name"
