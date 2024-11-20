@@ -1,7 +1,6 @@
+import ContactUs from "@/components/about/contact-us";
 import Image from "next/image";
 import React from "react";
-
-const DEFAULT_IMAGE = "/icons/app/stellarHorizons.png" as const;
 
 const team = [
   {
@@ -63,81 +62,22 @@ const team = [
 
 const AboutPage = () => {
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-800 p-8">
-      {/* Main Flex Container */}
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Contact Us Form */}
-        <div className="bg-white p-6 rounded-lg shadow-lg flex-[1] lg:flex-[0.4]">
-          <h2 className="text-3xl font-bold mb-20 text-center">Contact Us!</h2>
-          <form>
-            <div className="mb-8 ">
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"            
-              />
-              
-            </div>
-            <div className="mb-8 ">
-              <label htmlFor="Surname" className="block text-sm font-medium text-gray-700 mb-1">
-                Surname
-              </label>
-              <input
-                type="text"
-                id="Surname"
-                className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"            
-              />
-              
-            </div>
-            <div className="mb-8 ">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="mb-8 ">
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                Message
-              </label>
-              <textarea
-                id="message"
-                rows={8}
-                className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-              ></textarea>
-            </div >
-            <div className="flex justify-center mb-8">
-              <button
-                type="submit"
-                className=" bg-black text-white py-2 px-20 rounded-md hover:bg-blue-600 w-auto"
-              >
-                Submit
-              </button>
-            </div>
-          </form>
-        </div>
+    <div className="bg-gray-100 text-gray-800 p-8">
+      <div className="flex-[1] lg:flex-[0.6]">
+        <section className="text-center mb-6">
+          <h2 className="text-3xl font-bold mb-4">Meet Our Team</h2>
+          <p className="text-lg">
+            We are a group of passionate developers committed to building the
+            best hotel-booking platform.
+          </p>
+        </section>
 
-        {/* Meet Our Team */}
-        <div className="flex-[1] lg:flex-[0.6]">
-          <section className="text-center mb-6">
-            <h2 className="text-3xl font-bold mb-4">Meet Our Team</h2>
-            <p className="text-lg">
-              We are a group of passionate developers committed to building the best hotel-booking platform.
-            </p>
-          </section>
-
-          <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-6">
-            {team.map((member, index) => (
-              <div
-                key={index}
-                className="bg-white p-4 rounded-lg shadow-lg text-center"
-              >
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {team.map((member, index) => (
+            <div
+              key={index}
+              className="bg-white p-4 rounded-lg shadow-lg text-center"
+            >
               <Image
                 src={member.image}
                 alt={`${member.name}'s picture`}
@@ -146,22 +86,25 @@ const AboutPage = () => {
                 height={100}
                 quality={100}
               />
-                <h3 className="text-xl font-semibold mb-2">{member.name}</h3>
-                <p>{member.description}</p>
-                <p className="text-sm text-gray-600">
-                  <a
+              <h3 className="text-xl font-semibold mb-2">{member.name}</h3>
+              <p>{member.description}</p>
+              <p className="text-sm text-gray-600">
+                <a
+                 
                     href={member.linkedin}
-                    className="hover:text-blue-500"
+                   
+                  className="hover:text-blue-500"
+                
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    My LinkedIn Profile
-                  </a>
-                </p>
-              </div>
-            ))}
-          </section>
-        </div>
+                  My LinkedIn Profile
+                </a>
+              </p>
+            </div>
+          ))}
+        </section>
+        <ContactUs />
       </div>
     </div>
   );
