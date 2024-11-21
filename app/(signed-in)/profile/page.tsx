@@ -4,6 +4,7 @@ import AccountInformation from "@/components/ProfilePage/AccountInformation";
 import Rewards from "@/components/ProfilePage/Rewards";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import Avatar from "@/components/auth/Avatar";
 
 
 const ProfilePage: React.FC = () => {
@@ -19,12 +20,14 @@ const ProfilePage: React.FC = () => {
           <Image
             src={user?.image || "/default-avatar.png"}
             alt="Profile"
-            width={500}
-            height={500}
+            width={400}
+            height={400}
             quality={100}
             className="w-16 h-16 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600 mb-6"
             style={{ width: "10em", height: "10em" }}
+            priority
           />
+          {/* <Avatar image={user?.image ?? undefined} areaExpand="17rem" imgSize={"w-52 h-52"} /> */}
         </div>
         <ul className="space-y-4">
           <li

@@ -1,10 +1,10 @@
 import Image from "next/image";
 import React from "react";
-import { auth, signOut } from "../../auth";
+import { auth } from "@/auth";
 import Link from "next/link";
-import SignOutButton from "../auth/SignOutButton";
-import SigninButton from "../auth/SigninButton";
-import Avatar from "../auth/Avatar";
+import SignOutButton from "@/components/auth/SignOutButton";
+import SigninButton from "@/components/auth/SigninButton";
+import Avatar from "@/components/auth/Avatar";
 
 export default async function Header() {
   const session = await auth();
@@ -19,9 +19,9 @@ export default async function Header() {
   }
 
   return (
-    <header className="py-5 bg-base-100 text-base-300-content">
+    <header className="py-5 bg-base-100 text-base-300-content border-b-2 dark:border-black dark:border-opacity-15 border-b-slate-300">
       <div className="container mx-auto bg-base-100">
-        <div className="flex flex-col md:flex-row md:justify-between gap-6">
+        <div className="flex flex-col md:flex-row md:justify-between gap-6 space-x-5">
           {/* logo */}
           <Link href="/">
             <div className="flex items-center gap-5 justify-center xl:w-max">
@@ -38,13 +38,16 @@ export default async function Header() {
               {/* Text displayed next to image */}
             </div>
           </Link>
-          <div className="flex items-center gap-8 ">
-            {/* Navigation Links */}
+          {/* Searh Bar */}
+          <div className="flex items-center justify-center w-[90%]">
             <input
               type="text"
               placeholder="Search"
-              className="input input-primary text-neutral w-full max-w-xs"
+              className="input input-primary w-full flex-grow rounded-lg text-neutral dark:text-gray-100 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+          <div className="flex flex-grow-0 items-center justify-center gap-8 ">
+            {/* Navigation Links */}
             <Link className="flex items-center gap-8" href="/about">
               {/* Flex container for navigation items */}
               <div className="text-base-content hover:text-accent cursor-pointer">
@@ -63,8 +66,12 @@ export default async function Header() {
                 >
                   Profile
                 </Link>
+                <Link
+                  href="/profile"
+                >
+                  <Avatar image={session?.user.image ?? undefined} imgSize={"12"} />
+                </Link>
                 <SignOutButton className="text-base-300-content" />
-                <Avatar image={session?.user.image ?? undefined} imgSize={"12"} />
               </>
             )}
           </div>
