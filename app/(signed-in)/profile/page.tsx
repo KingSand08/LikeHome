@@ -5,120 +5,56 @@ import Rewards from "@/components/ProfilePage/Rewards";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 
+
 const ProfilePage: React.FC = () => {
-  const { data: session } = useSession(); // Get session data
+  const { data: session } = useSession();
   const user = session?.user;
-  const [userName, setUserName] = useState<string>(user?.name || "Anonymous");
-  const [userEmail, setUserEmail] = useState<string>(user?.email || "example@example.com");
-  const [editNameMode, setEditNameMode] = useState<boolean>(false);
-  const [editEmailMode, setEditEmailMode] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>("account");
 
-  const handlePhotoUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setProfilePhoto(reader.result as string);
-      reader.readAsDataURL(file);
-    }
-  };
   return (
-    <div className="flex">
-      {/* Left Side Section: Profile Photo and Navigation */}
-      <div className="flex flex-col w-1.5/4 p-6 border-gray-300" style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start" }}>
-        <label htmlFor="profilePhoto" style={{ cursor: "pointer" }}>
-          {profilePhoto ? (
-            <Image
-              src={profilePhoto}
-              alt="Profile"
-              style={{
-                width: "150px",
-                height: "150px",
-                borderRadius: "50%",
-                objectFit: "cover",
-                border: "2px solid #ccc",
-                marginBottom: "20px",
-                marginLeft: "50px",
-              }}
-              width={500}
-              height={500}
-            />
-          ) : (
-            <div
-              style={{
-                width: "120px",
-                height: "120px",
-                borderRadius: "50%",
-                backgroundColor: "#f0f0f0",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#999",
-                fontSize: "16px",
-                border: "2px solid #ccc",
-                marginBottom: "20px",
-                marginLeft: "50px",
-              }}
-            >
-              Upload Photo
-            </div>
-          )}
-        </label>
-        <input
-          type="file"
-          id="profilePhoto"
-          accept="image/*"
-          onChange={handlePhotoUpload}
-          style={{ display: "none" }}
-        />
-        {/* Account Information and Rewards Section */}
-        <div
-          className="flex-grow w-full max-w-xs border border-gray-300 rounded-lg p-6 bg-blue-50"
-          style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: "calc(100vh - 230px)" }}
-        >
-          <ul className="space-y-4 text-left">
-            <li
-              className="cursor-pointer hover:bg-blue-200 active:bg-blue-300 focus:bg-blue-200 focus:ring-2 focus:ring-blue-500 py-2 px-4"
-              onClick={() => {
-                setActiveSection("account");
-              }}
-            >
-              Account Information
-            </li>
-            <li
-              className="cursor-pointer hover:bg-blue-200 active:bg-blue-300 focus:bg-blue-200 focus:ring-2 focus:ring-blue-500 py-2 px-4"
-              onClick={() => {
-                setActiveSection("rewards");
-              }}
-            >
-              Rewards
-            </li>
-          </ul>
+    <div className="min-h-screen flex dark:bg-gray-900 dark:text-gray-100 bg-gray-50 text-gray-900 select-none">
+      {/* Left Side Section */}
+      <div className="flex flex-col w-1/4 p-6 bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+        <div className="flex justify-center">
+          <Image
+            src={user?.image || "/default-avatar.png"}
+            alt="Profile"
+            width={500}
+            height={500}
+            quality={100}
+            className="w-16 h-16 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600 mb-6"
+            style={{ width: "10em", height: "10em" }}
+          />
         </div>
+        <ul className="space-y-4">
+          <li
+            className={`py-3 px-4 rounded-lg cursor-pointer ${activeSection === "account"
+              ? "bg-blue-600 text-white"
+              : "hover:bg-blue-100 dark:hover:bg-gray-700"
+              }`}
+            onClick={() => setActiveSection("account")}
+          >
+            Account Information
+          </li>
+          <li
+            className={`py-3 px-4 rounded-lg cursor-pointer ${activeSection === "rewards"
+              ? "bg-blue-600 text-white"
+              : "hover:bg-blue-100 dark:hover:bg-gray-700"
+              }`}
+            onClick={() => setActiveSection("rewards")}
+          >
+            Rewards
+          </li>
+        </ul>
       </div>
-      {/* Right Side Section: Content Area */}
-      <div className="flex-grow p-6 gray" style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start" }}>
-        <div className="w-2.5/4 bg-gray-50">
+
+      {/* Right Side Section */}
+      <div className="flex-grow p-6">
+        <div className="max-w-4xl mx-auto mt- p-6 bg-gray-200 dark:bg-gray-800 rounded-lg dark:shadow light:shadow-xl">
           {activeSection === "account" ? (
-            <div className="mb-6">
-              <AccountInformation
-            userName={userName}
-            userEmail={userEmail}
-            setUserName={setUserName}
-            setUserEmail={setUserEmail}
-            editNameMode={editNameMode}
-            setEditNameMode={setEditNameMode}
-            editEmailMode={editEmailMode}
-            setEditEmailMode={setEditEmailMode}
-            setError={setError}
-              />
-              </div>
+            <AccountInformation userName={user?.name as string} userEmail={user?.email as string} />
           ) : (
-            <div className="mb-6">
-              <Rewards />
-            </div>
+            <Rewards />
           )}
         </div>
       </div>
