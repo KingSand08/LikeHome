@@ -56,7 +56,7 @@ const ProfilePage: React.FC = () => {
                 fontSize: "16px",
                 border: "2px solid #ccc",
                 marginBottom: "20px",
-                marginLeft: "50px",
+                marginLeft: "20px",
               }}
             >
               Upload Photo

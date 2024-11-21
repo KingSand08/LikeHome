@@ -1,8 +1,6 @@
 "use client";
-import BookingDateRange from "./BookingDateRange";
 import AdultsNumberInput from "./SearchComponents/AdultsNumberInput";
-import BookingInfoDisplay from "../Testing/BookingInfoDisplay";
-import { calculateNumDays } from "../../../lib/DateFunctions";
+import { DatePickerWithRange } from "./DatePickerWithRange";
 
 type BookingInfo = {
   checkinDate: string;
@@ -16,22 +14,16 @@ type BookingInfoUISearchCompleteProps = {
   setBookingInfo: (info: BookingInfo) => void;
 };
 
-const BookingInfoUISearchComplete: React.FC<
-  BookingInfoUISearchCompleteProps
-> = ({ bookingInfo, setBookingInfo }) => {
+const BookingInfoUISearchComplete: React.FC<BookingInfoUISearchCompleteProps> = ({
+  bookingInfo,
+  setBookingInfo,
+}) => {
   const handleDateChange = (dates: {
     checkinDate: string;
     checkoutDate: string;
+    numDays: number;
   }) => {
-    const checkinDate = new Date(dates.checkinDate);
-    const checkoutDate = new Date(dates.checkoutDate);
-
-    setBookingInfo({
-      ...bookingInfo,
-      checkinDate: dates.checkinDate,
-      checkoutDate: dates.checkoutDate,
-      numDays: calculateNumDays(checkinDate, checkoutDate),
-    });
+    setBookingInfo({ ...bookingInfo, ...dates });
   };
 
   const handleAdultsNumberChange = (adults: number) => {
@@ -42,13 +34,13 @@ const BookingInfoUISearchComplete: React.FC<
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">Booking Information</h2>
 
-      {/* Display Current Booking Info */}
-      {/* <BookingInfoDisplay bookingInfo={bookingInfo} /> */}
-
       {/* Booking Date Range Input */}
       <div className="mt-6">
         <h3 className="text-lg font-semibold mb-4">Booking Dates</h3>
-        <BookingDateRange onChange={handleDateChange} />
+        <DatePickerWithRange
+          onChange={handleDateChange} // Update parent state when date range changes
+          defaultNumDays={bookingInfo.numDays} // Default number of days
+        />
       </div>
 
       {/* Adults Number Input */}
