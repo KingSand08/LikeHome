@@ -14,6 +14,8 @@ import {
   FINAL_PAYMENT_INFO,
 } from "@/lib/rapid-hotel-api/api-setup";
 import { generateBookingId } from "@/lib/BookingFunctions";
+import { createReservation, PartialReservation } from "@/server-actions/reservation-actions";
+import { auth } from "@/auth";
 
 type CheckoutConfirmationProps = {
   paymentInfo: FINAL_PAYMENT_INFO;
@@ -63,10 +65,38 @@ const CheckoutConfirmation = ({
     }
 
     const bookingId = generateBookingId();
+    
+    // Create reservation in DB
+    const partialReservation: PartialReservation = {
+      bookingId,
+      checkin_date: bookingDetails.checkin_date, 
+      checkout_date: bookingDetails.checkout_date, 
+      adults_number: Number(bookingDetails.adults_number),
+      numDays: Number(bookingDetails.numDays), 
+      hotel_id: hotelRoomOffer.hotel_id, 
+      room_id: hotelRoomOffer.hotel_room_id, 
+      payment_info: {
+        firstName: paymentInfo.firstName,
+        lastName: paymentInfo.lastName,
+        billingAddress: paymentInfo.billingAddress,
+        city: paymentInfo.city,
+        state: paymentInfo.state,
+        zipCode: paymentInfo.zipCode,
+        email: paymentInfo.email,
+      },
+      transaction_info: {
+        dateCreated: Date.toString(),
+        stripePaymentId: "",
+      },
+      room_cost: totalAmount,
+    }
+
+    const reservation = await createReservation(partialReservation);
 
     const currentUrl =
       typeof window !== "undefined" ? window.location.origin : "";
     const returnUrl = `${currentUrl}/payment?bookingId=${bookingId}`;
+    console.log("before redir")
     const { error } = await stripe.confirmPayment({
       elements,
       clientSecret,
@@ -75,13 +105,14 @@ const CheckoutConfirmation = ({
         return_url: returnUrl,
       },
     });
+    console.log("after redir")
 
     if (error) {
       setErrorMessage(error.message);
       return;
     } else {
       // The payment UI automatically closes
-
+      console.log("DOES THIS WORK????????????????????????????????????????????????????????????????????");
       // IF successful, call to API and rewrite
       const FINAL_BOOKING_DETAILS: FINAL_BOOKING_INFO = {
         // Need to retrieve accountId using NextAuth? Link LikeHome account with this booking
@@ -107,9 +138,6 @@ const CheckoutConfirmation = ({
           stripePaymentId: "", // Will be updated in payment page
         },
       };
-
-      // Update the DB:
-      // Add new reservation with the following infomation above FINAL_BOOKING_DETAILS
     }
 
     setLoading(false);

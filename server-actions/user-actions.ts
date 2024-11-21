@@ -1,16 +1,19 @@
 "use server";
 import { auth } from "@/auth";
 
-async function addUser(userId: string) {
-    const session = await auth();
-    if (!session) {
-        throw new Error("Unauthorized");
+export async function createUser(id: string, email: string, name: string) {
+    // check if user already exists
+    const user = await prisma.user.findUnique({
+        where: { email },
+    });
+    if (user) {
+        return user;
     }
     
     return prisma.user.create({
         data: {
-            name: session.user.name,
-            email: session.user.email,
+            name,
+            email,
             rewardPoints: 0
         },
     })

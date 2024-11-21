@@ -3,10 +3,10 @@ import { Reservation } from "@prisma/client";
 import { auth } from "@/auth";
 import { updatePoints } from "./user-actions";
 
-type PartialReservation = Omit<Reservation, "userId" | "verified">;
+export type PartialReservation = Omit<Reservation, "id" | "userId" | "verified">;
 const POINT_MODIFIER = 0.1;
 
-async function createReservation({bookingId, checkin_date, checkout_date, adults_number, numDays, hotel_id, room_id, payment_info, transaction_info, room_cost}: PartialReservation) {
+export async function createReservation({bookingId, checkin_date, checkout_date, adults_number, numDays, hotel_id, room_id, payment_info, transaction_info, room_cost}: PartialReservation) {
     const session = await auth();
     if (!session) {
         throw new Error("Unauthorized");
@@ -30,7 +30,7 @@ async function createReservation({bookingId, checkin_date, checkout_date, adults
     })
 }
 
-async function validateReservation(bookingId: string, ) {
+export async function validateReservation(bookingId: string, ) {
     const room_cost = prisma.reservation.findUnique({
         where: {
             bookingId
@@ -55,7 +55,7 @@ async function validateReservation(bookingId: string, ) {
     })    
 }
 
-async function cancelReservation(bookingId: string) {
+export async function cancelReservation(bookingId: string) {
     const room_cost = prisma.reservation.findUnique({
         where: {
             bookingId
@@ -77,7 +77,7 @@ async function cancelReservation(bookingId: string) {
     })
 }
 
-async function getReservations() {
+export async function getReservations() {
     return prisma.reservation.findMany({
         where: {
             userId: (await auth())?.user.id
@@ -85,7 +85,7 @@ async function getReservations() {
     })
 }
 
-async function updateReservation(bookingId: string, data: PartialReservation) {
+export async function updateReservation(bookingId: string, data: PartialReservation) {
     return prisma.reservation.update({
         where: {
             bookingId
