@@ -19,7 +19,7 @@ export default async function Header() {
   }
 
   return (
-    <header className="py-5 bg-base-100">
+    <header className="py-5 bg-base-100 text-base-300-content">
       <div className="container mx-auto bg-base-100">
         <div className="flex flex-col md:flex-row md:justify-between gap-6">
           {/* logo */}
@@ -53,7 +53,7 @@ export default async function Header() {
             </Link>
             {!loginStatus ? (
               <>
-                <SigninButton />
+                <SigninButton className="text-base-300-content" />
               </>
             ) : (
               <>
@@ -63,7 +63,7 @@ export default async function Header() {
                 >
                   Profile
                 </Link>
-                <SignOutButton />
+                <SignOutButton className="text-base-300-content" />
                 <Avatar image={session?.user.image ?? undefined} imgSize={"12"} />
               </>
             )}

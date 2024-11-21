@@ -12,7 +12,7 @@ const ProfilePage: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("account");
 
   return (
-    <div className="min-h-screen flex dark:bg-gray-900 dark:text-gray-100 bg-gray-50 text-gray-900 select-none">
+    <div className="min-h-screen flex dark:text-gray-100 text-gray-900 select-none">
       {/* Left Side Section */}
       <div className="flex flex-col w-1/4 p-6 bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
         <div className="flex justify-center">

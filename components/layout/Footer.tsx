@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const Footer = () => {
   return (
-    <footer className="bg-accent py-[50px] lg:py-[50px]">
+    <footer className="bg-base-300 text-base-300-content py-[50px] lg:py-[50px]">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row md:justify-between gap-6">
           {/* logo */}
@@ -13,7 +13,7 @@ const Footer = () => {
               width={55}
               height={20}
             />
-            <span className="ml-2 text-lg font-bold text-accent-content">Stellar Horizons</span>{" "}
+            <span className="ml-2 text-lg font-bold">Stellar Horizons</span>{" "}
             {/* Text displayed next to image */}
           </div>
         </div>

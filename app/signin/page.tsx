@@ -9,7 +9,7 @@ type Props = {
 const Page = (props: Props) => {
   return (
     <div className='flex justify-center items-center min-h-screen'>
-      <div className='w-3/4'>
+      <div className='w-3/4 max-w-fit shadow-lg bg-gradient-to-r from-slate-800 to-slate-900 p-8 rounded-xl'>
         <SigninPage
           error={props.searchParams?.error}
           callbackUrl={props.searchParams?.callbackUrl}

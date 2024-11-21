@@ -14,26 +14,14 @@ type Props = {
 const SigninPage = (props: Props) => {
     console.log(props.callbackUrl);
 
-    const email = useRef("");
-    const password = useRef("");
-    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        await signIn("credentials", {
-            email: email.current,
-            password: password.current,
-            redirect: true,
-            callbackUrl: props.callbackUrl ?? "http://localhost:3001"
-        });
-    };
-
     return (
         <div className="flex items-center justify-center">
             {/* Wrapper */}
-            <div className="flex bg-white rounded-lg shadow-lg">
+            <div className="flex text-neutral-content rounded-lg">
                 {/* Left Section */}
-                <div className="flex-1 p-10 text-gray-800 w-[40em]">
+                <div className="flex-1 p-10 w-[40em]">
                     <h1 className="text-3xl pb-4">Let&apos;s get started!</h1>
-                    <p className="text-lg text-gray-700">
+                    <p className="text-lg opacity-90">
                         Welcome to LikeHome! Sign in with Google or provide your email to get
                         started! New users will have a short profile section to fill out
                         once signing in for the first time.
