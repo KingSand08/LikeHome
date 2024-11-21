@@ -3,6 +3,7 @@ import React, { useState, ChangeEvent } from "react";
 import AccountInformation from "@/components/ProfilePage/AccountInformation";
 import Rewards from "@/components/ProfilePage/Rewards";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 const ProfilePage: React.FC = () => {
   const { data: session } = useSession(); // Get session data
@@ -29,7 +30,7 @@ const ProfilePage: React.FC = () => {
       <div className="flex flex-col w-1.5/4 p-6 border-gray-300" style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start" }}>
         <label htmlFor="profilePhoto" style={{ cursor: "pointer" }}>
           {profilePhoto ? (
-            <img
+            <Image
               src={profilePhoto}
               alt="Profile"
               style={{
@@ -41,6 +42,8 @@ const ProfilePage: React.FC = () => {
                 marginBottom: "20px",
                 marginLeft: "50px",
               }}
+              width={500}
+              height={500}
             />
           ) : (
             <div
