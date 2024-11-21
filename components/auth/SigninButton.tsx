@@ -9,7 +9,7 @@ const SignInButton = ({ className }: ClassChange) => {
 
     return (
         <Link
-            className="btn w-fit px-4 py-2 btn-primary text-secondary-content rounded"
+            className={`${className} btn w-fit px-4 py-2 btn-primary rounded`}
             href={`/signin?callbackUrl=${encodeURIComponent(pathname)}`}
         >
             SIGN IN

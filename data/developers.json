@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Mauricio Curiel",
+    "image": "/images/team/mau.png",
+    "description": "Project Manager overseeing development and project milestones",
+    "linkedin": ""
+  },
+  {
+    "name": "Ahsan Ali",
+    "image": "/images/team/Ahsan.png",
+    "description": "Backend Developer specializing in server-side development and testing.",
+    "linkedin": ""
+  },
+  {
+    "name": "Ali Altimimi",
+    "image": "/images/team/Ali.png",
+    "description": "Backend Developer focused on database architecture and optimization.",
+    "linkedin": ""
+  },
+  {
+    "name": "Connor Linville",
+    "image": "/images/team/Connor.png",
+    "description": "Backend Developer with expertise in deployment strategies and user authentication systems.",
+    "linkedin": "https://www.linkedin.com/in/connor-linville-219422216/"
+  },
+  {
+    "name": "Steven Lu",
+    "image": "/images/team/Steven.png",
+    "description": "Frontend Developer responsible for implementing designs from Figma into a responsive UI.",
+    "linkedin": ""
+  },
+  {
+    "name": "Raymund Mercader",
+    "image": "/images/team/Raymund.png",
+    "description": "Full Stack Developer experienced in both backend and frontend development.",
+    "linkedin": ""
+  },
+  {
+    "name": "Hoa Tuong Minh Nguyen",
+    "image": "/images/team/Minh.png",
+    "description": "UI/UX Designer on Figma and Frontend Developer.",
+    "linkedin": "https://www.linkedin.com/in/hoa-nguyen-m1000/"
+  },
+  {
+    "name": "Ryan Tang",
+    "image": "/images/team/Ryan.png",
+    "description": "Backend Developer focused on stripe and prisma integration.",
+    "linkedin": ""
+  }
+]

@@ -40,7 +40,7 @@ export default function OAuthButton(props: OAuthButtonProps) {
           className={`flex items-center mb-2 border border-transparent rounded-lg shadow-sm px-4 py-3
             ${provider.bgColor} text-white font-medium transition duration-200 ease-in-out
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-fit pr-[50px] text-md h-auto
-            justify-center space-x-8`}
+            justify-center space-x-8 max-[500px]:text-sm text-md`}
         >
           <Image
             alt={`${provider.name} logo`}
