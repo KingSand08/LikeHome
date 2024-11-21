@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 const ContactUs = () => {
@@ -23,7 +25,7 @@ const ContactUs = () => {
           </label>
           <input
             type="text"
-            id="name"
+            name="name"
             className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -36,7 +38,7 @@ const ContactUs = () => {
           </label>
           <input
             type="email"
-            id="email"
+            name="email"
             className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -48,7 +50,7 @@ const ContactUs = () => {
             Message
           </label>
           <textarea
-            id="message"
+            name="message"
             rows={4}
             className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
           ></textarea>
