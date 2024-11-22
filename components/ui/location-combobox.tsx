@@ -119,9 +119,18 @@ const cachedLocations: Location[] = [
   },
 ];
 
-export default function LocationCombobox() {
+type LocationComboboxProps = {
+  searchLocations: (query: string) => void;
+  setRegionId: (regionId: string) => void;
+};
+
+export default function LocationCombobox(props: LocationComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
+  const handleSearch = () => {
+    setValue("");
+    props.searchLocations(value);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -134,7 +143,7 @@ export default function LocationCombobox() {
         >
           {value
             ? cachedLocations.find((loc) => loc.name === value)?.name
-            : "Select framework..."}
+            : "Select Location..."}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -143,15 +152,18 @@ export default function LocationCombobox() {
           <CommandInput placeholder="Search locations..." />
           <CommandList>
             <CommandEmpty>
-              No location found. Submit to search for more.
+              <button onClick={handleSearch}>
+                No location found. Click to search.
+              </button>
             </CommandEmpty>
             <CommandGroup>
               {cachedLocations.map((loc) => (
                 <CommandItem
                   key={loc.regionId}
-                  value={loc.regionId}
+                  value={loc.name}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
+                    props.setRegionId(loc.regionId);
                     setOpen(false);
                   }}
                 >

@@ -10,6 +10,7 @@ import {
 } from "@/lib/rapid-hotel-api/zod/region-search-schemas";
 import { REGION_SEARCH_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
+import LocationCombobox from "@/components/ui/location-combobox";
 
 type RegionSelectProps = {
   query: string;
@@ -45,16 +46,20 @@ const RegionSelect: React.FC<RegionSelectProps> = ({
     onRegionSelect(null);
   };
 
-  const handleFindRegion = async () => {
+  const handleFindRegion = async (
+    _query?: string,
+    _domain?: string,
+    _locale?: string
+  ) => {
     setLoading(true);
     setSelectedRegionDetails(null);
     try {
       const urlParams = JSONToURLSearchParams({
-        "query": query,
-        "domain": domain,
-        "locale": locale,
+        query: _query ?? query,
+        domain: _domain ?? domain,
+        locale: _locale ?? locale,
       });
-      
+
       const response = await fetch(
         `${REGION_SEARCH_API_URL}?${urlParams.toString()}`
       );
@@ -78,6 +83,7 @@ const RegionSelect: React.FC<RegionSelectProps> = ({
 
   return (
     <div>
+      <LocationCombobox searchLocations={handleFindRegion} setRegionId={onRegionSelect} />
       <TemplateInput
         title="Region Search Query"
         placeholder="Enter region search query"
@@ -88,7 +94,7 @@ const RegionSelect: React.FC<RegionSelectProps> = ({
       />
       {!selectedRegionDetails?.region_id ? (
         <button
-          onClick={handleFindRegion}
+          onClick={() => handleFindRegion()}
           className="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           disabled={loading}
         >
