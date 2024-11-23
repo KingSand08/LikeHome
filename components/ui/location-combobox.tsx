@@ -127,9 +127,9 @@ type LocationComboboxProps = {
 export default function LocationCombobox(props: LocationComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
-  const handleSearch = () => {
-    setValue("");
-    props.searchLocations(value);
+  const handleSearch = (value: string) => {
+      setValue(value);
+      props.searchLocations(value);
   };
 
   return (
