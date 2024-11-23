@@ -35,96 +35,68 @@ type Location = {
 };
 
 // TODO: Replace with a DB call to get the cached regions
-const cachedLocations: Location[] = [
+const cachedLocations: APIRegionArrayFormatted = [
   {
-    name: "San Jose, California, United States",
+    region_id: "602703",
     type: "CITY",
-    regionId: "602703",
-    coordinates: [37.3354, -121.891907],
-    country: "United States",
-    domain: "US",
+    regionNames: {
+      fullName: "San Jose, California, United States",
+      shortName: "San Jose",
+      displayName: "San Jose, California, United States",
+      primaryDisplayName: "San Jose",
+      secondaryDisplayName: "California, United States",
+      lastSearchName: "San Jose, California, United States",
+    },
+    coordinates: {
+      lat: "37.3354",
+      long: "-121.891907",
+    },
+    country: {
+      name: "United States",
+      domain: "US",
+    },
   },
-
   {
-    name: "San Jose (SJC - Norman Y. Mineta San Jose Intl.), California, United States",
+    region_id: "4409939",
     type: "AIRPORT",
-    regionId: "4409939",
-    coordinates: [37.369739, -121.929225],
-    country: "United States",
-    domain: "US",
+    regionNames: {
+      fullName:
+        "San Jose (SJC - Norman Y. Mineta San Jose Intl.), California, United States",
+      shortName: "SJC",
+      displayName: "San Jose Airport",
+      primaryDisplayName: "Norman Y. Mineta San Jose Intl.",
+      secondaryDisplayName: "San Jose, California, United States",
+      lastSearchName: "San Jose (SJC - Norman Y. Mineta San Jose Intl.)",
+    },
+    coordinates: {
+      lat: "37.369739",
+      long: "-121.929225",
+    },
+    country: {
+      name: "United States",
+      domain: "US",
+    },
   },
-
   {
-    name: "San José, San José Province, Costa Rica",
+    region_id: "3177",
     type: "CITY",
-    regionId: "3177",
-    coordinates: [9.93286, -84.079559],
-    country: "Costa Rica",
-    domain: "CR",
-  },
-
-  {
-    name: "San José del Cabo, Baja California Sur, Mexico",
-    type: "CITY",
-    regionId: "8650",
-    coordinates: [23.063656, -109.702438],
-    country: "Mexico",
-    domain: "MX",
-  },
-
-  {
-    name: "San José (SJO - Juan Santamaría Intl.), Costa Rica",
-    type: "AIRPORT",
-    regionId: "5196371",
-    coordinates: [9.9981, -84.2046],
-    country: "Costa Rica",
-    domain: "CR",
-  },
-
-  {
-    name: "San Jose Convention Center, San Jose, California, United States",
-    type: "POI",
-    regionId: "6138778",
-    coordinates: [37.329081, -121.889132],
-    country: "United States",
-    domain: "US",
-  },
-
-  {
-    name: 'San José del Cabo ("San Jose Del Cabo Airport") (SJD - Los Cabos Intl.), Baja California Sur, Mexico',
-    type: "AIRPORT",
-    regionId: "4475475",
-    coordinates: [23.162746, -109.717368],
-    country: "Mexico",
-    domain: "MX",
-  },
-
-  {
-    name: "Downtown San Jose, San Jose, California, United States",
-    type: "NEIGHBORHOOD",
-    regionId: "553248633938970011",
-    coordinates: [37.335095, -121.892883],
-    country: "United States",
-    domain: "US",
-  },
-
-  {
-    name: "San Jose (SJO - All Airports), Costa Rica",
-    type: "METROCODE",
-    regionId: "6139076",
-    coordinates: [9.93960791512362, -84.10325688819586],
-    country: "Costa Rica",
-    domain: "CR",
-  },
-
-  {
-    name: "San Jose State University, San Jose, California, United States",
-    type: "POI",
-    regionId: "6069527",
-    coordinates: [37.32890082806852, -121.8749250818403],
-    country: "United States",
-    domain: "US",
-  },
+    regionNames: {
+      fullName: "San José, San José Province, Costa Rica",
+      shortName: "San José",
+      displayName: "San José, Costa Rica",
+      primaryDisplayName: "San José",
+      secondaryDisplayName: "San José Province, Costa Rica",
+      lastSearchName: "San José, Costa Rica",
+    },
+    coordinates: {
+      lat: "9.93286",
+      long: "-84.079559",
+    },
+    country: {
+      name: "Costa Rica",
+      domain: "CR",
+    },
+  }
 ];
 
 type LocationComboboxProps = {
