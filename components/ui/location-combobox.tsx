@@ -16,6 +16,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  DEFAULT_DOMAIN,
+  DEFAULT_LOCALE,
+} from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
+import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
+import { REGION_SEARCH_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
+import { APIRegionArrayFormatted } from "@/app/api/hotels/region/route";
+import {useState, use } from "react"
 
 type Location = {
   name: string;
@@ -125,11 +133,12 @@ type LocationComboboxProps = {
 };
 
 export default function LocationCombobox(props: LocationComboboxProps) {
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
+  const [ops, setOps] = useState(cachedLocations);
   const handleSearch = (value: string) => {
-      setValue(value);
-      props.searchLocations(value);
+    setValue(value);
+    props.searchLocations(value);
   };
 
   return (
@@ -183,3 +192,24 @@ export default function LocationCombobox(props: LocationComboboxProps) {
     </Popover>
   );
 }
+
+const handleFindRegion = async (
+  query: string,
+  setOps: React.Dispatch<>
+  domain?: string,
+  locale?: string
+) => {
+  const urlParams = JSONToURLSearchParams({
+    query: query,
+    domain: domain ?? DEFAULT_DOMAIN,
+    locale: locale ?? DEFAULT_LOCALE,
+  });
+
+  const response = use(
+    fetch(`${REGION_SEARCH_API_URL}?${urlParams.toString()}`)
+  );
+  if (!response.ok) alert(`Failed to fetch regions.`);
+
+  const REGION_DATA: APIRegionArrayFormatted = await response.json();
+  setOps(REGION_DATA);
+};

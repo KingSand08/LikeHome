@@ -35,6 +35,7 @@ import RegionSearchUIComplete from "@/components/search/RegionSearch/RegionSearc
 import HotelSearchUIComplete from "@/components/search/HotelSearch/HotelSearchUIComplete";
 import HotelResultUIComplete from "@/components/search/HotelResults/HotelResultsUIComplete";
 import SearchParamsDisplay from "@/components/search/Testing/SearchParamsDisplay";
+import LocationCombobox from "@/components/ui/location-combobox";
 
 export type searchParamsType = {
   // RegionSearch inputs
@@ -107,33 +108,10 @@ const HomeSearchPage: React.FC = () => {
   return (
     <div className="bg-slate-gray container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Browsing Search Page</h1>
-      <h2 className="text-xl font-bold mb-4">
-        This will end up in / (the landing/browsing page)
-      </h2>
 
       {/* RegionSearch Component */}
-      <RegionSearchUIComplete
-        regionSearchInputs={{
-          query: searchParams.query,
-          domain: searchParams.domain,
-          locale: searchParams.locale,
-        }}
-        selectedRegionId={searchParams.selectedRegionId}
-        setRegionSearchInputs={(newParams: {
-          query: string;
-          domain: RegionSearchDomainType;
-          locale: RegionSearchLocaleType;
-        }) =>
-          updateRegionSearchParams({
-            query: newParams.query,
-            domain: newParams.domain,
-            locale: newParams.locale,
-          })
-        }
-        setSelectedRegionId={(regionId: string | null) =>
-          updateRegionSearchParams({ selectedRegionId: regionId })
-        }
-      />
+      <LocationCombobox
+       />
 
       <hr></hr>
       {/* BookingInfo Component */}
@@ -150,12 +128,7 @@ const HomeSearchPage: React.FC = () => {
           adultsNumber: number;
           numDays: number;
         }) =>
-          updateBookingInfoParams({
-            checkinDate: newParams.checkinDate,
-            checkoutDate: newParams.checkoutDate,
-            adultsNumber: newParams.adultsNumber,
-            numDays: newParams.numDays,
-          })
+          updateBookingInfoParams(newParams)
         }
       />
 
@@ -190,7 +163,7 @@ const HomeSearchPage: React.FC = () => {
 
       <hr></hr>
       {/* Displaying all search parameters */}
-      <SearchParamsDisplay searchParams={searchParams} />
+      {/* <SearchParamsDisplay searchParams={searchParams} /> */}
 
       <hr></hr>
       {/* HotelSelectUIComplete Component */}
