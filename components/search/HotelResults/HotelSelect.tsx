@@ -71,11 +71,33 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
         {loading ? "Loading..." : "Find Hotels"}
       </button>
 
+      {hotelsData &&
+      bookingParams.price_min > hotelsData?.priceRange?.minPrice &&
+      bookingParams.price_max < hotelsData?.priceRange?.maxPrice ? (
+        <div className="text-red text-2xl">
+          Sorry, there are no hotels with the price range between{" "}
+          {`$${bookingParams.price_min} and $${bookingParams.price_max}`}. Here
+          are some other hotels you can check out...
+        </div>
+      ) : hotelsData &&
+        bookingParams.price_min > hotelsData?.priceRange?.minPrice ? (
+        <div className="text-red text-2xl">
+          Sorry, there are no hotels with min price over{" "}
+          {`$${bookingParams.price_min}`}. Here are some other hotels you can
+          check out...
+        </div>
+      ) : hotelsData &&
+        bookingParams.price_max < hotelsData?.priceRange?.maxPrice ? (
+        <div className="text-red text-2xl">
+          Sorry, there are no hotels with max price under{" "}
+          {`$${bookingParams.price_max}`}. Here are some other hotels you can
+          check out...
+        </div>
+      ) : null}
+
       {/* Hotel List Display */}
       <div className="mt-6">
-        {loading ? (
-          null
-        ) : hotelsData && hotelsData.properties.length > 0 ? (
+        {loading ? null : hotelsData && hotelsData.properties.length > 0 ? (
           <HotelList hotelsData={hotelsData} bookingParams={bookingParams} />
         ) : (
           <p className="text-gray-500">No hotels found.</p>
