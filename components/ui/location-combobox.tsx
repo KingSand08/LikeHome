@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import { Check } from "lucide-react";
 
@@ -93,7 +94,13 @@ export default function LocationCombobox() {
   const findRegion = () => handleFindRegion(query, ops, setOps);
 
   return (
-    <Command onFocus={() => setOpen(true)} onBlur={() => setOpen(false)}>
+    <Command
+      onFocus={() => setOpen(true)}
+      onBlur={() => setOpen(false)}
+      className={`relative ${
+        open ? "rounded-lg rounded-b-none" : "rounded-lg"
+      } text-neutral dark:text-gray-100 dark:bg-gray-800 border-2 border-primary focus:outline-none focus:ring-2 focus:ring-blue-500`}
+    >
       <CommandInput
         placeholder="Search locations..."
         onValueChange={setQuery}
@@ -102,8 +109,9 @@ export default function LocationCombobox() {
           else if (e.key == "Escape") setOpen(false);
         }}
       />
+      {open && <hr />}
       {open && (
-        <CommandList>
+        <CommandList className="absolute top-full left-0 w-full bg-white dark:bg-gray-800 max-h-60 overflow-auto rounded-lg rounded-t-none border-2 border-t-0 border-primary">
           <CommandEmpty className="py-3 text-center text-sm w-full">
             Press Enter to search for more locations.
           </CommandEmpty>
