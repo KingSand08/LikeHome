@@ -92,10 +92,6 @@ const HomeSearchPage: React.FC = () => {
   });
 
   // Handlers to update specific sections of searchParams
-  const updateRegionSearchParams = (
-    newSearchParams: Partial<typeof searchParams>
-  ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
-
   const updateBookingInfoParams = (
     newSearchParams: Partial<typeof searchParams>
   ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
@@ -106,15 +102,19 @@ const HomeSearchPage: React.FC = () => {
 
   const [region] = useContext(RegionContext);
   useEffect(() => {
-    updateRegionSearchParams({ selectedRegionId: region.region_id });
-  }, [region, updateRegionSearchParams]);
+    // update region search params
+    setSearchParams((prev) => ({
+      ...prev,
+      selectedRegionId: region.region_id ?? null,
+    }));
+  }, [region, setSearchParams]);
 
   return (
     <div className="bg-slate-gray container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">
         Browsing Hotels in {region.name} 🏨
       </h1>
-      
+
       {/* BookingInfo Component */}
       <BookingInfoUISearchComplete
         bookingInfo={{
