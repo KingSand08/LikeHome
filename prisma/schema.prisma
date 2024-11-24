@@ -4,8 +4,7 @@
 // To check if the DB is linked and working run "npx prisma studio" (it will display the database)
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["mongoDb"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -14,11 +13,12 @@ datasource db {
 }
 
 model User {
-  id               String        @id @default(auto()) @map("_id") @db.ObjectId
-  email            String        @unique
-  name             String
-  rewardPoints     Int
-  reservations     Reservation[]
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  email          String        @unique
+  name           String
+  rewardPoints   Int           @default(0)
+  redeemedPoints Int           @default(0)
+  reservations   Reservation[]
 }
 
 model Reservation {
