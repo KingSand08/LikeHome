@@ -6,6 +6,7 @@ import { z } from "zod";
 import { hotelSearchParamsRefinedSchema } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
 import { HOTEL_SEARCH_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
+import { DEFAULT_MAX_PRICE, DEFAULT_MIN_PRICE } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 
 export type bookingParamsType = z.infer<typeof hotelSearchParamsRefinedSchema>;
 
@@ -22,6 +23,13 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
     useState<APIHotelSearchJSONFormatted | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [isValidParams, setIsValidParams] = useState<boolean>(false);
+  const [lastPriceRange, setLastPriceRange] = useState<{
+    max: number;
+    min: number;
+  }>({
+    max: DEFAULT_MAX_PRICE,
+    min: DEFAULT_MIN_PRICE,
+  });
 
   useEffect(() => {
     const isValid =
@@ -30,6 +38,10 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
   }, [bookingParams]);
 
   const handleFindHotels = async () => {
+    setLastPriceRange({
+      max: hotelsData?.priceRange?.maxPrice!,
+      min: hotelsData?.priceRange?.minPrice!,
+    });
     setLoading(true);
     setHotelsData(null);
     try {
@@ -71,27 +83,25 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
         {loading ? "Loading..." : "Find Hotels"}
       </button>
 
-      {hotelsData &&
-      bookingParams.price_min > hotelsData?.priceRange?.minPrice &&
-      bookingParams.price_max < hotelsData?.priceRange?.maxPrice ? (
+      {hotelsData && lastPriceRange &&
+      lastPriceRange.min > hotelsData?.priceRange?.minPrice &&
+      lastPriceRange.max < hotelsData?.priceRange?.maxPrice ? (
         <div className="text-red text-2xl">
           Sorry, there are no hotels with the price range between{" "}
-          {`$${bookingParams.price_min} and $${bookingParams.price_max}`}. Here
-          are some other hotels you can check out...
+          {`$${lastPriceRange.min} and $${lastPriceRange.max}`}. Here are some other
+          hotels you can check out...
         </div>
-      ) : hotelsData &&
-        bookingParams.price_min > hotelsData?.priceRange?.minPrice ? (
+      ) : hotelsData && lastPriceRange &&
+      lastPriceRange.min > hotelsData?.priceRange?.minPrice ? (
         <div className="text-red text-2xl">
-          Sorry, there are no hotels with min price over{" "}
-          {`$${bookingParams.price_min}`}. Here are some other hotels you can
-          check out...
+          Sorry, there are no hotels with min price over {`$${lastPriceRange.min}`}.
+          Here are some other hotels you can check out...
         </div>
-      ) : hotelsData &&
-        bookingParams.price_max < hotelsData?.priceRange?.maxPrice ? (
+      ) : hotelsData && lastPriceRange &&
+      lastPriceRange.max < hotelsData?.priceRange?.maxPrice ? (
         <div className="text-red text-2xl">
-          Sorry, there are no hotels with max price under{" "}
-          {`$${bookingParams.price_max}`}. Here are some other hotels you can
-          check out...
+          Sorry, there are no hotels with max price under {`$${lastPriceRange.max}`}
+          . Here are some other hotels you can check out...
         </div>
       ) : null}
 
