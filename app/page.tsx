@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,
@@ -34,6 +34,7 @@ import BookingInfoUISearchComplete from "@/components/search/BookingInfoSearch/B
 import HotelSearchUIComplete from "@/components/search/HotelSearch/HotelSearchUIComplete";
 import LocationCombobox from "@/components/ui/location-combobox";
 import HotelSelect from "@/components/search/HotelResults/HotelSelect";
+import { RegionContext } from "@/components/providers/RegionProvider";
 
 export type searchParamsType = {
   // RegionSearch inputs
@@ -103,16 +104,18 @@ const HomeSearchPage: React.FC = () => {
     newSearchParams: Partial<typeof searchParams>
   ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
 
+  const [region] = useContext(RegionContext);
+  useEffect(() => {
+    updateRegionSearchParams({ selectedRegionId: region.region_id });
+  }, [region]);
+
   return (
     <div className="bg-slate-gray container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Browsing Search Page</h1>
 
       {/* RegionSearch Component */}
-      <LocationCombobox
-        
-       />
-
-      <hr></hr>
+      <LocationCombobox />
+      <h1>{region.name}</h1>
       {/* BookingInfo Component */}
       <BookingInfoUISearchComplete
         bookingInfo={{
@@ -126,9 +129,7 @@ const HomeSearchPage: React.FC = () => {
           checkoutDate: string;
           adultsNumber: number;
           numDays: number;
-        }) =>
-          updateBookingInfoParams(newParams)
-        }
+        }) => updateBookingInfoParams(newParams)}
       />
 
       <hr></hr>

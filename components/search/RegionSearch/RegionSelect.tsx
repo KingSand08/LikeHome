@@ -83,7 +83,7 @@ const RegionSelect: React.FC<RegionSelectProps> = ({
 
   return (
     <div>
-      <LocationCombobox searchLocations={handleFindRegion} setRegionId={onRegionSelect} />
+      <LocationCombobox searchLocations={handleFindRegion} />
       <TemplateInput
         title="Region Search Query"
         placeholder="Enter region search query"

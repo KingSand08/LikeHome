@@ -18,6 +18,7 @@ import { REGION_SEARCH_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { APIRegionArrayFormatted } from "@/app/api/hotels/region/route";
 import { useState, useContext } from "react";
 import { RegionContext } from "../providers/RegionProvider";
+import { CommandEmpty } from "cmdk";
 
 // TODO: Replace with a DB call to get the cached regions
 const cachedLocations: APIRegionArrayFormatted = [
@@ -84,11 +85,7 @@ const cachedLocations: APIRegionArrayFormatted = [
   },
 ];
 
-export default function LocationCombobox({
-  setRegionId,
-}: {
-  setRegionId: React.Dispatch<string>;
-}) {
+export default function LocationCombobox() {
   const [value, setValue] = useContext(RegionContext);
   const [open, setOpen] = useState(false);
   const [ops, setOps] = useState(cachedLocations);
@@ -107,6 +104,9 @@ export default function LocationCombobox({
       />
       {open && (
         <CommandList>
+          <CommandEmpty className="py-3 text-center text-sm w-full">
+            Press Enter to search for more locations.
+          </CommandEmpty>
           <CommandGroup>
             {ops.map((loc) => (
               <CommandItem
@@ -118,8 +118,10 @@ export default function LocationCombobox({
                     setValue({});
                     return;
                   }
-                  setRegionId(currentValue);
-                  setValue({region_id: loc.region_id, name: loc.regionNames.displayName});
+                  setValue({
+                    region_id: loc.region_id,
+                    name: loc.regionNames.displayName,
+                  });
                   setOpen(false);
                 }}
               >
@@ -135,12 +137,6 @@ export default function LocationCombobox({
               </CommandItem>
             ))}
           </CommandGroup>
-          <button
-            className="py-3 text-center text-sm w-full"
-            onClick={findRegion}
-          >
-            Click to search for more.
-          </button>
         </CommandList>
       )}
     </Command>
@@ -163,6 +159,7 @@ const handleFindRegion = async (
   const response = await fetch(
     `${REGION_SEARCH_API_URL}?${urlParams.toString()}`
   );
+  console.log(response);
   if (!response.ok) alert(`Failed to fetch regions.`);
 
   const REGION_DATA: APIRegionArrayFormatted = await response.json();
