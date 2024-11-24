@@ -20,7 +20,6 @@ import { APIRegionArrayFormatted } from "@/app/api/hotels/region/route";
 import { useState, useContext } from "react";
 import { RegionContext } from "../providers/RegionProvider";
 import { CommandEmpty } from "cmdk";
-const dropdownRef = React.useRef<HTMLDivElement>(null);
 
 // TODO: Replace with a DB call to get the cached regions
 const cachedLocations: APIRegionArrayFormatted = [
@@ -93,19 +92,19 @@ export default function LocationCombobox() {
   const [ops, setOps] = useState(cachedLocations);
   const [query, setQuery] = useState("");
   const findRegion = () => handleFindRegion(query, ops, setOps);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
   const handleBlur = (e: React.FocusEvent) => {
     // Check if focus is still within the dropdown
     if (!dropdownRef.current?.contains(e.relatedTarget as Node)) {
       setOpen(false);
     }
   };
-  
-  
+
   return (
     <Command
-      href={dropdownRef}
+      ref={dropdownRef}
       onFocus={() => setOpen(true)}
-      onBlur={(handleBlur)}
+      onBlur={handleBlur}
       className={`relative ${
         open ? "rounded-lg rounded-b-none" : "rounded-lg"
       } text-neutral dark:text-gray-100 dark:bg-gray-800 border-2 border-primary focus:outline-none focus:ring-2 focus:ring-blue-500`}
