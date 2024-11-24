@@ -51,10 +51,17 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
       ></div>
 
       {/* Price Per Night Section */}
-      <div className="text-lg font-medium text-black mb-4">
-        Price per night: {room.pricePerNight.currency.symbol}
-        {room.pricePerNight.amount} {room.pricePerNight.currency.code}
-      </div>
+      {room.pricePerNight.amount > 0 ? (
+        <div className="text-lg font-medium text-black mb-4">
+          Price per night:{" "}
+          {`${room.pricePerNight.currency.symbol}
+          ${room.pricePerNight.amount} ${room.pricePerNight.currency.code}`}
+        </div>
+      ) : (
+        <div className="text-lg font-medium text-black mb-4">
+          Price per night: Unavailable
+        </div>
+      )}
 
       {/* Room ID */}
       <div className="text-sm text-gray-600 mb-4">
@@ -79,14 +86,23 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
 
       {/* Centered Custom Link and Reserve Now Button */}
       <div className="text-center">
-        <Link href={`${CustomHotelRoomLink}?${urlParams}`}>
+        {room.pricePerNight.amount > 0 ? (
+          <Link href={`${CustomHotelRoomLink}?${urlParams}`}>
+            <div
+              className="inline-block bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-700 transition-colors"
+              aria-label="Reserve Now"
+            >
+              Reserve Now
+            </div>
+          </Link>
+        ) : (
           <div
-            className="inline-block bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-700 transition-colors"
-            aria-label="Reserve Now"
+            className="inline-block bg-gray-600 text-white font-semibold py-2 px-4 rounded transition-colors disabled hover:cursor-not-allowed"
+            aria-label="Unavailable"
           >
-            Reserve Now
+            Unavailable
           </div>
-        </Link>
+        )}
       </div>
     </div>
   );

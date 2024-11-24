@@ -1,56 +1,22 @@
-import React from "react";
-import { redirect } from "next/navigation";
-import { auth } from "@/auth";
-import Image from "next/image";
-import OAuthButton from "@/components/OAuthButton";
+"use client";
+import React from 'react'
+import SigninPage from '@/components/auth/SigninPage'
 
-export default async function SignInPage() {
-  const profilePageURL = "/profile";
-
-  // redirect user
-  const session = await auth();
-  if (session) {
-    redirect(profilePageURL);
-  }
-
-  return (
-    <>
-      <div className="h-[75vh] flex items-center justify-center">
-        <div className="bg-white flex rounded-lg w-3/4">
-          <div className="flex-1 text-gray-800 p-20">
-            <h1 className="text-3xl pb-4">Let&apos;s get started!</h1>
-            <p className="text-lg text-gray-700">
-              Welcome to LikeHome! Sign in Google or provide your email to get
-              started! New users will have a short profile section to fill out
-              once signing in for the first time.
-            </p>
-            <div className="mt-14">
-              <OAuthButton />
-              {/* Section divider input field */}
-              <div>
-                <p className="mt-4 mb-4 text-center text-lg">or</p>
-              </div>
-              {/* Email input field */}
-              <div className="pb-4 flex flex-col items-center">
-                <input
-                  className="text-base-100 p-2 border-2 border-gray-600 rounded-md w-full focus:border-purple-600 focus:ring-purple-500 focus:outline-none"
-                  type="email"
-                  name="email"
-                  placeholder="Enter your email"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="relative flex-1">
-            <Image
-              alt="likehome image"
-              src="/stellarHorizons.png"
-              fill
-              className="object-cover rounded-lg"
-            />
-          </div>
-        </div>
-      </div>
-    </>
-  );
+type Props = {
+  searchParams?: Record<"callbackUrl" | "error", string>;
 }
+
+const Page = (props: Props) => {
+  return (
+    <div className='flex justify-center items-center min-h-screen max-[1180px]:my-8'>
+      <div className='w-3/4 max-w-fit shadow-2xl dark:shadow-lg dark:bg-gradient-to-r dark:from-slate-800 dark:to-slate-900 bg-gradient-to-r from-slate-300 to-slate-400 p-8 rounded-xl'>
+        <SigninPage
+          error={props.searchParams?.error}
+          callbackUrl={props.searchParams?.callbackUrl}
+        />
+      </div>
+    </div>
+  )
+}
+
+export default Page

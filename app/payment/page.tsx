@@ -25,7 +25,7 @@ const PaymentRedirectPage = () => {
     } else {
       router.replace("/error");
     }
-  }, [searchParams, router]);
+  }, [payment_intent, payment_intent_client_secret, bookingId, router]);
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
