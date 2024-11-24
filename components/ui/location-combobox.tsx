@@ -20,6 +20,7 @@ import { APIRegionArrayFormatted } from "@/app/api/hotels/region/route";
 import { useState, useContext } from "react";
 import { RegionContext } from "../providers/RegionProvider";
 import { CommandEmpty } from "cmdk";
+const dropdownRef = React.useRef<HTMLDivElement>(null);
 
 // TODO: Replace with a DB call to get the cached regions
 const cachedLocations: APIRegionArrayFormatted = [
@@ -92,11 +93,19 @@ export default function LocationCombobox() {
   const [ops, setOps] = useState(cachedLocations);
   const [query, setQuery] = useState("");
   const findRegion = () => handleFindRegion(query, ops, setOps);
-
+  const handleBlur = (e: React.FocusEvent) => {
+    // Check if focus is still within the dropdown
+    if (!dropdownRef.current?.contains(e.relatedTarget as Node)) {
+      setOpen(false);
+    }
+  };
+  
+  
   return (
     <Command
+      href={dropdownRef}
       onFocus={() => setOpen(true)}
-      onBlur={() => setOpen(false)}
+      onBlur={(handleBlur)}
       className={`relative ${
         open ? "rounded-lg rounded-b-none" : "rounded-lg"
       } text-neutral dark:text-gray-100 dark:bg-gray-800 border-2 border-primary focus:outline-none focus:ring-2 focus:ring-blue-500`}
@@ -105,8 +114,8 @@ export default function LocationCombobox() {
         placeholder="Search locations..."
         onValueChange={setQuery}
         onKeyDown={(e) => {
-          if (e.key == "Enter") findRegion();
-          else if (e.key == "Escape") setOpen(false);
+          if (e.key === "Enter") findRegion();
+          else if (e.key === "Escape") setOpen(false);
         }}
       />
       {open && <hr />}
@@ -121,7 +130,7 @@ export default function LocationCombobox() {
                 key={loc.region_id}
                 value={loc.regionNames.displayName}
                 onSelect={(currentValue) => {
-                  const isDeselect = currentValue == value;
+                  const isDeselect = currentValue === value?.name;
                   if (isDeselect) {
                     setValue({});
                     return;
@@ -137,7 +146,7 @@ export default function LocationCombobox() {
                 <Check
                   className={cn(
                     "ml-auto",
-                    value === loc.regionNames.displayName
+                    value?.name === loc.regionNames.displayName
                       ? "opacity-100"
                       : "opacity-0"
                   )}
