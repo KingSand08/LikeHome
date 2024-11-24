@@ -23,16 +23,7 @@ import {
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import { REGION_SEARCH_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { APIRegionArrayFormatted } from "@/app/api/hotels/region/route";
-import {useState, use } from "react"
-
-type Location = {
-  name: string;
-  type: string;
-  regionId: string;
-  coordinates: [number, number];
-  country: string;
-  domain: string;
-};
+import { useState, use } from "react";
 
 // TODO: Replace with a DB call to get the cached regions
 const cachedLocations: APIRegionArrayFormatted = [
@@ -96,22 +87,18 @@ const cachedLocations: APIRegionArrayFormatted = [
       name: "Costa Rica",
       domain: "CR",
     },
-  }
+  },
 ];
 
-type LocationComboboxProps = {
-  searchLocations: (query: string) => void;
-  setRegionId: (regionId: string) => void;
-};
-
-export default function LocationCombobox(props: LocationComboboxProps) {
+export default function LocationCombobox({
+  setRegionId,
+}: {
+  setRegionId: React.Dispatch<string>;
+}) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [ops, setOps] = useState(cachedLocations);
-  const handleSearch = (value: string) => {
-    setValue(value);
-    props.searchLocations(value);
-  };
+  const [query, setQuery] = useState("");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -123,40 +110,48 @@ export default function LocationCombobox(props: LocationComboboxProps) {
           className="w-[200px] justify-between"
         >
           {value
-            ? cachedLocations.find((loc) => loc.name === value)?.name
+            ? ops.find((loc) => loc.regionNames.displayName === value)
+                ?.regionNames.displayName
             : "Select Location..."}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search locations..." />
+          <CommandInput
+            placeholder="Search locations..."
+            onValueChange={setQuery}
+          />
           <CommandList>
             <CommandEmpty>
-              <button onClick={handleSearch}>
+              <button onClick={() => handleFindRegion(query, ops, setOps)}>
                 No location found. Click to search.
               </button>
             </CommandEmpty>
             <CommandGroup>
-              {cachedLocations.map((loc) => (
+              {ops.map((loc) => (
                 <CommandItem
-                  key={loc.regionId}
-                  value={loc.name}
+                  key={loc.region_id}
+                  value={loc.regionNames.displayName}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
-                    props.setRegionId(loc.regionId);
+                    setRegionId(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
                 >
-                  {loc.name}
+                  {loc.regionNames.displayName}
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === loc.name ? "opacity-100" : "opacity-0"
+                      value === loc.regionNames.displayName
+                        ? "opacity-100"
+                        : "opacity-0"
                     )}
                   />
                 </CommandItem>
               ))}
+              <button onClick={() => handleFindRegion(query, ops, setOps)}>
+                Click to search for more.
+              </button>
             </CommandGroup>
           </CommandList>
         </Command>
@@ -167,7 +162,8 @@ export default function LocationCombobox(props: LocationComboboxProps) {
 
 const handleFindRegion = async (
   query: string,
-  setOps: React.Dispatch<>
+  ops: APIRegionArrayFormatted,
+  setOps: React.Dispatch<APIRegionArrayFormatted>,
   domain?: string,
   locale?: string
 ) => {
@@ -177,11 +173,11 @@ const handleFindRegion = async (
     locale: locale ?? DEFAULT_LOCALE,
   });
 
-  const response = use(
-    fetch(`${REGION_SEARCH_API_URL}?${urlParams.toString()}`)
+  const response = await fetch(
+    `${REGION_SEARCH_API_URL}?${urlParams.toString()}`
   );
   if (!response.ok) alert(`Failed to fetch regions.`);
 
   const REGION_DATA: APIRegionArrayFormatted = await response.json();
-  setOps(REGION_DATA);
+  setOps([...REGION_DATA, ...ops]);
 };
