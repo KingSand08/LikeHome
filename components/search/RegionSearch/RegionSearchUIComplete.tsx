@@ -52,7 +52,7 @@ const RegionSearchUIComplete: React.FC<RegionSearchUICompleteProps> = ({
       /> */}
 
       {/* Dropdown Inputs */}
-      <div className="flex flex-row justify-between space-x-4 mt-4">
+      {/* <div className="flex flex-row justify-between space-x-4 mt-4">
         <div className="flex-1">
           <DomainDropdown
             selectedDomain={regionSearchInputs.domain}
@@ -65,7 +65,7 @@ const RegionSearchUIComplete: React.FC<RegionSearchUICompleteProps> = ({
             onChange={handleLocaleChange}
           />
         </div>
-      </div>
+      </div> */}
 
       {/* Region Select Component */}
       <RegionSelect
