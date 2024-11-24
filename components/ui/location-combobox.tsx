@@ -16,7 +16,8 @@ import {
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import { REGION_SEARCH_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { APIRegionArrayFormatted } from "@/app/api/hotels/region/route";
-import { useState, use } from "react";
+import { useState, useContext } from "react";
+import { RegionContext } from "../providers/RegionProvider";
 
 // TODO: Replace with a DB call to get the cached regions
 const cachedLocations: APIRegionArrayFormatted = [
@@ -88,7 +89,7 @@ export default function LocationCombobox({
 }: {
   setRegionId: React.Dispatch<string>;
 }) {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useContext(RegionContext);
   const [open, setOpen] = useState(false);
   const [ops, setOps] = useState(cachedLocations);
   const [query, setQuery] = useState("");
@@ -101,7 +102,6 @@ export default function LocationCombobox({
         onValueChange={setQuery}
         onKeyDown={(e) => {
           if (e.key == "Enter") findRegion();
-
           else if (e.key == "Escape") setOpen(false);
         }}
       />
@@ -115,11 +115,11 @@ export default function LocationCombobox({
                 onSelect={(currentValue) => {
                   const isDeselect = currentValue == value;
                   if (isDeselect) {
-                    setValue("");
+                    setValue({});
                     return;
                   }
                   setRegionId(currentValue);
-                  setValue(currentValue);
+                  setValue({region_id: loc.region_id, name: loc.regionNames.displayName});
                   setOpen(false);
                 }}
               >
