@@ -54,7 +54,7 @@ const ModalRoute: React.FC<ModalProps> = ({ children, onClose, callbackUrl = "/"
             <div className="modal-box relative max-w-5xl">
                 {/* Close button */}
                 <button
-                    className="bg-black hover:bg-gray-700 btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                    className="bg-gray-400 hover:bg-gray-300 dark:bg-black dark:hover:bg-gray-700 btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                     onClick={handleClose}
                 >
                     ✕

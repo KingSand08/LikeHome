@@ -1,110 +1,57 @@
 import ContactUs from "@/components/about/contact-us";
 import Image from "next/image";
 import React from "react";
-
-const team = [
-  {
-    name: "Mauricio Curiel",
-    image: "/images/team/mau.png",
-    description:
-      "Project Manager overseeing development and project milestones",
-    linkedin: "",
-  },
-  {
-    name: "Ahsan Ali",
-    image: "/images/team/Ahsan.png",
-    description:
-      "Backend Developer specializing in server-side development and testing.",
-    linkedin: "",
-  },
-  {
-    name: "Ali Altimimi",
-    image: "/images/team/Ali.png",
-    description:
-      "Backend Developer focused on database architecture and optimization.",
-    linkedin: "",
-  },
-  {
-    name: "Connor Linville",
-    image: "/images/team/Connor.png",
-    description:
-      "Backend Developer with expertise in deployment strategies and user authentication systems.",
-    linkedin: "",
-  },
-  {
-    name: "Steven Lu",
-    image: "/images/team/Steven.png",
-    description:
-      "Frontend Developer responsible for implementing designs from Figma into a responsive UI.",
-    linkedin: "",
-  },
-  {
-    name: "Raymund Mercader",
-    image: "/images/team/Raymund.png",
-    description:
-      "Full Stack Developer experienced in both backend and frontend development.",
-    linkedin: "",
-  },
-  {
-    name: "Hoa Tuong Minh Nguyen",
-    image: "/images/team/Minh.png",
-    description:
-      "UI/UX Designer on Figma and Frontend Developer.",
-    linkedin: "https://www.linkedin.com/in/hoa-nguyen-m1000/",
-  },
-  {
-    name: "Ryan Tang",
-    image: "/images/team/Ryan.png",
-    description: "Backend Developer focused on stripe and prisma integration.",
-    linkedin: "",
-  },
-];
+import developers from "@/data/developers.json";
 
 const AboutPage = () => {
   return (
-    <div className="bg-gray-100 text-gray-800 p-8">
-      <div className="flex-[1] lg:flex-[0.6]">
-        <section className="text-center mb-6">
-          <h2 className="text-3xl font-bold mb-4">Meet Our Team</h2>
+    <div className="text-gray-800 dark:text-gray-100 p-8 bg-gradient-to-b from-gray-100 via-gray-200 to-gray-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="flex-[1] lg:flex-[0.6] max-w-6xl mx-auto">
+        <section className="text-center mb-12">
+          <h2 className="text-4xl font-extrabold mb-6 text-blue-700 dark:text-blue-400">
+            Meet Our Team
+          </h2>
           <p className="text-lg">
             We are a group of passionate developers committed to building the
             best hotel-booking platform.
           </p>
         </section>
 
-        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {team.map((member, index) => (
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {developers.map((member, index) => (
             <div
               key={index}
-              className="bg-white p-4 rounded-lg shadow-lg text-center"
+              className="bg-white text-gray-800 dark:bg-slate-700 dark:text-gray-100 p-6 rounded-xl shadow-lg transition transform hover:scale-105 hover:shadow-xl"
             >
               <Image
                 src={member.image}
                 alt={`${member.name}'s picture`}
-                className="w-24 h-24 rounded-full mx-auto mb-4"
+                className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-blue-700 dark:border-blue-500"
                 width={100}
                 height={100}
                 quality={100}
               />
               <h3 className="text-xl font-semibold mb-2">{member.name}</h3>
-              <p>{member.description}</p>
-              <p className="text-sm text-gray-600">
-                <a
-                 
+              <p className="mb-4 text-sm">{member.description}</p>
+              {member.linkedin && (
+                <p>
+                  <a
                     href={member.linkedin}
-                   
-                  className="hover:text-blue-500"
-                
+                    className="text-blue-600 dark:text-blue-400 hover:underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                  My LinkedIn Profile
-                </a>
-              </p>
+                    My LinkedIn Profile
+                  </a>
+                </p>
+              )}
             </div>
           ))}
         </section>
-        <ContactUs />
+
+        <div className="mt-12">
+          <ContactUs />
+        </div>
       </div>
     </div>
   );

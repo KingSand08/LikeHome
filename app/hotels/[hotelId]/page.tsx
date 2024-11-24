@@ -56,7 +56,6 @@ const HotelIDPage: React.FC = () => {
         });
         await handleFindValidHotelRoom(); // Call room API only if hotel details are successfully fetched
       } catch (error) {
-        alert(error);
         setError(true);
       } finally {
         setLoading(false); // Ensure loading is set to false after fetch completion
@@ -94,7 +93,9 @@ const HotelIDPage: React.FC = () => {
 
   if (loading) {
     return <p>Loading...</p>;
-  } else if (error || !hotelData) {
+  }
+
+  if (error || !hotelData) {
     return <p>Error loading hotel data.</p>;
   }
 
