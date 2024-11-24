@@ -19,9 +19,9 @@ export async function createUser(email: string, name: string) {
   });
 }
 
-export async function updatePoints(userId: string, pointChange: number) {
+export async function updatePoints(email: string, pointChange: number) {
   const user = await prisma.user.findUnique({
-    where: { id: userId },
+    where: { email },
     select: { rewardPoints: true },
   });
 
@@ -33,7 +33,7 @@ export async function updatePoints(userId: string, pointChange: number) {
   const rewardPoints = oldPoints ?? 0 + pointChange;
 
   return prisma.user.update({
-    where: { id: userId },
+    where: { email },
     data: { rewardPoints },
   });
 }

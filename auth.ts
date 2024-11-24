@@ -24,9 +24,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   events: {
     signIn: async (m: { user: User }) => {
-      console.log(m.user);
       createUser(m.user.email!, m.user.name!);
-      console.log();
     },
   },
 });
