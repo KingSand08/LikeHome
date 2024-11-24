@@ -1,21 +1,14 @@
 import * as React from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,
@@ -95,68 +88,62 @@ export default function LocationCombobox({
 }: {
   setRegionId: React.Dispatch<string>;
 }) {
-  const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
+  const [open, setOpen] = useState(false);
   const [ops, setOps] = useState(cachedLocations);
   const [query, setQuery] = useState("");
+  const findRegion = () => handleFindRegion(query, ops, setOps);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[200px] justify-between"
-        >
-          {value
-            ? ops.find((loc) => loc.regionNames.displayName === value)
-                ?.regionNames.displayName
-            : "Select Location..."}
-          <ChevronsUpDown className="opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandInput
-            placeholder="Search locations..."
-            onValueChange={setQuery}
-          />
-          <CommandList>
-            <CommandEmpty>
-              <button onClick={() => handleFindRegion(query, ops, setOps)}>
-                No location found. Click to search.
-              </button>
-            </CommandEmpty>
-            <CommandGroup>
-              {ops.map((loc) => (
-                <CommandItem
-                  key={loc.region_id}
-                  value={loc.regionNames.displayName}
-                  onSelect={(currentValue) => {
-                    setRegionId(currentValue === value ? "" : currentValue);
-                    setOpen(false);
-                  }}
-                >
-                  {loc.regionNames.displayName}
-                  <Check
-                    className={cn(
-                      "ml-auto",
-                      value === loc.regionNames.displayName
-                        ? "opacity-100"
-                        : "opacity-0"
-                    )}
-                  />
-                </CommandItem>
-              ))}
-              <button onClick={() => handleFindRegion(query, ops, setOps)}>
-                Click to search for more.
-              </button>
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+    <Command onFocus={() => setOpen(true)} onBlur={() => setOpen(false)}>
+      <CommandInput
+        placeholder="Search locations..."
+        onValueChange={setQuery}
+        onKeyDown={(e) => {
+          if (e.key == "Enter") findRegion();
+          
+          else if (e.key == "Escape") setOpen(false);
+        }}
+      />
+      {open && (
+        <CommandList>
+          <CommandGroup>
+            {ops.map((loc) => (
+              <CommandItem
+                key={loc.region_id}
+                value={loc.regionNames.displayName}
+                onSelect={(currentValue) => {
+                  const isDeselect = currentValue == value;
+                  if (isDeselect) {
+                    setValue("");
+                    return;
+                  }
+                  setRegionId(currentValue);
+                  setValue(currentValue);
+                  setOpen(false);
+                }}
+              >
+                {loc.regionNames.displayName}
+                <Check
+                  className={cn(
+                    "ml-auto",
+                    value === loc.regionNames.displayName
+                      ? "opacity-100"
+                      : "opacity-0"
+                  )}
+                />
+              </CommandItem>
+            ))}
+          </CommandGroup>
+          <button
+            className="py-3 text-center text-sm w-full"
+            onClick={findRegion}
+          >
+            Click to search for more.
+          </button>
+        </CommandList>
+      )}
+    </Command>
   );
 }
 
