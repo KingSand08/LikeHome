@@ -1,17 +1,16 @@
 "use server";
-
-import prisma from "../lib/prisma";
+import prisma from "@/prisma/client";
 
 export async function createUser(email: string, name: string) {
-  // check if user already exists
-  const user = await prisma.user.findUnique({
+  const existingUser = await prisma.user.findUnique({
     where: { email },
   });
-  if (user) {
-    return user;
+
+  if (existingUser) {
+    return existingUser;
   }
 
-  return prisma.user.create({
+  return await prisma.user.create({
     data: {
       name,
       email,
@@ -21,11 +20,15 @@ export async function createUser(email: string, name: string) {
 }
 
 export async function updatePoints(userId: string, pointChange: number) {
-  const oldPoints = (
-    await prisma.user.findUnique({
-      where: { id: userId },
-    })
-  )?.rewardPoints;
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { rewardPoints: true },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+  const oldPoints = user.rewardPoints;
 
   const rewardPoints = oldPoints ?? 0 + pointChange;
 

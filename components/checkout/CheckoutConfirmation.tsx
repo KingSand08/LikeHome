@@ -14,8 +14,11 @@ import {
   FINAL_PAYMENT_INFO,
 } from "@/lib/rapid-hotel-api/api-setup";
 import { generateBookingId } from "@/lib/BookingFunctions";
-import { createReservation, PartialReservation } from "@/server-actions/reservation-actions";
-import { auth } from "@/auth";
+import {
+  createReservation,
+  PartialReservation,
+} from "@/server-actions/reservation-actions";
+import { useSession } from "next-auth/react";
 
 type CheckoutConfirmationProps = {
   paymentInfo: FINAL_PAYMENT_INFO;
@@ -35,6 +38,7 @@ const CheckoutConfirmation = ({
   const [errorMessage, setErrorMessage] = useState<string>();
   const [clientSecret, setClientSecret] = useState("");
   const [loading, setLoading] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     fetch("/api/create-payment-intent", {
@@ -64,17 +68,15 @@ const CheckoutConfirmation = ({
       return;
     }
 
-    const bookingId = generateBookingId();
-    
-    // Create reservation in DB
-    const partialReservation: PartialReservation = {
-      bookingId,
-      checkin_date: bookingDetails.checkin_date, 
-      checkout_date: bookingDetails.checkout_date, 
-      adults_number: Number(bookingDetails.adults_number),
-      numDays: Number(bookingDetails.numDays), 
-      hotel_id: hotelRoomOffer.hotel_id, 
-      room_id: hotelRoomOffer.hotel_room_id, 
+    const FINAL_BOOKING_DETAILS: FINAL_BOOKING_INFO = {
+      email: session?.user.email!,
+      bookingId: generateBookingId(),
+      checkin_date: bookingDetails.checkin_date,
+      checkout_date: bookingDetails.checkout_date,
+      adults_number: bookingDetails.adults_number,
+      numDays: bookingDetails.numDays,
+      hotel_id: hotelRoomOffer.hotel_id,
+      room_id: hotelRoomOffer.hotel_room_id,
       payment_info: {
         firstName: paymentInfo.firstName,
         lastName: paymentInfo.lastName,
@@ -85,59 +87,63 @@ const CheckoutConfirmation = ({
         email: paymentInfo.email,
       },
       transaction_info: {
-        dateCreated: Date.toString(),
+        dateCreated: (new Date).toISOString(),
         stripePaymentId: "",
       },
-      room_cost: totalAmount,
-    }
+    };
 
-    const reservation = await createReservation(partialReservation);
-
-    const currentUrl =
-      typeof window !== "undefined" ? window.location.origin : "";
-    const returnUrl = `${currentUrl}/payment?bookingId=${bookingId}`;
-    console.log("before redir")
-    const { error } = await stripe.confirmPayment({
-      elements,
-      clientSecret,
-      confirmParams: {
-        // Custom booking URL
-        return_url: returnUrl,
+    // Create reservation in DB
+    const partialReservation: PartialReservation = {
+      userEmail: FINAL_BOOKING_DETAILS.email,
+      bookingId: FINAL_BOOKING_DETAILS.bookingId,
+      checkin_date: FINAL_BOOKING_DETAILS.checkin_date,
+      checkout_date: FINAL_BOOKING_DETAILS.checkout_date,
+      adults_number: Number(FINAL_BOOKING_DETAILS.adults_number),
+      numDays: Number(FINAL_BOOKING_DETAILS.numDays),
+      hotel_id: FINAL_BOOKING_DETAILS.hotel_id,
+      room_id: FINAL_BOOKING_DETAILS.room_id,
+      payment_info: {
+        firstName: FINAL_BOOKING_DETAILS.payment_info.firstName,
+        lastName: FINAL_BOOKING_DETAILS.payment_info.lastName,
+        billingAddress: FINAL_BOOKING_DETAILS.payment_info.billingAddress,
+        city: FINAL_BOOKING_DETAILS.payment_info.city,
+        state: FINAL_BOOKING_DETAILS.payment_info.state,
+        zipCode: FINAL_BOOKING_DETAILS.payment_info.zipCode,
+        email: FINAL_BOOKING_DETAILS.payment_info.email,
       },
-    });
-    console.log("after redir")
+      transaction_info: {
+        dateCreated: FINAL_BOOKING_DETAILS.transaction_info.dateCreated,
+        stripePaymentId: FINAL_BOOKING_DETAILS.transaction_info.stripePaymentId,
+      },
+      room_cost: totalAmount,
+    };
 
-    if (error) {
-      setErrorMessage(error.message);
-      return;
-    } else {
-      // The payment UI automatically closes
-      console.log("DOES THIS WORK????????????????????????????????????????????????????????????????????");
-      // IF successful, call to API and rewrite
-      const FINAL_BOOKING_DETAILS: FINAL_BOOKING_INFO = {
-        // Need to retrieve accountId using NextAuth? Link LikeHome account with this booking
-        account_id: "", // we need to retrieve LikeHome account identifier to link this transaction too
-        bookingId: bookingId,
-        checkin_date: bookingDetails.checkin_date,
-        checkout_date: bookingDetails.checkout_date,
-        adults_number: bookingDetails.adults_number,
-        numDays: bookingDetails.numDays,
-        hotel_id: hotelRoomOffer.hotel_id,
-        room_id: hotelRoomOffer.hotel_room_id,
-        payment_info: {
-          firstName: paymentInfo.firstName,
-          lastName: paymentInfo.lastName,
-          billingAddress: paymentInfo.billingAddress,
-          city: paymentInfo.city,
-          state: paymentInfo.state,
-          zipCode: paymentInfo.zipCode,
-          email: paymentInfo.email,
+    try {
+      const reservation = await createReservation(partialReservation);
+
+      const currentUrl =
+        typeof window !== "undefined" ? window.location.origin : "";
+      const returnUrl = `${currentUrl}/payment?bookingId=${FINAL_BOOKING_DETAILS.bookingId}`;
+
+      console.log("before redir");
+
+      const { error } = await stripe.confirmPayment({
+        elements,
+        clientSecret,
+        confirmParams: {
+          // Custom booking URL
+          return_url: returnUrl,
         },
-        transaction_info: {
-          dateCreated: Date.toString(),
-          stripePaymentId: "", // Will be updated in payment page
-        },
-      };
+      });
+
+      if (error) {
+        console.error("Error during payment confirmation:", error);
+        throw new Error("Payment confirmation failed.");
+      }
+
+      console.log("after redir");
+    } catch (error) {
+      console.error("Error in reservation and payment flow:", error);
     }
 
     setLoading(false);

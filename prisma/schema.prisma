@@ -13,55 +13,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// //May need to update model for photos
-// model Hotel {
-//   id                   String    @id @default(auto()) @map("_id") @db.ObjectId
-//   name                 String
-//   location             Location
-//   amenities            String[]
-//   pricePerNight        Int
-//   ratings              Ratings?
-//   roomsAvailable       Int
-//   description          String
-//   singleRoomsAvailable Int
-//   doubleRoomsAvailable Int
-//   createdAt            DateTime?
-
-//   @@map("hotels") // Maps the model to "hotels" collection in MongoDB
-// }
-
-// type Location {
-//   address     String
-//   city        String
-//   state       String
-//   zip         String
-//   country     String
-//   coordinates Coordinates? // Make coordinates nullable
-// }
-
-// type Coordinates {
-//   latitude  Float
-//   longitude Float
-// }
-
-// type Ratings {
-//   average      Float
-//   reviewsCount Int
-// }
-
 model User {
-  id           String        @id @default(auto()) @map("_id") @db.ObjectId
-  email        String        @unique
-  name         String
-  rewardPoints Int
-  reservations Reservation[]
+  id               String        @id @default(auto()) @map("_id") @db.ObjectId
+  email            String        @unique
+  name             String
+  rewardPoints     Int
+  reservations     Reservation[]
 }
 
 model Reservation {
   id               String          @id @default(auto()) @map("_id") @db.ObjectId
   bookingId        String          @unique
-  userId           String          @db.ObjectId
-  user             User            @relation(fields: [userId], references: [id])
+  userEmail        String
+  user             User            @relation(fields: [userEmail], references: [email])
   checkin_date     String
   checkout_date    String
   adults_number    Int
