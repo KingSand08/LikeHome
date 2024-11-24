@@ -31,11 +31,9 @@ import {
 } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
 import { generateDefaultDates } from "@/lib/DateFunctions";
 import BookingInfoUISearchComplete from "@/components/search/BookingInfoSearch/BookingInfoSearchUIComplete";
-import RegionSearchUIComplete from "@/components/search/RegionSearch/RegionSearchUIComplete";
 import HotelSearchUIComplete from "@/components/search/HotelSearch/HotelSearchUIComplete";
-import HotelResultUIComplete from "@/components/search/HotelResults/HotelResultsUIComplete";
-import SearchParamsDisplay from "@/components/search/Testing/SearchParamsDisplay";
 import LocationCombobox from "@/components/ui/location-combobox";
+import HotelSelect from "@/components/search/HotelResults/HotelSelect";
 
 export type searchParamsType = {
   // RegionSearch inputs
@@ -111,6 +109,7 @@ const HomeSearchPage: React.FC = () => {
 
       {/* RegionSearch Component */}
       <LocationCombobox
+        
        />
 
       <hr></hr>
@@ -167,7 +166,7 @@ const HomeSearchPage: React.FC = () => {
 
       <hr></hr>
       {/* HotelSelectUIComplete Component */}
-      <HotelResultUIComplete
+      <HotelSelect
         bookingParams={{
           checkin_date: searchParams.checkinDate,
           checkout_date: searchParams.checkoutDate,

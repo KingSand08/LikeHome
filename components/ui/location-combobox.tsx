@@ -101,7 +101,7 @@ export default function LocationCombobox({
         onValueChange={setQuery}
         onKeyDown={(e) => {
           if (e.key == "Enter") findRegion();
-          
+
           else if (e.key == "Escape") setOpen(false);
         }}
       />
