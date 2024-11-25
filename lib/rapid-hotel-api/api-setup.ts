@@ -50,7 +50,7 @@ export type FINAL_STRIPE_TRANSACTION_INFO = {
 };
 
 export type FINAL_BOOKING_INFO = {
-  account_id: string;
+  email: string;
   bookingId: string;
   checkin_date: string;
   checkout_date: string;

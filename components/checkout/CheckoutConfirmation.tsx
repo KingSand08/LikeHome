@@ -14,6 +14,8 @@ import {
   FINAL_PAYMENT_INFO,
 } from "@/lib/rapid-hotel-api/api-setup";
 import { generateBookingId } from "@/lib/BookingFunctions";
+import { PartialReservation } from "@/server-actions/reservation-actions";
+import { useSession } from "next-auth/react";
 
 type CheckoutConfirmationProps = {
   paymentInfo: FINAL_PAYMENT_INFO;
@@ -33,6 +35,7 @@ const CheckoutConfirmation = ({
   const [errorMessage, setErrorMessage] = useState<string>();
   const [clientSecret, setClientSecret] = useState("");
   const [loading, setLoading] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     fetch("/api/create-payment-intent", {
@@ -62,54 +65,58 @@ const CheckoutConfirmation = ({
       return;
     }
 
-    const bookingId = generateBookingId();
-
-    const currentUrl =
-      typeof window !== "undefined" ? window.location.origin : "";
-    const returnUrl = `${currentUrl}/payment?bookingId=${bookingId}`;
-    const { error } = await stripe.confirmPayment({
-      elements,
-      clientSecret,
-      confirmParams: {
-        // Custom booking URL
-        return_url: returnUrl,
+    // Create reservation in DB
+    const PrismaReservationDB: PartialReservation = {
+      userEmail: session?.user.email!,
+      bookingId: generateBookingId(),
+      checkin_date: bookingDetails.checkin_date,
+      checkout_date: bookingDetails.checkout_date,
+      adults_number: Number(bookingDetails.adults_number),
+      numDays: Number(bookingDetails.numDays),
+      hotel_id: hotelRoomOffer.hotel_id,
+      room_id: hotelRoomOffer.hotel_room_id,
+      payment_info: {
+        firstName: paymentInfo.firstName,
+        lastName: paymentInfo.lastName,
+        billingAddress: paymentInfo.billingAddress,
+        city: paymentInfo.city,
+        state: paymentInfo.state,
+        zipCode: paymentInfo.zipCode,
+        email: paymentInfo.email,
       },
-    });
+      transaction_info: {
+        dateCreated: new Date().toISOString(),
+        stripePaymentId: "", // Placeholder for actual Stripe payment ID
+      },
+      room_cost: totalAmount,
+    };
 
-    if (error) {
-      setErrorMessage(error.message);
-      return;
-    } else {
-      // The payment UI automatically closes
+    try {
+      // use reservation-actions.ts functions to call the DB
 
-      // IF successful, call to API and rewrite
-      const FINAL_BOOKING_DETAILS: FINAL_BOOKING_INFO = {
-        // Need to retrieve accountId using NextAuth? Link LikeHome account with this booking
-        account_id: "", // we need to retrieve LikeHome account identifier to link this transaction too
-        bookingId: bookingId,
-        checkin_date: bookingDetails.checkin_date,
-        checkout_date: bookingDetails.checkout_date,
-        adults_number: bookingDetails.adults_number,
-        numDays: bookingDetails.numDays,
-        hotel_id: hotelRoomOffer.hotel_id,
-        room_id: hotelRoomOffer.hotel_room_id,
-        payment_info: {
-          firstName: paymentInfo.firstName,
-          lastName: paymentInfo.lastName,
-          billingAddress: paymentInfo.billingAddress,
-          city: paymentInfo.city,
-          state: paymentInfo.state,
-          zipCode: paymentInfo.zipCode,
-          email: paymentInfo.email,
+      const currentUrl =
+        typeof window !== "undefined" ? window.location.origin : "";
+      const returnUrl = `${currentUrl}/payment?bookingId=${PrismaReservationDB.bookingId}`;
+
+      console.log("before redir");
+
+      const { error } = await stripe.confirmPayment({
+        elements,
+        clientSecret,
+        confirmParams: {
+          // Custom booking URL
+          return_url: returnUrl,
         },
-        transaction_info: {
-          dateCreated: Date.toString(),
-          stripePaymentId: "", // Will be updated in payment page
-        },
-      };
+      });
 
-      // Update the DB:
-      // Add new reservation with the following infomation above FINAL_BOOKING_DETAILS
+      if (error) {
+        console.error("Error during payment confirmation:", error);
+        throw new Error("Payment confirmation failed.");
+      }
+
+      console.log("after redir");
+    } catch (error) {
+      console.error("Error in reservation and payment flow:", error);
     }
 
     setLoading(false);
