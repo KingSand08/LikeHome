@@ -1,31 +1,62 @@
 "use client";
+
 import { CUSTOM_HOTEL_BOOKINGS_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
+import { updateReservationPayment } from "@/server-actions/reservation-actions";
+import { useSession } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const PaymentRedirectPage = () => {
   const searchParams = useSearchParams();
-  const router = useRouter(); // Use the router from next/navigation
+  const router = useRouter();
   const payment_intent = searchParams.get("payment_intent");
   const payment_intent_client_secret = searchParams.get(
     "payment_intent_client_secret"
   );
   const bookingId = searchParams.get("bookingId");
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (payment_intent && payment_intent_client_secret && bookingId) {
-      // Update the existing booking entry in DB. Update variable stripePaymentId with payment_intent
+    const handlePaymentRedirect = async () => {
+      if (
+        status === "authenticated" && // Ensure the session is authenticated
+        session?.user?.email && // Ensure the session has the user's email
+        payment_intent &&
+        payment_intent_client_secret &&
+        bookingId
+      ) {
+        try {
+          console.log("Updating reservation with payment intent...");
+          const results = await updateReservationPayment(
+            bookingId,
+            payment_intent
+          );
 
-      router.replace(
-        `${CUSTOM_HOTEL_BOOKINGS_URL.replace(
-          "{bookingId}",
-          bookingId
-        )}?success=true`
-      );
-    } else {
-      router.replace("/error");
-    }
-  }, [payment_intent, payment_intent_client_secret, bookingId, router]);
+          if (!results.success) {
+            throw new Error(`Failed to update reservation: ${results.message}`);
+          }
+          router.push(
+            `${CUSTOM_HOTEL_BOOKINGS_URL.replace(
+              "{bookingId}",
+              bookingId
+            )}?success=true`
+          );
+        } catch (error) {
+          console.error("Error during payment processing:", error);
+          router.push("/error");
+        }
+      }
+    };
+
+    handlePaymentRedirect();
+  }, [
+    payment_intent,
+    payment_intent_client_secret,
+    bookingId,
+    router,
+    session,
+    status,
+  ]);
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
