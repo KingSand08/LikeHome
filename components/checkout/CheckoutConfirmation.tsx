@@ -65,13 +65,14 @@ const CheckoutConfirmation = ({
       return;
     }
 
-    const FINAL_BOOKING_DETAILS: FINAL_BOOKING_INFO = {
-      email: session?.user.email!,
+    // Create reservation in DB
+    const PrismaReservationDB: PartialReservation = {
+      userEmail: session?.user.email!,
       bookingId: generateBookingId(),
       checkin_date: bookingDetails.checkin_date,
       checkout_date: bookingDetails.checkout_date,
-      adults_number: bookingDetails.adults_number,
-      numDays: bookingDetails.numDays,
+      adults_number: Number(bookingDetails.adults_number),
+      numDays: Number(bookingDetails.numDays),
       hotel_id: hotelRoomOffer.hotel_id,
       room_id: hotelRoomOffer.hotel_room_id,
       payment_info: {
@@ -85,32 +86,7 @@ const CheckoutConfirmation = ({
       },
       transaction_info: {
         dateCreated: new Date().toISOString(),
-        stripePaymentId: "",
-      },
-    };
-
-    // Create reservation in DB
-    const PrismaReservationDB: PartialReservation = {
-      userEmail: FINAL_BOOKING_DETAILS.email,
-      bookingId: FINAL_BOOKING_DETAILS.bookingId,
-      checkin_date: FINAL_BOOKING_DETAILS.checkin_date,
-      checkout_date: FINAL_BOOKING_DETAILS.checkout_date,
-      adults_number: Number(FINAL_BOOKING_DETAILS.adults_number),
-      numDays: Number(FINAL_BOOKING_DETAILS.numDays),
-      hotel_id: FINAL_BOOKING_DETAILS.hotel_id,
-      room_id: FINAL_BOOKING_DETAILS.room_id,
-      payment_info: {
-        firstName: FINAL_BOOKING_DETAILS.payment_info.firstName,
-        lastName: FINAL_BOOKING_DETAILS.payment_info.lastName,
-        billingAddress: FINAL_BOOKING_DETAILS.payment_info.billingAddress,
-        city: FINAL_BOOKING_DETAILS.payment_info.city,
-        state: FINAL_BOOKING_DETAILS.payment_info.state,
-        zipCode: FINAL_BOOKING_DETAILS.payment_info.zipCode,
-        email: FINAL_BOOKING_DETAILS.payment_info.email,
-      },
-      transaction_info: {
-        dateCreated: FINAL_BOOKING_DETAILS.transaction_info.dateCreated,
-        stripePaymentId: FINAL_BOOKING_DETAILS.transaction_info.stripePaymentId,
+        stripePaymentId: "", // Placeholder for actual Stripe payment ID
       },
       room_cost: totalAmount,
     };
@@ -120,7 +96,7 @@ const CheckoutConfirmation = ({
 
       const currentUrl =
         typeof window !== "undefined" ? window.location.origin : "";
-      const returnUrl = `${currentUrl}/payment?bookingId=${FINAL_BOOKING_DETAILS.bookingId}`;
+      const returnUrl = `${currentUrl}/payment?bookingId=${PrismaReservationDB.bookingId}`;
 
       console.log("before redir");
 

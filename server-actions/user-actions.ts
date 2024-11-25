@@ -1,7 +1,7 @@
 "use server";
 import prisma from "@/prisma/client";
 
-export async function createUser(email: string, name: string, image: string) {
+export async function createUser(email: string) {
   const existingUser = await prisma.user.findUnique({
     where: { email },
   });
@@ -12,9 +12,7 @@ export async function createUser(email: string, name: string, image: string) {
 
   return await prisma.user.create({
     data: {
-      name,
       email,
-      image,
       rewardPoints: 0,
     },
   });
