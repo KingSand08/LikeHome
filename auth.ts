@@ -1,4 +1,4 @@
-import NextAuth, { Account, User } from "next-auth";
+import NextAuth from "next-auth";
 import type { Provider } from "next-auth/providers";
 import Google from "next-auth/providers/google";
 import Discord from "next-auth/providers/discord";
@@ -23,8 +23,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/signin",
   },
   events: {
-    signIn: async (m: { user: User }) => {
-      createUser(m.user.email!, m.user.name!);
+    async signIn(user) {
+      const userCreation = await createUser(
+        user.user.email!,
+        user.user.name!,
+        user.user.image!
+      );
     },
   },
 });
