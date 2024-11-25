@@ -14,10 +14,7 @@ import {
   FINAL_PAYMENT_INFO,
 } from "@/lib/rapid-hotel-api/api-setup";
 import { generateBookingId } from "@/lib/BookingFunctions";
-import {
-  createReservation,
-  PartialReservation,
-} from "@/server-actions/reservation-actions";
+import { PartialReservation } from "@/server-actions/reservation-actions";
 import { useSession } from "next-auth/react";
 
 type CheckoutConfirmationProps = {
@@ -87,13 +84,13 @@ const CheckoutConfirmation = ({
         email: paymentInfo.email,
       },
       transaction_info: {
-        dateCreated: (new Date).toISOString(),
+        dateCreated: new Date().toISOString(),
         stripePaymentId: "",
       },
     };
 
     // Create reservation in DB
-    const partialReservation: PartialReservation = {
+    const PrismaReservationDB: PartialReservation = {
       userEmail: FINAL_BOOKING_DETAILS.email,
       bookingId: FINAL_BOOKING_DETAILS.bookingId,
       checkin_date: FINAL_BOOKING_DETAILS.checkin_date,
@@ -119,7 +116,7 @@ const CheckoutConfirmation = ({
     };
 
     try {
-      const reservation = await createReservation(partialReservation);
+      // use reservation-actions.ts functions to call the DB
 
       const currentUrl =
         typeof window !== "undefined" ? window.location.origin : "";
