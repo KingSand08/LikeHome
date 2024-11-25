@@ -1,7 +1,7 @@
 "use client";
 
 import { CUSTOM_HOTEL_BOOKINGS_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
-import { updateReservationPayment } from "@/server-actions/reservation-actions";
+import { updateReservationPaymentAndRewards } from "@/server-actions/reservation-actions";
 import { useSession } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -18,37 +18,39 @@ const PaymentRedirectPage = () => {
 
   useEffect(() => {
     const handlePaymentRedirect = async () => {
-      if (
-        status === "authenticated" && // Ensure the session is authenticated
-        session?.user?.email && // Ensure the session has the user's email
-        payment_intent &&
-        payment_intent_client_secret &&
-        bookingId
-      ) {
-        try {
-          console.log("Updating reservation with payment intent...");
-          const results = await updateReservationPayment(
-            bookingId,
-            payment_intent
-          );
+      try {
+        console.log("Updating reservation with payment intent...");
+        const results = await updateReservationPaymentAndRewards(
+          session?.user.email!,
+          bookingId!,
+          payment_intent!
+        );
 
-          if (!results.success) {
-            throw new Error(`Failed to update reservation: ${results.message}`);
-          }
-          router.push(
-            `${CUSTOM_HOTEL_BOOKINGS_URL.replace(
-              "{bookingId}",
-              bookingId
-            )}?success=true`
-          );
-        } catch (error) {
-          console.error("Error during payment processing:", error);
-          router.push("/error");
+        if (!results.success) {
+          throw new Error(`Failed to update reservation: ${results.message}`);
         }
+
+        router.replace(
+          `${CUSTOM_HOTEL_BOOKINGS_URL.replace(
+            "{bookingId}",
+            bookingId!
+          )}?success=true`
+        );
+      } catch (error) {
+        console.error("Error during payment processing:", error);
+        router.push("/error");
       }
     };
 
-    handlePaymentRedirect();
+    if (
+      payment_intent &&
+      payment_intent_client_secret &&
+      bookingId &&
+      status === "authenticated" &&
+      session?.user?.email
+    ) {
+      handlePaymentRedirect();
+    }
   }, [
     payment_intent,
     payment_intent_client_secret,

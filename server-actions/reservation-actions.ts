@@ -1,4 +1,5 @@
 "use server";
+import { DEFAULT_REWARDS_MULTIPLIER } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import { Reservation } from "@prisma/client";
 
 export type PartialReservation = Omit<
@@ -7,10 +8,6 @@ export type PartialReservation = Omit<
 > & {
   userEmail: string;
 };
-
-// Point modifier for rewards
-const POINT_MODIFIER = 0.1;
-// const pointChange = POINT_MODIFIER * reservation.room_cost;
 
 export async function createReservation(data: PartialReservation) {
   try {
@@ -38,7 +35,31 @@ export async function createReservation(data: PartialReservation) {
   }
 }
 
-export async function updateReservationPayment(
+async function addRewards(email: string, room_cost: number) {
+  try {
+    const pointsToAdd = room_cost * DEFAULT_REWARDS_MULTIPLIER;
+
+    const updatedRewards = await prisma.user.update({
+      where: {
+        email: email,
+      },
+      data: {
+        rewardPoints: {
+          increment: pointsToAdd,
+        },
+      },
+    });
+
+    console.log("Updated rewards:", updatedRewards);
+    return updatedRewards;
+  } catch (error: any) {
+    console.error("Error updating rewards:", error.message);
+    throw error;
+  }
+}
+
+export async function updateReservationPaymentAndRewards(
+  email: string,
   bookingId: string,
   stripePaymentId: string
 ) {
@@ -57,10 +78,12 @@ export async function updateReservationPayment(
         verified: true,
       },
     });
-
     console.log("Updated reservation:", updatedReservation);
 
-    return { success: true, message: "Reservation updated successfully." };
+    const updatedRewards = await addRewards(email, updatedReservation.room_cost)
+    console.log("Updated rewards:", updatedRewards);
+
+    return { success: true, message: "Reservation and rewards updated successfully." };
   } catch (error: any) {
     console.error("Error in updateReservationPayment:", error.message);
     return {
@@ -84,7 +107,6 @@ export async function retrieveAllReservations(email: string) {
     return reservations;
   } catch (error: any) {
     console.error("Error fetching reservations:", error.message);
-    throw new Error("Unable to fetch reservations.");
   }
 }
 

@@ -18,7 +18,7 @@ model User {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
   email String @unique
 
-  rewardPoints Int
+  rewardPoints Int           @default(0)
   reservations Reservation[]
 }
 
