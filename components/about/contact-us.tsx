@@ -5,7 +5,7 @@ import React from "react";
 const ContactUs = () => {
   return (
     <div className="p-8 mt-16 rounded-xl shadow-2xl bg-white dark:bg-slate-800 text-gray-800 dark:text-gray-100 max-w-screen-md mx-auto">
-      <h2 className="text-4xl font-extrabold mb-6 text-center text-blue-700 dark:text-blue-400">
+      <h2 className="text-4xl font-extrabold mb-6 text-center text-primary">
         Contact Us!
       </h2>
       <p className="text-center mb-8 text-lg">
@@ -33,7 +33,7 @@ const ContactUs = () => {
           <input
             type="text"
             name="name"
-            className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-3 focus:ring-2 focus:ring-primary focus:outline-none"
             placeholder="Enter your full name"
             required
           />
@@ -50,7 +50,7 @@ const ContactUs = () => {
           <input
             type="email"
             name="email"
-            className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-3 focus:ring-2 focus:ring-primary focus:outline-none"
             placeholder="Enter your email address"
             required
           />
@@ -67,7 +67,7 @@ const ContactUs = () => {
           <textarea
             name="message"
             rows={4}
-            className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-3 focus:ring-2 focus:ring-primary focus:outline-none"
             placeholder="Write your message here..."
             required
           ></textarea>
@@ -77,7 +77,7 @@ const ContactUs = () => {
         <div className="flex justify-center">
           <button
             type="submit"
-            className="bg-blue-600 text-white py-3 px-10 rounded-lg font-semibold hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 transition-all"
+            className="btn-primary bg-blue-600 text-white py-3 px-10 rounded-lg font-semibold hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition-all"
           >
             Submit
           </button>
