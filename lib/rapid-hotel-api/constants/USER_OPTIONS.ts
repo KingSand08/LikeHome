@@ -44,6 +44,7 @@ export const DEFAULT_MAX_PRICE: number = 50000 as const;
 // Booking details
 export const DEFAULT_BOOKING_NUM_DAYS: number = 3 as const; // Not including checkout day
 export const DEFAULT_DAYS_FROM_TODAY: number = 7 as const; // Used for setting the default checkin_date from X DAYS_FROM_TODAY
+export const ONE_DAY: number = 1 as const;
 
 export const DEFAULT_ADULTS_NUMBER: number = 1 as const;
 export const DEFAULT_MIN_ADULTS_NUMBER: number = 1 as const;

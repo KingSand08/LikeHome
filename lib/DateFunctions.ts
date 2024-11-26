@@ -1,6 +1,7 @@
 import {
   DEFAULT_BOOKING_NUM_DAYS,
   DEFAULT_DAYS_FROM_TODAY,
+  ONE_DAY
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 
 // Format to YYYY-MM-DD
@@ -15,7 +16,13 @@ export const generateDefaultDates = (
   DEFAULT_CHECKOUT_BOOKING_DATE: string;
 } => {
   // Calculate checkinDate to be X DEFAULT_DAYS_FROM_TODAY from today's date
-  const checkinDate = new Date();
+  let tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate()+1)
+  
+  let checkinDate= new Date();
+  checkinDate.setDate(checkinDate.getDate()+1)
+
+
 
   // Calculate checkoutDate to be numDays from today's date
   const checkoutDate = new Date(checkinDate);

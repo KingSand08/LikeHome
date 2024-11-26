@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { format } from "date-fns";
+import { format, isBefore, isEqual, isToday } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 
@@ -43,7 +43,7 @@ export function DatePickerWithRange({
     generateDefaultDates(defaultNumDays);
 
   const [dateRange, setDateRange] = React.useState<DateRange>({
-    from: new Date(),
+    from: new Date(DEFAULT_CHECKIN_BOOKING_DATE),
     to: new Date(DEFAULT_CHECKOUT_BOOKING_DATE),
   });
 
@@ -131,6 +131,7 @@ export function DatePickerWithRange({
             selected={dateRange}
             onSelect={handleDateRangeChange}
             numberOfMonths={2}
+            disabled={(date)=> isBefore(date, new Date() || isEqual(date, new Date()))}
           />
         </PopoverContent>
       </Popover>
