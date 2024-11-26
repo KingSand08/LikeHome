@@ -10,12 +10,17 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import {
+  DEFAULT_DOMAIN,
+  DEFAULT_LOCALE,
+} from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
+import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
+import { REGION_SEARCH_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { APIRegion } from "@/app/api/hotels/region/route";
 import { useState, useContext } from "react";
 import { RegionContext } from "../providers/RegionProvider";
 import { CommandEmpty } from "cmdk";
 import { usePathname, useRouter } from "next/navigation";
-import { fetchRegionDetails } from "@/server-actions/api-actions";
 
 // TODO: Replace with a DB call to get the cached regions
 const cachedLocations: APIRegion[] = [
@@ -172,14 +177,17 @@ const handleFindRegion = async (
   domain?: string,
   locale?: string
 ) => {
-  const REGION_DATA: APIRegion[] | null = await fetchRegionDetails(
-    query,
-    domain,
-    locale
+  const urlParams = JSONToURLSearchParams({
+    query: query,
+    domain: domain ?? DEFAULT_DOMAIN,
+    locale: locale ?? DEFAULT_LOCALE,
+  });
+
+  const response = await fetch(
+    `${REGION_SEARCH_API_URL}?${urlParams.toString()}`
   );
-  if (REGION_DATA) {
-    setOps([...REGION_DATA, ...ops]);
-  } else {
-    alert(`Failed to fetch regions.`);
-  }
+  if (!response.ok) alert(`Failed to fetch regions.`);
+
+  const REGION_DATA: APIRegion[] = await response.json();
+  setOps([...REGION_DATA, ...ops]);
 };

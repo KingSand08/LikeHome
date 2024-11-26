@@ -1,4 +1,5 @@
 "use server";
+
 import { APIHotelDetailsJSONFormatted } from "@/app/api/hotels/details/route";
 import { APIRegion } from "@/app/api/hotels/region/route";
 import {
@@ -14,10 +15,7 @@ import {
   HOTEL_SEARCH_API_URL,
   REGION_SEARCH_API_URL,
 } from "@/lib/rapid-hotel-api/constants/ROUTES";
-import {
-  DEFAULT_DOMAIN,
-  DEFAULT_LOCALE,
-} from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
+import { DEFAULT_DOMAIN, DEFAULT_LOCALE } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import { ReadonlyURLSearchParams } from "next/navigation";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
