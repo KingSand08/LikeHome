@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
     }
 
     const JSON_DATA: APIRegionSearchResponseJSON = await response.json();
-    const PAYLOAD: APIRegionArrayFormatted =
+    const PAYLOAD: APIRegion[] =
       JSON_DATA.data?.map((regionItem) => ({
         region_id: regionItem.gaiaId ?? "",
         type: regionItem.type ?? "Unknown",
@@ -99,7 +99,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export type APIRegionArrayFormatted = {
+export type APIRegion = {
   region_id: string;
   type: string;
   regionNames: {
@@ -119,4 +119,4 @@ export type APIRegionArrayFormatted = {
     name: string;
     domain: string; // Using isoCode2 as domain.
   };
-}[];
+};
