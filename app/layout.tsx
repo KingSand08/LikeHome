@@ -2,7 +2,7 @@ import { Providers } from "@/components/providers/providers";
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-import "./globals.css";
+import "@/app/styles/globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
@@ -23,7 +23,6 @@ export default function RootLayout({
         <Providers>
           <Header />
           <main className="flex-grow">{children}</main>{" "}
-          {/* Main content takes up remaining space */}
           <Footer />
         </Providers>
       </body>

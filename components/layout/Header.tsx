@@ -30,11 +30,12 @@ export default async function Header() {
                 alt="LikeHome Logo"
                 width={55}
                 height={20}
+                priority
+                style={{ height: "auto", width: "auto" }}
               />
               <span className="ml-2 text-lg font-bold text-base-content">
                 LikeHome
-              </span>{" "}
-              {/* Text displayed next to image */}
+              </span>
             </div>
           </Link>
           {/* Searh Bar */}

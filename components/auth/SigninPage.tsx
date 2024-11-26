@@ -13,9 +13,9 @@ type Props = {
 
 const SigninPage = (props: Props) => {
     return (
-        <div className="flex flex-col lg:flex-row items-center justify-center px-4 dark:text-gray-100">
+        <div className="flex flex-col lg:flex-row items-center justify-center opacity-100 px-4 dark:text-gray-100">
             {/* Wrapper */}
-            <div className="flex flex-col min-[1180px]:flex-row rounded-lg overflow-hidden w-full max-w-5xl">
+            <div className="flex flex-col min-[1200px]:flex-row rounded-lg overflow-hidden w-full min-[1200px]:max-w-5xl max-w-md">
                 {/* Left Section */}
                 <div className="flex-1 p-6 md:p-10">
                     <h1 className="text-2xl md:text-3xl pb-4">Let&apos;s get started!</h1>

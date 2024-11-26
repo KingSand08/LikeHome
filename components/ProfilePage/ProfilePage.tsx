@@ -12,7 +12,7 @@ const ProfilePage = ({ user }: { user: User }) => {
     return (
         <div className="min-h-screen flex max-[1300px]:flex-col flex-row dark:text-gray-100 text-gray-900 select-none">
             {/* Left Side Section */}
-            <div className="flex flex-col max-[1300px]:w-screen w-1/4 max-[1300px]:h-fit max-[1300px]:py-12 p-6 
+            <div className="flex flex-col max-[1300px]:w-screen w-1/4 max-[1300px]:h-fit max-[1300px]:py-6 p-6 
                             bg-gradient-to-tr dark:from-gray-900 dark:to-[#0f1318] from-gray-200 to-gray-300
                             max-[1300px]:border-b-4 max-[1300px]:border-r-0 border-r-[5px] border-opacity-25 border-base-300">
                 <div className="flex justify-center">
@@ -20,6 +20,7 @@ const ProfilePage = ({ user }: { user: User }) => {
                         <Avatar
                             image={user.image ?? undefined}
                             size={"17em"}
+                            className="ring-4 ring-primary ring-offset-2 ring-offset-gray-900"
                         />
                     </div>
                 </div>

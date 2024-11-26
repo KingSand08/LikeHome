@@ -26,7 +26,7 @@ const AboutPage = () => {
               <Image
                 src={member.image}
                 alt={`${member.name}'s picture`}
-                className="w-24 h-24 rounded-full mx-auto mb-4 ring-primary ring-[3px] ring-offset-[3px] ring-offset-slate-700"
+                className="w-24 h-24 rounded-full mx-auto mb-4 ring-primary ring-[3px] ring-offset-[3px] dark:ring-offset-slate-700 ring-offset-white object-cover"
                 width={100}
                 height={100}
                 quality={100}
