@@ -134,12 +134,12 @@ const HotelSearchUIComplete: React.FC<HotelSearchUICompleteProps> = ({
         </div>
       </div>
       <div className="flex flex-row justify-between space-x-4">
-        <div className="flex-1">
+        {/* <div className="flex-1">
           <PaymentTypeCheckbox
             selectedOptions={hotelSearchInputs.paymentType}
             onChange={handlePaymentTypeChange}
           />
-        </div>
+        </div> */}
         <PriceRangeInput
           selectedPriceRange={{
             price_min: hotelSearchInputs.price_min,
