@@ -1,11 +1,12 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { APIHotelSearchJSONFormatted } from "@/app/api/hotels/search/route";
 import HotelList from "./HotelList/HotelList";
 import { z } from "zod";
 import { hotelSearchParamsRefinedSchema } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
 import { HOTEL_SEARCH_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
+import { RegionContext } from "@/components/providers/RegionProvider";
 
 export type bookingParamsType = z.infer<typeof hotelSearchParamsRefinedSchema>;
 
@@ -16,60 +17,56 @@ type HotelSelectUICompleteProps = {
 
 const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
   bookingParams,
-  validRegionId,
 }) => {
   const [hotelsData, setHotelsData] =
     useState<APIHotelSearchJSONFormatted | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [isValidParams, setIsValidParams] = useState<boolean>(false);
+  const [region] = useContext(RegionContext);
+
+  const isValid: boolean =
+    hotelSearchParamsRefinedSchema.safeParse(bookingParams).success &&
+    !!region &&
+    region.region_id !== "" &&
+    !loading;
 
   useEffect(() => {
-    const isValid =
-      hotelSearchParamsRefinedSchema.safeParse(bookingParams).success;
-    setIsValidParams(isValid);
-  }, [bookingParams]);
+    if (!isValid) return;
 
-  const handleFindHotels = async () => {
-    setLoading(true);
-    setHotelsData(null);
-    try {
-      const urlParams = JSONToURLSearchParams(bookingParams);
-
-      const response = await fetch(
-        `${HOTEL_SEARCH_API_URL}?${urlParams.toString()}`
-      );
-      if (!response.ok) {
-        alert(
-          `Failed to fetch hotels. Status: ${response?.status}. StatusText: ${
-            response?.statusText
-          } Url: ${HOTEL_SEARCH_API_URL}?${urlParams.toString()}`
-        );
-        setHotelsData(null);
-      } else {
-        const HOTEL_DATA: APIHotelSearchJSONFormatted = await response.json();
-
-        setHotelsData(HOTEL_DATA);
-      }
-    } catch (error) {
-      alert("An unexpected error occurred. Please try again.");
+    const handleFindHotels = async () => {
+      setLoading(true);
       setHotelsData(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+      try {
+        const urlParams = JSONToURLSearchParams(bookingParams);
+
+        const response = await fetch(
+          `${HOTEL_SEARCH_API_URL}?${urlParams.toString()}`
+        );
+        if (!response.ok) {
+          alert(
+            `Failed to fetch hotels. Status: ${response?.status}. StatusText: ${
+              response?.statusText
+            } Url: ${HOTEL_SEARCH_API_URL}?${urlParams.toString()}`
+          );
+          setHotelsData(null);
+        } else {
+          const HOTEL_DATA: APIHotelSearchJSONFormatted = await response.json();
+
+          setHotelsData(HOTEL_DATA);
+        }
+      } catch (error) {
+        alert("An unexpected error occurred. Please try again.");
+        setHotelsData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    handleFindHotels();
+  }, [region]);
 
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-lg font-semibold mb-4">Available Hotels</h2>
-
-      {/* Button to Trigger Hotel Search */}
-      <button
-        onClick={handleFindHotels}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-red-500 disabled:cursor-not-allowed"
-        disabled={loading || !isValidParams || !validRegionId}
-      >
-        {loading ? "Loading..." : "Find Hotels"}
-      </button>
 
       {/* Hotel List Display */}
       <div className="mt-6">
