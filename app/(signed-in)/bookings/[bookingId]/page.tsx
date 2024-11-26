@@ -34,7 +34,7 @@ const BookingIDPage = async ({
     return (
       <div>
         <h1>Failed to load reservation details.</h1>
-        <p>"An unexpected error occurred."</p>
+        <p>An unexpected error occurred.</p>
         <Link href="/bookings" className="p-2 bg-red-500 text-white">
           Navigate back to bookings page
         </Link>
