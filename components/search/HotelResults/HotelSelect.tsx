@@ -143,14 +143,14 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
         <button
           onClick={handleFindHotelsCached}
           className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-red-500 disabled:cursor-not-allowed"
-          disabled={loading}
+          disabled={loading || !region}
         >
           {loading ? "Loading..." : "Find Hotels (cached)"}
         </button>
         <button
           onClick={handleFindHotels}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-red-500 disabled:cursor-not-allowed"
-          disabled={loading}
+          disabled={loading || !region}
         >
           {loading ? "Loading..." : "Find Hotels (actual API data)"}
         </button>
