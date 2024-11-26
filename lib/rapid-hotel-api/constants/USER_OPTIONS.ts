@@ -48,6 +48,3 @@ export const DEFAULT_DAYS_FROM_TODAY: number = 7 as const; // Used for setting t
 export const DEFAULT_ADULTS_NUMBER: number = 1 as const;
 export const DEFAULT_MIN_ADULTS_NUMBER: number = 1 as const;
 export const DEFAULT_MAX_ADULTS_NUMBER: number = 10 as const;
-
-// Rewards
-export const DEFAULT_REWARDS_MULTIPLIER: number = 0.1 as const;

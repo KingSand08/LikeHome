@@ -1,6 +1,6 @@
 "use server";
-import { DEFAULT_REWARDS_MULTIPLIER } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import { Reservation } from "@prisma/client";
+import { updateUserRewards } from "./user-actions";
 
 export type PartialReservation = Omit<
   Reservation,
@@ -35,29 +35,6 @@ export async function createReservation(data: PartialReservation) {
   }
 }
 
-async function addRewards(email: string, room_cost: number) {
-  try {
-    const pointsToAdd = room_cost * DEFAULT_REWARDS_MULTIPLIER;
-
-    const updatedRewards = await prisma.user.update({
-      where: {
-        email: email,
-      },
-      data: {
-        rewardPoints: {
-          increment: pointsToAdd,
-        },
-      },
-    });
-
-    console.log("Updated rewards:", updatedRewards);
-    return updatedRewards;
-  } catch (error: any) {
-    console.error("Error updating rewards:", error.message);
-    throw error;
-  }
-}
-
 export async function updateReservationPaymentAndRewards(
   email: string,
   bookingId: string,
@@ -78,7 +55,10 @@ export async function updateReservationPaymentAndRewards(
     },
   });
   console.log("Updated reservation:", updatedReservation);
-  const updatedRewards = await addRewards(email, updatedReservation.room_cost);
+  const updatedRewards = await updateUserRewards(
+    email,
+    updatedReservation.room_cost
+  );
   console.log("Updated rewards:", updatedRewards);
   return {
     success: true,
