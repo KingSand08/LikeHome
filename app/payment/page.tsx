@@ -1,7 +1,7 @@
 "use client";
 
 import { CUSTOM_HOTEL_BOOKINGS_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
-import { updateReservationPaymentAndRewards } from "@/server-actions/reservation-actions";
+import { verifyReservation } from "@/server-actions/reservation-actions";
 import { useSession } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
@@ -21,14 +21,14 @@ const PaymentRedirectPage = () => {
     const handlePaymentRedirect = async () => {
       try {
         console.log("Updating reservation with payment intent...");
-        const results = await updateReservationPaymentAndRewards(
+        const results = await verifyReservation(
           session?.user.email!,
           bookingId!,
           payment_intent!
         );
 
-        if (!results.success) {
-          throw new Error(`Failed to update reservation: ${results.message}`);
+        if (!results) {
+          throw new Error(`Failed to update reservation: ${bookingId}`);
         }
 
         router.replace(

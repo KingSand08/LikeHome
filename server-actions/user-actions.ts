@@ -53,6 +53,7 @@ export async function updateUserRewards(email: string, payment: number) {
   });
 }
 
+//TODO: @ryanhtang use this function along with getUserRewards to conditionally render a redeem free stay button
 export async function redeemRewards(email: string, points: number) {
   const user = await prisma.user.findUnique({
     where: { email },

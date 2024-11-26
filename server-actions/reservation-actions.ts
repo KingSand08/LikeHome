@@ -67,6 +67,7 @@ export async function verifyReservation(
   return true;
 }
 
+// TODO: @ryanhtang use this function in a cancel reservation button that charges a constant fee
 export async function cancelReservation(email: string, bookingId: string) {
   const deletedReservation = await prisma.reservation.delete({
     where: {
