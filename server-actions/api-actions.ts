@@ -5,9 +5,13 @@ import {
   APIHotelRoomOffersJSONFormatted,
   HotelRoomOffer,
 } from "@/app/api/hotels/search/rooms/route";
+import { APIHotelSearchJSONFormatted } from "@/app/api/hotels/search/route";
+import { bookingParamsType } from "@/components/search/HotelResults/HotelSelect";
+import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import {
   HOTEL_DETAILS_API_URL,
   HOTEL_ROOM_OFFERS_API_URL,
+  HOTEL_SEARCH_API_URL,
 } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import {
   DEFAULT_DOMAIN,
@@ -40,6 +44,31 @@ export async function fetchRegionDetails(
     return (await response.json()) as APIRegion[];
   } catch (error) {
     console.error("Error fetching region details:", error);
+    return null;
+  }
+}
+
+export async function fetchSearchHotelsFromRegion(
+  bookingParams: bookingParamsType
+): Promise<APIHotelSearchJSONFormatted | null> {
+  const mutableSearchParams = JSONToURLSearchParams(bookingParams);
+
+  const url = `${baseUrl}${HOTEL_SEARCH_API_URL}?${mutableSearchParams.toString()}`;
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to search valid hotels from region. ${response.statusText}`
+      );
+    }
+
+    return (await response.json()) as APIHotelSearchJSONFormatted;
+  } catch (error) {
+    console.error(
+      `Error fetching hotels from region ${bookingParams.region_id}:`,
+      error
+    );
     return null;
   }
 }
