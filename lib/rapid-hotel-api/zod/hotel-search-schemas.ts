@@ -7,6 +7,7 @@ import {
   DEFAULT_MIN_PRICE,
   DEFAULT_SORT_ORDER,
 } from "../constants/USER_OPTIONS";
+import { isBefore, isEqual, startOfDay } from "date-fns";
 
 export const API_HOTEL_SEARCH_URL =
   "https://hotels-com-provider.p.rapidapi.com/v2/hotels/search" as const;
@@ -137,9 +138,11 @@ export function refinePriceAndDateValidationZod<T extends ZodRawShape>(
   return schema
     .refine(
       (data) => {
-        const checkin = new Date(data.checkin_date);
-        const checkout = new Date(data.checkout_date);
-        const today = new Date();
+        const today = startOfDay(new Date());
+        const [checkinYear, checkinMonth, checkinDay] = data.checkin_date.split("-");
+        const checkin = new Date(checkinYear, checkinMonth - 1, checkinDay);
+        const [checkoutYear, checkoutMonth, checkoutDay] = data.checkout_date.split("-");
+        const checkout = new Date(checkoutYear, checkoutMonth -  1, checkoutDay);
 
         if (checkin < today) {
           return false; // Check-in date is in the past
@@ -147,11 +150,16 @@ export function refinePriceAndDateValidationZod<T extends ZodRawShape>(
         if (checkout < checkin) {
           return false; // Check-out date is before check-in date
         }
+        if (isEqual(checkin, checkout)) {
+          return false;
+        }
+        if (isEqual(checkin, checkout)) {
+          return false;
+        }
         return true;
       },
       {
-        message:
-          "Invalid date range: check-in date must be tomorrow from today's date, and check-out date must be on or after check-in.",
+        message: `Invalid date range: check-in date must be tomorrow or later, and check-out date must be on or after check-in. check-in and check-out dates cannot be the same`,
         path: ["checkin_date", "checkout_date"],
       }
     )
