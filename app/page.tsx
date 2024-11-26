@@ -112,98 +112,54 @@ const HomeSearchPage: React.FC = () => {
       selectedRegionId: region.region_id,
     }));
   }, [region, setSearchParams]);
-
-
+  
+  
+  
   return (
-    <div className="drawer">
-      {/* Drawer Toggle */}
-      <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-      {/* Main Content */}
-      <div className="drawer-content flex flex-col items-center justify-center">
-        <FilterButton />
-
-        <div className="z-0">
-          <h1 className="text-2xl font-bold mb-4">
-            {region
-              ? `Browsing Hotels in ${region.name} 🏨`
-              : "Select a location to start!"}
-          </h1>
-          {/* BookingInfo Component */}
-          <BookingInfoUISearchComplete
-            bookingInfo={{
-              checkinDate: searchParams.checkinDate,
-              checkoutDate: searchParams.checkoutDate,
-              adultsNumber: searchParams.adultsNumber,
-              numDays: searchParams.numDays,
-            }}
-            setBookingInfo={(newParams: {
-              checkinDate: string;
-              checkoutDate: string;
-              adultsNumber: number;
-              numDays: number;
-            }) => updateBookingInfoParams(newParams)}
-          />
-          <hr />
-          {/* HotelSearch Component */}
-          {/* <HotelSearchUIComplete
-            hotelSearchInputs={{
-              accessibilityOptions: searchParams.accessibilityOptions,
-              amenitiesOptions: searchParams.amenitiesOptions,
-              mealPlanOptions: searchParams.mealPlanOptions,
-              lodgingOptions: searchParams.lodgingOptions,
-              paymentType: searchParams.paymentType,
-              sortOrder: searchParams.sortOrder,
-              availableOnly: searchParams.availableOnly,
-              price_min: searchParams.price_min,
-              price_max: searchParams.price_max,
-            }}
-            setHotelSearchInputs={(newParams) =>
-              updateHotelSearchParams({
-                accessibilityOptions: newParams.accessibilityOptions,
-                amenitiesOptions: newParams.amenitiesOptions,
-                mealPlanOptions: newParams.mealPlanOptions,
-                lodgingOptions: newParams.lodgingOptions,
-                paymentType: newParams.paymentType,
-                sortOrder: newParams.sortOrder,
-                availableOnly: newParams.availableOnly,
-                price_min: newParams.price_min,
-                price_max: newParams.price_max,
-              })
-            }
-          /> */}
-          <hr />
-          {/* HotelSelect Component */}
-          <HotelSelect
-            bookingParams={{
-              checkin_date: searchParams.checkinDate,
-              checkout_date: searchParams.checkoutDate,
-              adults_number: searchParams.adultsNumber,
-              region_id: searchParams.selectedRegionId ?? "",
-              sort_order: searchParams.sortOrder,
-              locale: searchParams.locale,
-              domain: searchParams.domain,
-              price_min: searchParams.price_min,
-              price_max: searchParams.price_max,
-              accessibility: searchParams.accessibilityOptions,
-              amenities: searchParams.amenitiesOptions,
-              lodging_type: searchParams.lodgingOptions,
-              meal_plan: searchParams.mealPlanOptions,
-              available_filter: searchParams.availableOnly,
-            }}
-            validRegionId={!!searchParams.selectedRegionId}
-          />
-        </div>
-      </div>
-      {/* Sidebar Content */}
-      <div className="drawer-side z-20">
-        <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
-        <SidebarFilters
-          hotelSearchInputs={searchParams}
-          setHotelSearchInputs={setSearchParams}
+    <DrawerComponent
+      hotelSearchInputs={searchParams}
+      setHotelSearchInputs={setSearchParams}
+    >
+      <div>
+        <h1 className="text-2xl font-bold mb-4">
+          {region
+            ? `Browsing Hotels in ${region.name} 🏨`
+            : "Select a location to start!"}
+        </h1>
+        <BookingInfoUISearchComplete
+          bookingInfo={{
+            checkinDate: searchParams.checkinDate,
+            checkoutDate: searchParams.checkoutDate,
+            adultsNumber: searchParams.adultsNumber,
+            numDays: searchParams.numDays,
+          }}
+          setBookingInfo={(newParams) =>
+            updateBookingInfoParams(newParams)
+          }
+        />
+        <hr />
+        <HotelSelect
+          bookingParams={{
+            checkin_date: searchParams.checkinDate,
+            checkout_date: searchParams.checkoutDate,
+            adults_number: searchParams.adultsNumber,
+            region_id: searchParams.selectedRegionId ?? "",
+            sort_order: searchParams.sortOrder,
+            locale: searchParams.locale,
+            domain: searchParams.domain,
+            price_min: searchParams.price_min,
+            price_max: searchParams.price_max,
+            accessibility: searchParams.accessibilityOptions,
+            amenities: searchParams.amenitiesOptions,
+            lodging_type: searchParams.lodgingOptions,
+            meal_plan: searchParams.mealPlanOptions,
+            available_filter: searchParams.availableOnly,
+          }}
+          validRegionId={!!searchParams.selectedRegionId}
         />
       </div>
-    </div>
+    </DrawerComponent>
   );
 };
-
-export default HomeSearchPage;
+  export default HomeSearchPage;
+  

@@ -1,4 +1,6 @@
 "use client";
+
+import React from "react";
 import {
   HotelsSearchAccessibilityOptionsType,
   HotelSearchSortOrderOptionsType,
@@ -8,8 +10,8 @@ import {
   HotelsSearchLodgingOptionsType,
   HotelsSearchPaymentTypeOptionsType,
 } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
-import React from "react";
 import SidebarFilters from "./SidebarFilters";
+import FilterButton from "./FilterButton";
 
 type DrawerComponentProps = {
   hotelSearchInputs: {
@@ -33,22 +35,20 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
   children,
 }) => {
   return (
-    <div className="drawer lg:drawer-open">
+    <div className="drawer">
       {/* Drawer Toggle */}
-      <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
+      <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+
       {/* Main Content */}
       <div className="drawer-content flex flex-col items-center justify-center">
-        <label
-          htmlFor="my-drawer-2"
-          className="btn btn-primary drawer-button lg:hidden"
-        >
-          Open Filters
-        </label>
+        {/* Use the dynamic FilterButton */}
+        <FilterButton />
         {children}
       </div>
+
       {/* Sidebar Content */}
-      <div className="drawer-side">
-        <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
+      <div className="drawer-side z-50">
+        <label htmlFor="my-drawer" aria-label="close-sidebar" className="drawer-overlay"></label>
         <SidebarFilters
           hotelSearchInputs={hotelSearchInputs}
           setHotelSearchInputs={setHotelSearchInputs}
