@@ -21,13 +21,13 @@ const TemplateDropdown = <T extends string>({
 
   return (
     <div className="mb-4">
-      <label className="block text-sm font-medium mb-2 text-white">
+      <label className="block text-sm font-medium mb-2 text-base-content">
         {title}
       </label>
       <select
         value={selectedOption}
         onChange={handleChange}
-        className="w-full p-2 border rounded text-white"
+        className="w-full p-2 border rounded text-base-content"
       >
         <option value="">{placeholder}</option>
         {options.map((option) => (
