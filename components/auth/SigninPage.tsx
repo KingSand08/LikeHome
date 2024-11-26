@@ -12,8 +12,6 @@ type Props = {
 };
 
 const SigninPage = (props: Props) => {
-    console.log(props.callbackUrl);
-
     return (
         <div className="flex flex-col lg:flex-row items-center justify-center px-4 dark:text-gray-100">
             {/* Wrapper */}

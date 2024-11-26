@@ -8,8 +8,6 @@ import Avatar from "@/components/auth/Avatar";
 
 export default async function Header() {
   const session = await auth();
-  console.log("Session:", session);
-
   const user = !session?.user;
 
   var loginStatus = false;
@@ -69,7 +67,10 @@ export default async function Header() {
                 <Link
                   href="/profile"
                 >
-                  <Avatar image={session?.user.image ?? undefined} imgSize={"12"} />
+                  <Avatar
+                    image={session?.user.image ?? undefined}
+                    size={"3.4em"}
+                  />
                 </Link>
                 <SignOutButton className="text-base-300-content" />
               </>

@@ -8,7 +8,7 @@ const AccountInformation = ({ user }: { user: User }) => {
   return (
     <div className="p-6">
       <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Account Information</h3>
-      <div className="max-[1300pxa]:flex hidden items-center pt-2 pb-6">
+      <div className="max-[1300px]:flex hidden items-center justify-center pt-2 pb-6">
         <Avatar
           image={user?.image ?? undefined}
           size={"8em"}

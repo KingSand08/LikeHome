@@ -11,10 +11,9 @@ const ProfilePage = ({ user }: { user: User }) => {
 
     return (
         <div className="min-h-screen flex max-[1300px]:flex-col flex-row dark:text-gray-100 text-gray-900 select-none">
-
             {/* Left Side Section */}
             <div className="flex flex-col max-[1300px]:w-screen w-1/4 max-[1300px]:h-fit max-[1300px]:py-12 p-6 
-                            bg-gradient-to-tr dark:from-gray-800 dark:to-gray-900 from-gray-200 to-gray-300
+                            bg-gradient-to-tr dark:from-gray-900 dark:to-[#0f1318] from-gray-200 to-gray-300
                             max-[1300px]:border-b-4 max-[1300px]:border-r-0 border-r-[5px] border-opacity-25 border-base-300">
                 <div className="flex justify-center">
                     <div className="min-[1300px]:flex hidden flex-col mb-6">
@@ -26,19 +25,21 @@ const ProfilePage = ({ user }: { user: User }) => {
                 </div>
                 <ul className="space-y-4">
                     <li
-                        className={`py-3 px-4 rounded-lg cursor-pointer ${activeSection === "account"
-                            ? "bg-blue-600 text-white"
-                            : "hover:bg-blue-100 dark:hover:bg-gray-700"
-                            }`}
+                        className={`btn w-full px-4 py-2 rounded-lg cursor-pointer
+                            ${activeSection === "account"
+                                ? "btn-secondary"
+                                : "bg-blue-300 border-blue-300 hover:border-blue-400 hover:bg-blue-400 shadow-md dark:bg-slate-800 dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-700 dark:shadow-lg"}`
+                        }
                         onClick={() => setActiveSection("account")}
                     >
                         Account Information
                     </li>
                     <li
-                        className={`py-3 px-4 rounded-lg cursor-pointer ${activeSection === "rewards"
-                            ? "bg-blue-600 text-white"
-                            : "hover:bg-blue-100 dark:hover:bg-gray-700"
-                            }`}
+                        className={`btn w-full px-4 py-2 rounded-lg cursor-pointer
+                            ${activeSection === "rewards"
+                                ? "btn-secondary"
+                                : "bg-blue-300 border-blue-300 hover:border-blue-400 hover:bg-blue-400 shadow-md dark:bg-slate-800 dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-700 dark:shadow-lg"}`
+                        }
                         onClick={() => setActiveSection("rewards")}
                     >
                         Rewards
