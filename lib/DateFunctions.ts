@@ -1,7 +1,6 @@
 import {
   DEFAULT_BOOKING_NUM_DAYS,
-  DEFAULT_DAYS_FROM_TODAY,
-  ONE_DAY
+  DEFAULT_DAYS_FROM_TODAY_OFFSET,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 
 // Format to YYYY-MM-DD
@@ -10,27 +9,25 @@ const formatDate = (date: Date): string => {
 };
 
 export const generateDefaultDates = (
-  numDays = DEFAULT_BOOKING_NUM_DAYS
+  numDaysBetween = DEFAULT_BOOKING_NUM_DAYS,
+  daysFromToday = DEFAULT_DAYS_FROM_TODAY_OFFSET
 ): {
   DEFAULT_CHECKIN_BOOKING_DATE: string;
   DEFAULT_CHECKOUT_BOOKING_DATE: string;
+  DEFAULT_NUM_DAYS: number;
 } => {
-  // Calculate checkinDate to be X DEFAULT_DAYS_FROM_TODAY from today's date
-  let tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate()+1)
-  
-  let checkinDate= new Date();
-  checkinDate.setDate(checkinDate.getDate()+1)
+  // Calculate checkinDate to be X daysFromToday from today's date
+  const checkinDate = new Date();
+  checkinDate.setDate(checkinDate.getDate() + daysFromToday);
 
-
-
-  // Calculate checkoutDate to be numDays from today's date
+  // Calculate checkoutDate to be numDaysBetween after checkinDate
   const checkoutDate = new Date(checkinDate);
-  checkoutDate.setDate(checkinDate.getDate() + DEFAULT_DAYS_FROM_TODAY); // Don't include the last day (checkout day)
+  checkoutDate.setDate(checkinDate.getDate() + numDaysBetween);
 
   return {
     DEFAULT_CHECKIN_BOOKING_DATE: formatDate(checkinDate),
     DEFAULT_CHECKOUT_BOOKING_DATE: formatDate(checkoutDate),
+    DEFAULT_NUM_DAYS: calculateNumDays(checkinDate, checkoutDate),
   };
 };
 
