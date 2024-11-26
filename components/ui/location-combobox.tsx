@@ -16,14 +16,14 @@ import {
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import { REGION_SEARCH_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
-import { APIRegionArrayFormatted } from "@/app/api/hotels/region/route";
+import { APIRegion } from "@/app/api/hotels/region/route";
 import { useState, useContext } from "react";
 import { RegionContext } from "../providers/RegionProvider";
 import { CommandEmpty } from "cmdk";
 import { usePathname, useRouter } from "next/navigation";
 
 // TODO: Replace with a DB call to get the cached regions
-const cachedLocations: APIRegionArrayFormatted = [
+const cachedLocations: APIRegion[] = [
   {
     region_id: "602703",
     type: "CITY",
@@ -104,6 +104,22 @@ export default function LocationCombobox() {
       setOpen(false);
     }
   };
+  const handleSelection = (currentValue: string, loc: APIRegion) => {
+    const isDeselect = currentValue === value?.name;
+    // if (isDeselect) {
+    //   setValue({});
+    //   return;
+    // }
+    // setValue({
+    //   region_id: loc.region_id,
+    //   name: loc.regionNames.displayName,
+    // });
+    setOpen(false);
+
+    if (pathname !== "/") {
+      router.push("/");
+    }
+  };
 
   return (
     <Command
@@ -134,22 +150,7 @@ export default function LocationCombobox() {
               <CommandItem
                 key={loc.region_id}
                 value={loc.regionNames.displayName}
-                onSelect={(currentValue) => {
-                  const isDeselect = currentValue === value?.name;
-                  if (isDeselect) {
-                    setValue({});
-                    return;
-                  }
-                  setValue({
-                    region_id: loc.region_id,
-                    name: loc.regionNames.displayName,
-                  });
-                  setOpen(false);
-
-                  if (pathname !== "/") {
-                    router.push("/");
-                  }
-                }}
+                onSelect={(currentValue) => handleSelection(currentValue, loc)}
               >
                 {loc.regionNames.displayName}
                 <Check
@@ -171,8 +172,8 @@ export default function LocationCombobox() {
 
 const handleFindRegion = async (
   query: string,
-  ops: APIRegionArrayFormatted,
-  setOps: React.Dispatch<APIRegionArrayFormatted>,
+  ops: APIRegion[],
+  setOps: React.Dispatch<APIRegion[]>,
   domain?: string,
   locale?: string
 ) => {
@@ -188,6 +189,6 @@ const handleFindRegion = async (
   console.log(response);
   if (!response.ok) alert(`Failed to fetch regions.`);
 
-  const REGION_DATA: APIRegionArrayFormatted = await response.json();
+  const REGION_DATA: APIRegion[] = await response.json();
   setOps([...REGION_DATA, ...ops]);
 };

@@ -103,16 +103,22 @@ const HomeSearchPage: React.FC = () => {
   const [region] = useContext(RegionContext);
   useEffect(() => {
     // update region search params
-    setSearchParams((prev) => ({
-      ...prev,
-      selectedRegionId: region.region_id ?? null,
-    }));
+    setSearchParams((prev) =>
+      region
+        ? {
+            ...prev,
+            selectedRegionId: region.region_id ?? null,
+          }
+        : prev
+    );
   }, [region, setSearchParams]);
 
   return (
     <div className="bg-slate-gray container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">
-        Browsing Hotels in {region.name} 🏨
+        {region
+          ? `Browsing Hotels in ${region.name} 🏨`
+          : "Select a location to start!"}
       </h1>
 
       {/* BookingInfo Component */}
