@@ -4,7 +4,7 @@ import { CUSTOM_HOTEL_BOOKINGS_URL } from "@/lib/rapid-hotel-api/constants/ROUTE
 import { updateReservationPaymentAndRewards } from "@/server-actions/reservation-actions";
 import { useSession } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const PaymentRedirectPage = () => {
   const searchParams = useSearchParams();
@@ -15,6 +15,7 @@ const PaymentRedirectPage = () => {
   );
   const bookingId = searchParams.get("bookingId");
   const { data: session, status } = useSession();
+  const hasRun = useRef(false);
 
   useEffect(() => {
     const handlePaymentRedirect = async () => {
@@ -43,12 +44,14 @@ const PaymentRedirectPage = () => {
     };
 
     if (
+      !hasRun.current &&
       payment_intent &&
       payment_intent_client_secret &&
       bookingId &&
       status === "authenticated" &&
       session?.user?.email
     ) {
+      hasRun.current = true;
       handlePaymentRedirect();
     }
   }, [

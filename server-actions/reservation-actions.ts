@@ -63,34 +63,27 @@ export async function updateReservationPaymentAndRewards(
   bookingId: string,
   stripePaymentId: string
 ) {
-  try {
-    const updatedReservation = await prisma.reservation.update({
-      where: {
-        bookingId: bookingId,
-      },
-      data: {
-        transaction_info: {
-          set: {
-            stripePaymentId: stripePaymentId,
-            dateCreated: new Date().toISOString(),
-          },
+  const updatedReservation = await prisma.reservation.update({
+    where: {
+      bookingId: bookingId,
+    },
+    data: {
+      transaction_info: {
+        set: {
+          stripePaymentId: stripePaymentId,
+          dateCreated: new Date().toISOString(),
         },
-        verified: true,
       },
-    });
-    console.log("Updated reservation:", updatedReservation);
-
-    const updatedRewards = await addRewards(email, updatedReservation.room_cost)
-    console.log("Updated rewards:", updatedRewards);
-
-    return { success: true, message: "Reservation and rewards updated successfully." };
-  } catch (error: any) {
-    console.error("Error in updateReservationPayment:", error.message);
-    return {
-      success: false,
-      message: `Error updating reservation: ${error.message}`,
-    };
-  }
+      verified: true,
+    },
+  });
+  console.log("Updated reservation:", updatedReservation);
+  const updatedRewards = await addRewards(email, updatedReservation.room_cost);
+  console.log("Updated rewards:", updatedRewards);
+  return {
+    success: true,
+    message: "Reservation and rewards updated successfully.",
+  };
 }
 
 export async function retrieveAllReservations(email: string) {
@@ -110,7 +103,10 @@ export async function retrieveAllReservations(email: string) {
   }
 }
 
-export async function retrieveSpecificReservation(bookingId: string, email: string) {
+export async function retrieveSpecificReservation(
+  bookingId: string,
+  email: string
+) {
   try {
     const reservation = await prisma.reservation.findUnique({
       where: {
@@ -118,9 +114,11 @@ export async function retrieveSpecificReservation(bookingId: string, email: stri
       },
     });
 
-          // Throw forbidden error if no reservation is found or email doesn't match
+    // Throw forbidden error if no reservation is found or email doesn't match
     if (reservation.userEmail !== email) {
-      throw new Error("Forbidden: You are not authorized to view this reservation.");
+      throw new Error(
+        "Forbidden: You are not authorized to view this reservation."
+      );
     }
 
     return reservation;
