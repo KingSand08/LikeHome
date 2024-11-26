@@ -5,6 +5,7 @@ import Rewards from "@/components/ProfilePage/Rewards";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Avatar from "@/components/auth/Avatar";
+import User from "@/types/User";
 
 
 const ProfilePage: React.FC = () => {
@@ -13,21 +14,19 @@ const ProfilePage: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("account");
 
   return (
-    <div className="min-h-screen flex dark:text-gray-100 text-gray-900 select-none">
+    <div className="min-h-screen flex max-[1300px]:flex-col flex-row dark:text-gray-100 text-gray-900 select-none">
       {/* Left Side Section */}
-      <div className="flex flex-col w-1/4 p-6 bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+      <div className="flex flex-col max-[1300px]:w-screen w-1/4 max-[1300px]:h-fit max-[1300px]:py-12 p-6 bg-gradient-to-tr 
+      dark:from-gray-800 dark:to-gray-900 from-gray-200 to-gray-300
+      max-[1300px]:border-b-4 max-[1300px]:border-r-0 border-r-[5px] border-opacity-25 border-base-300">
+        {/* bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 */}
         <div className="flex justify-center">
-          <Image
-            src={user?.image || "/default-avatar.png"}
-            alt="Profile"
-            width={400}
-            height={400}
-            quality={100}
-            className="w-16 h-16 rounded-full object-cover border-2 border-gray-300 dark:border-gray-600 mb-6"
-            style={{ width: "10em", height: "10em" }}
-            priority
-          />
-          {/* <Avatar image={user?.image ?? undefined} areaExpand="17rem" imgSize={"w-52 h-52"} /> */}
+          <div className="min-[1300px]:flex hidden flex-col mb-6">
+            <Avatar
+              image={user?.image ?? undefined}
+              size={"17em"}
+            />
+          </div>
         </div>
         <ul className="space-y-4">
           <li
@@ -50,12 +49,11 @@ const ProfilePage: React.FC = () => {
           </li>
         </ul>
       </div>
-
       {/* Right Side Section */}
       <div className="flex-grow p-6">
         <div className="max-w-4xl mx-auto mt- p-6 bg-gray-200 dark:bg-gray-800 rounded-lg dark:shadow light:shadow-xl">
           {activeSection === "account" ? (
-            <AccountInformation userName={user?.name as string} userEmail={user?.email as string} />
+            <AccountInformation user={user as User} />
           ) : (
             <Rewards />
           )}
