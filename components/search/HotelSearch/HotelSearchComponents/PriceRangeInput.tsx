@@ -36,7 +36,7 @@ const PriceRangeInput: React.FC<PriceRangeInputProps> = ({
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-row gap-4">
       <TemplateInput
         title="Min Value"
         placeholder="Enter minimum price"

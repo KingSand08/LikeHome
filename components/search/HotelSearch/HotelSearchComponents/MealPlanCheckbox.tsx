@@ -22,6 +22,7 @@ const MealPlanCheckbox: React.FC<MealPlanCheckboxProps> = ({
       }
       selectedOptions={selectedOptions}
       onChange={onChange}
+      selectedOptionsLimit={1}
     />
   );
 };
