@@ -1,6 +1,6 @@
 "use server";
 import { Reservation } from "@prisma/client";
-import { updateUserRewards } from "./user-actions";
+import { redeemRewards, updateUserRewards } from "./user-actions";
 
 export type PartialReservation = Omit<
   Reservation,
@@ -17,6 +17,26 @@ export async function createReservation(data: PartialReservation) {
     });
   console.log("Reservation created successfully:", reservation);
   return reservation;
+}
+
+export async function redeemFreeStay(email: string, bookingId: string) {
+  const updatedReservation = await prisma.reservation.update({
+    where: {
+      bookingId: bookingId,
+    },
+    data: {
+      verified: true,
+    },
+  });
+
+  console.log("Updated reservation:", updatedReservation);
+
+  const updatedRewards = await redeemRewards(
+    email,
+    updatedReservation.room_cost
+  );
+  console.log("Updated rewards:", updatedRewards);
+  return true;
 }
 
 export async function verifyReservation(

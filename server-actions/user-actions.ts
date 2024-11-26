@@ -21,6 +21,19 @@ export async function createUser(email: string) {
   });
 }
 
+export async function getUserRewards(email: string) {
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { rewardPoints: true },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return user.rewardPoints;
+}
+
 export async function updateUserRewards(email: string, payment: number) {
   const user = await prisma.user.findUnique({
     where: { email },
@@ -37,5 +50,32 @@ export async function updateUserRewards(email: string, payment: number) {
   return prisma.user.update({
     where: { email },
     data: { rewardPoints },
+  });
+}
+
+export async function redeemRewards(email: string, points: number) {
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { rewardPoints: true },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const rewardPoints = user.rewardPoints - points;
+
+  if (rewardPoints < 0) {
+    throw new Error("Not enough points to redeem");
+  }
+
+  return prisma.user.update({
+    where: { email },
+    data: {
+      rewardPoints,
+      redeemedPoints: {
+        increment: points,
+      },
+    },
   });
 }
