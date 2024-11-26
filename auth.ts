@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import type { Provider } from "next-auth/providers";
 import Google from "next-auth/providers/google";
 import Discord from "next-auth/providers/discord";
+import { createUser } from "./server-actions/user-actions";
 
 const providers: Provider[] = [Google, Discord];
 

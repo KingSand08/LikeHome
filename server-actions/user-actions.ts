@@ -32,7 +32,7 @@ export async function updateUserRewards(email: string, payment: number) {
   }
   const oldPoints = user.rewardPoints;
 
-  const rewardPoints = oldPoints ?? 0 + pointChange;
+  const rewardPoints = oldPoints ?? 0 + payment * DEFAULT_REWARDS_MULTIPLIER;
 
   return prisma.user.update({
     where: { email },
