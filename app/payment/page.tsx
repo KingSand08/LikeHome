@@ -1,31 +1,67 @@
 "use client";
+
 import { CUSTOM_HOTEL_BOOKINGS_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
+import { updateReservationPaymentAndRewards } from "@/server-actions/reservation-actions";
+import { useSession } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const PaymentRedirectPage = () => {
   const searchParams = useSearchParams();
-  const router = useRouter(); // Use the router from next/navigation
+  const router = useRouter();
   const payment_intent = searchParams.get("payment_intent");
   const payment_intent_client_secret = searchParams.get(
     "payment_intent_client_secret"
   );
   const bookingId = searchParams.get("bookingId");
+  const { data: session, status } = useSession();
+  const hasRun = useRef(false);
 
   useEffect(() => {
-    if (payment_intent && payment_intent_client_secret && bookingId) {
-      // Update the existing booking entry in DB. Update variable stripePaymentId with payment_intent
+    const handlePaymentRedirect = async () => {
+      try {
+        console.log("Updating reservation with payment intent...");
+        const results = await updateReservationPaymentAndRewards(
+          session?.user.email!,
+          bookingId!,
+          payment_intent!
+        );
 
-      router.replace(
-        `${CUSTOM_HOTEL_BOOKINGS_URL.replace(
-          "{bookingId}",
-          bookingId
-        )}?success=true`
-      );
-    } else {
-      router.replace("/error");
+        if (!results.success) {
+          throw new Error(`Failed to update reservation: ${results.message}`);
+        }
+
+        router.replace(
+          `${CUSTOM_HOTEL_BOOKINGS_URL.replace(
+            "{bookingId}",
+            bookingId!
+          )}?success=true`
+        );
+      } catch (error) {
+        console.error("Error during payment processing:", error);
+        router.push("/error");
+      }
+    };
+
+    if (
+      !hasRun.current &&
+      payment_intent &&
+      payment_intent_client_secret &&
+      bookingId &&
+      status === "authenticated" &&
+      session?.user?.email
+    ) {
+      hasRun.current = true;
+      handlePaymentRedirect();
     }
-  }, [payment_intent, payment_intent_client_secret, bookingId, router]);
+  }, [
+    payment_intent,
+    payment_intent_client_secret,
+    bookingId,
+    router,
+    session,
+    status,
+  ]);
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">

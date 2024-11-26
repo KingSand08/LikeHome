@@ -22,6 +22,7 @@ const LodgingOptionsCheckbox: React.FC<LodgingOptionsCheckboxProps> = ({
       }
       selectedOptions={selectedOptions}
       onChange={onChange}
+      selectedOptionsLimit={3}
     />
   );
 };

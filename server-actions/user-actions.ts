@@ -1,6 +1,9 @@
 "use server";
 import prisma from "@/prisma/client";
 
+// Rewards
+const DEFAULT_REWARDS_MULTIPLIER: number = 0.1 as const;
+
 export async function createUser(email: string) {
   const existingUser = await prisma.user.findUnique({
     where: { email },
@@ -18,21 +21,25 @@ export async function createUser(email: string) {
   });
 }
 
-export async function updatePoints(email: string, pointChange: number) {
-  const user = await prisma.user.findUnique({
-    where: { email },
-    select: { rewardPoints: true },
-  });
+export async function updateUserRewards(email: string, room_cost: number) {
+  try {
+    const pointsToAdd = room_cost * DEFAULT_REWARDS_MULTIPLIER;
 
-  if (!user) {
-    throw new Error("User not found");
+    const updatedRewards = await prisma.user.update({
+      where: {
+        email: email,
+      },
+      data: {
+        rewardPoints: {
+          increment: pointsToAdd,
+        },
+      },
+    });
+
+    console.log("Updated rewards:", updatedRewards);
+    return updatedRewards;
+  } catch (error: any) {
+    console.error("Error updating rewards:", error.message);
+    throw error;
   }
-  const oldPoints = user.rewardPoints;
-
-  const rewardPoints = oldPoints ?? 0 + pointChange;
-
-  return prisma.user.update({
-    where: { email },
-    data: { rewardPoints },
-  });
 }
