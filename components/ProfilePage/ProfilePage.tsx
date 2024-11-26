@@ -27,6 +27,7 @@ const ProfilePage = ({ user }: { user: User }) => {
                     </div>
                 </div>
                 <div className="flex flex-col space-y-3 justify-center items-center w-full">
+                    <h2 className="text-xl text-base-content font-semibold">Profile Navigation</h2>
                     <div className="flex items-center justify-center w-full">
                         <button
                             className="flex items-center justify-center btn btn-secondary w-full p-2 rounded-lg shadow-md dark:shadow-lg"
@@ -35,7 +36,7 @@ const ProfilePage = ({ user }: { user: User }) => {
                             }}
                         >
                             <div className="w-5 mt-1">
-                                <DropDownBtn rotated={showContent} />
+                                <DropDownBtn rotated={showContent} color={"red dark:white"} />
                             </div>
                         </button>
                     </div>
@@ -44,7 +45,7 @@ const ProfilePage = ({ user }: { user: User }) => {
                             <li
                                 className={`btn w-full px-4 py-2 rounded-lg cursor-pointer ${activeSection === "account"
                                     ? "btn-secondary"
-                                    : "bg-blue-300 border-blue-300 hover:border-blue-400 hover:bg-blue-400 shadow-md dark:bg-slate-800 dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-700 dark:shadow-lg"
+                                    : "bg-blue-200 border-blue-200 hover:border-blue-400 hover:bg-blue-400 shadow-md dark:bg-slate-800 dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-700 dark:shadow-lg"
                                     }`}
                                 onClick={() => setActiveSection("account")}
                             >
@@ -53,7 +54,7 @@ const ProfilePage = ({ user }: { user: User }) => {
                             <li
                                 className={`btn w-full px-4 py-2 rounded-lg cursor-pointer ${activeSection === "rewards"
                                     ? "btn-secondary"
-                                    : "bg-blue-300 border-blue-300 hover:border-blue-400 hover:bg-blue-400 shadow-md dark:bg-slate-800 dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-700 dark:shadow-lg"
+                                    : "bg-blue-200 border-blue-200 hover:border-blue-400 hover:bg-blue-400 shadow-md dark:bg-slate-800 dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-700 dark:shadow-lg"
                                     }`}
                                 onClick={() => setActiveSection("rewards")}
                             >

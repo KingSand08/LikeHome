@@ -9,7 +9,7 @@ const DropDownBtn = ({ color = "white", rotated = false }: { color?: string, rot
             viewBox="-949 951 100 125"
             xmlSpace="preserve"
             enableBackground="new -949 951 100 100"
-            fill="white"
+            fill="currentColor"
             style={{
                 transform: rotated ? "rotate(0deg)" : "rotate(180deg)",
                 transition: "transform 0.2s ease-in-out",
