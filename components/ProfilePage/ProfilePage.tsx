@@ -21,7 +21,7 @@ const ProfilePage = ({ user }: { user: User }) => {
                     <div className="min-[1300px]:flex hidden flex-col mb-6">
                         <Avatar
                             image={user.image ?? undefined}
-                            size={"17em"}
+                            size={"10em"}
                             className="ring-4 ring-primary ring-offset-2 ring-offset-gray-900"
                         />
                     </div>
@@ -67,7 +67,7 @@ const ProfilePage = ({ user }: { user: User }) => {
 
             {/* Right Side Section */}
             <div className="flex-grow p-6">
-                <div className="max-w-4xl mx-auto mt- p-6 bg-gray-200 dark:bg-gray-800 rounded-lg dark:shadow light:shadow-xl">
+                <div className="max-w-4xl mx-auto mt- p-6 bg-gray-300 dark:bg-gray-900 rounded-lg dark:shadow light:shadow-xl">
                     {activeSection === "account" ? (
                         <AccountInformation user={user as User} />
                     ) : (
