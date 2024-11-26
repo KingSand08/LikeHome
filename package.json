@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
+    "init": "npm install && npx prisma generate",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage"
   },
