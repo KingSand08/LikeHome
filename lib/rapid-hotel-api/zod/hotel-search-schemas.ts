@@ -139,8 +139,10 @@ export function refinePriceAndDateValidationZod<T extends ZodRawShape>(
     .refine(
       (data) => {
         const today = startOfDay(new Date());
-        const checkin = startOfDay(new Date(data.checkin_date));
-        const checkout = startOfDay(new Date(data.checkout_date));
+        const [checkinYear, checkinMonth, checkinDay] = data.checkin_date.split("-");
+        const checkin = new Date(checkinYear, checkinMonth - 1, checkinDay);
+        const [checkoutYear, checkoutMonth, checkoutDay] = data.checkout_date.split("-");
+        const checkout = new Date(checkoutYear, checkoutMonth -  1, checkoutDay);
 
         if (checkin < today) {
           return false; // Check-in date is in the past
