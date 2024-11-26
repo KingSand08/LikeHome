@@ -26,7 +26,7 @@ const SortOrderDropdown: React.FC<SortOrderDropdownProps> = ({
 
   return (
     <TemplateDropdown
-      title="Select Sort Order"
+      title="Sort Order"
       placeholder="Select a sort order"
       options={
         [...HotelSearchSortOrderOptions] as HotelSearchSortOrderOptionsType[]

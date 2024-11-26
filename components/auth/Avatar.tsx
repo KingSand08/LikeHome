@@ -5,68 +5,46 @@ type AvatarProps = {
     image?: string;
     username?: string;
     className?: string;
-    imgSize?: string;
-    areaExpand?: string;
+    size: string;
     textSize?: string;
 };
 
-const Avatar: React.FC<AvatarProps> = ({
-    image,
-    username,
-    className = "",
-    imgSize = "w-16 h-16",
-    areaExpand = "3.4rem",
-    textSize = "text-xl",
-}) => {
+const Avatar: React.FC<AvatarProps> = ({ image, username, className = "", size, textSize = "text-xl" }) => {
     return (
-        <div className="flex items-center justify-center">
+        <div
+            className={`flex items-center justify-center rounded-full overflow-hidden flex-shrink-0 ${className}`}
+            style={{
+                width: size || "3.6em",
+                height: size,
+                backgroundColor: image ? "transparent" : "#374151",
+                aspectRatio: '1 / 1',
+            }}
+        >
             {image ? (
-                <div
-                    className="avatar flex items-center justify-center"
+                <Image
+                    src={image}
+                    alt="Profile Image"
+                    width={500}
+                    height={500}
+                    quality={100}
+                    className="object-cover w-full h-full"
+                    priority
                     style={{
-                        width: areaExpand,
-                        aspectRatio: "1 / 1",
+                        width: "100%",
+                        height: "100%",
                     }}
-                >
-                    <div className={`${className} ${imgSize} rounded-full`}>
-                        <Image
-                            src={image || "/default/defaultProfilePhoto.png"}
-                            alt="Profile Image"
-                            width={500}
-                            height={500}
-                            quality={100}
-                            className="rounded-full object-cover"
-                        />
-                    </div>
-                </div>
+                />
             ) : (
-                <div
-                    className="avatar flex items-center justify-center"
+                <span
+                    className={`${textSize} text-neutral-content`}
                     style={{
-                        width: areaExpand,
-                        aspectRatio: "1 / 1",
-                        clipPath: "circle()",
+                        lineHeight: size,
+                        textAlign: "center",
                     }}
                 >
-                    <div className="avatar placeholder flex items-center justify-center w-full">
-                        <div
-                            className={`${className} ${imgSize} h-auto rounded-full flex items-center justify-center w-full`}
-                        >
-                            <div
-                                className="bg-neutral text-neutral-content w-full h-full rounded-full flex items-center justify-center"
-                                style={{
-                                    clipPath: "circle()",
-                                }}
-                            >
-                                <span className={`${textSize}`}>
-                                    {username?.substring(0, 2)?.toUpperCase() || "?"}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    {username?.substring(0, 2)?.toUpperCase() || "?"}
+                </span>
             )}
-            {username && <div>hello</div>}
         </div>
     );
 };

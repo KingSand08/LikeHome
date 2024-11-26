@@ -16,7 +16,7 @@ const AmenitiesCheckbox: React.FC<AmenitiesCheckboxProps> = ({
 }) => {
   return (
     <TemplateCheckbox
-      title="Select Amenities Options"
+      title="Priority Amenities"
       options={
         [...HotelsSearchAmenitiesOptions] as HotelsSearchAmenitiesOptionsType[]
       }

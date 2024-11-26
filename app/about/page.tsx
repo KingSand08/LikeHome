@@ -8,7 +8,7 @@ const AboutPage = () => {
     <div className="text-gray-800 dark:text-gray-100 p-8 bg-gradient-to-b from-gray-100 via-gray-200 to-gray-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="flex-[1] lg:flex-[0.6] max-w-6xl mx-auto">
         <section className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold mb-6 text-blue-700 dark:text-blue-400">
+          <h2 className="text-4xl font-extrabold mb-6 text-primary dark:text-primary">
             Meet Our Team
           </h2>
           <p className="text-lg">
@@ -26,7 +26,7 @@ const AboutPage = () => {
               <Image
                 src={member.image}
                 alt={`${member.name}'s picture`}
-                className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-blue-700 dark:border-blue-500"
+                className="w-24 h-24 rounded-full mx-auto mb-4 ring-primary ring-[3px] ring-offset-[3px] dark:ring-offset-slate-700 ring-offset-white object-cover"
                 width={100}
                 height={100}
                 quality={100}
@@ -37,7 +37,7 @@ const AboutPage = () => {
                 <p>
                   <a
                     href={member.linkedin}
-                    className="text-blue-600 dark:text-blue-400 hover:underline"
+                    className="text-primary hover:underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
