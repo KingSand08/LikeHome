@@ -12,6 +12,7 @@ import {
   HOTEL_DETAILS_API_URL,
   HOTEL_ROOM_OFFERS_API_URL,
   HOTEL_SEARCH_API_URL,
+  REGION_SEARCH_API_URL,
 } from "@/lib/rapid-hotel-api/constants/ROUTES";
 import {
   DEFAULT_DOMAIN,
@@ -31,7 +32,7 @@ export async function fetchRegionDetails(
   mutableSearchParams.set("domain", domain ? domain : DEFAULT_DOMAIN);
   mutableSearchParams.set("locale", locale ? locale : DEFAULT_LOCALE);
 
-  const url = `${baseUrl}${HOTEL_DETAILS_API_URL}?${mutableSearchParams.toString()}`;
+  const url = `${baseUrl}${REGION_SEARCH_API_URL}?${mutableSearchParams.toString()}`;
   try {
     const response = await fetch(url);
 
