@@ -20,8 +20,7 @@ import { APIRegionArrayFormatted } from "@/app/api/hotels/region/route";
 import { useState, useContext } from "react";
 import { RegionContext } from "../providers/RegionProvider";
 import { CommandEmpty } from "cmdk";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 
 // TODO: Replace with a DB call to get the cached regions
 const cachedLocations: APIRegionArrayFormatted = [
@@ -97,9 +96,6 @@ export default function LocationCombobox() {
   const router = useRouter();
   const findRegion = () => {
     handleFindRegion(query, ops, setOps);
-    if (pathname !== "/") {
-      router.push("/");
-    }
   };
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const handleBlur = (e: React.FocusEvent) => {
@@ -120,6 +116,7 @@ export default function LocationCombobox() {
     >
       <CommandInput
         placeholder="Search locations..."
+        value={value?.name ?? query}
         onValueChange={setQuery}
         onKeyDown={(e) => {
           if (e.key === "Enter") findRegion();
@@ -148,6 +145,10 @@ export default function LocationCombobox() {
                     name: loc.regionNames.displayName,
                   });
                   setOpen(false);
+
+                  if (pathname !== "/") {
+                    router.push("/");
+                  }
                 }}
               >
                 {loc.regionNames.displayName}
