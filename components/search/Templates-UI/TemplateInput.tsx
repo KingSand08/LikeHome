@@ -41,7 +41,7 @@ const TemplateInput: React.FC<TemplateInputProps> = ({
 
   return (
     <div className="mb-6">
-      <label className="block text-sm font-medium text-primary mb-2">
+      <label className="font-semibold text-primary">
         {title}
       </label>
       <input

@@ -37,7 +37,7 @@ const BookingInfoUISearchComplete: React.FC<BookingInfoUISearchCompleteProps> = 
       <div className="gap-5 join">
         {/* Booking Date Range Input */}
           <div className="join-item">
-            <h3 className="text-lg font-semibold">Booking Dates</h3>
+            <h3 className="text-primary font-semibold">Booking Dates</h3>
             <DatePickerWithRange
               onChange={handleDateChange} // Update parent state when date range changes
               defaultNumDays={bookingInfo.numDays} // Default number of days

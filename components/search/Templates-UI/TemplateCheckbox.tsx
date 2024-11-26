@@ -27,9 +27,9 @@ const TemplateCheckbox = <T extends string>({
   const isMaxSelected = selectedOptions.length >= selectedOptionsLimit;
 
   return (
-    <div className="bg-base-100 shadow-md rounded-lg p-4">
+    <div className="bg-base-100 shadow-md rounded-lg p-4 mb-2 max-w-md mx-auto">
       <h3 className="text-lg font-semibold text-primary mb-4">{title}</h3>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="space-y-2">
         {options.map((option) => (
           <div key={option} className="flex items-center">
             <input
