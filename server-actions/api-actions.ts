@@ -1,6 +1,6 @@
 "use server";
-
 import { APIHotelDetailsJSONFormatted } from "@/app/api/hotels/details/route";
+import { APIRegion } from "@/app/api/hotels/region/route";
 import {
   APIHotelRoomOffersJSONFormatted,
   HotelRoomOffer,
@@ -9,9 +9,40 @@ import {
   HOTEL_DETAILS_API_URL,
   HOTEL_ROOM_OFFERS_API_URL,
 } from "@/lib/rapid-hotel-api/constants/ROUTES";
+import {
+  DEFAULT_DOMAIN,
+  DEFAULT_LOCALE,
+} from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import { ReadonlyURLSearchParams } from "next/navigation";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+export async function fetchRegionDetails(
+  query: string,
+  domain?: string,
+  locale?: string
+): Promise<APIRegion[] | null> {
+  const mutableSearchParams = new URLSearchParams();
+  mutableSearchParams.set("query", query);
+  mutableSearchParams.set("domain", domain ? domain : DEFAULT_DOMAIN);
+  mutableSearchParams.set("locale", locale ? locale : DEFAULT_LOCALE);
+
+  const url = `${baseUrl}${HOTEL_DETAILS_API_URL}?${mutableSearchParams.toString()}`;
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to retrieve region details. ${response.statusText}`
+      );
+    }
+
+    return (await response.json()) as APIRegion[];
+  } catch (error) {
+    console.error("Error fetching region details:", error);
+    return null;
+  }
+}
 
 export async function fetchHotelDetails(
   hotelId: string | string[],
