@@ -10,6 +10,7 @@ import convertToSubcurrency from "@/lib/convertPrice";
 import { FINAL_PAYMENT_INFO } from "@/lib/rapid-hotel-api/api-setup";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 
 // Check for the Stripe public key
@@ -35,7 +36,7 @@ export default function CheckoutInfo({
   hotelRoomOffer,
   bookingDetails,
 }: CheckoutInfoProps) {
-  // User information in a single state object
+  const { data: session } = useSession();
   const [userInfo, setUserInfo] = useState<FINAL_PAYMENT_INFO>({
     firstName: "",
     lastName: "",
@@ -43,11 +44,12 @@ export default function CheckoutInfo({
     city: "",
     state: "",
     zipCode: "",
-    email: "",
+    email: session?.user.email || "",
   });
 
   // Calculate total amount
-  const totalAmount = pricePerDay * numberOfDays + (pricePerDay * numberOfDays * 0.1);
+  const totalAmount =
+    pricePerDay * numberOfDays + pricePerDay * numberOfDays * 0.1;
   const roundedTotalAmount = parseFloat(totalAmount.toFixed(2));
 
   // Handle input change for user information fields

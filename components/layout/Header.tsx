@@ -9,8 +9,6 @@ import LocationCombobox from "../ui/location-combobox";
 
 export default async function Header() {
   const session = await auth();
-  console.log("Session:", session);
-
   const user = !session?.user;
 
   var loginStatus = false;
@@ -32,11 +30,12 @@ export default async function Header() {
                 alt="LikeHome Logo"
                 width={55}
                 height={20}
+                priority
+                style={{ height: "auto", width: "auto" }}
               />
               <span className="ml-2 text-lg font-bold text-base-content">
                 LikeHome
-              </span>{" "}
-              {/* Text displayed next to image */}
+              </span>
             </div>
           </Link>
           {/* Searh Bar */}
@@ -66,7 +65,7 @@ export default async function Header() {
                 <Link href="/profile">
                   <Avatar
                     image={session?.user.image ?? undefined}
-                    imgSize={"12"}
+                    size={"3.4em"}
                   />
                 </Link>
                 <SignOutButton className="text-base-300-content" />

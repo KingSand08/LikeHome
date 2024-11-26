@@ -8,9 +8,10 @@ type ModalProps = {
     onClose?: () => void;
     callbackUrl?: string;
     show?: boolean;
+    className?: string;
 };
 
-const ModalRoute: React.FC<ModalProps> = ({ children, onClose, callbackUrl = "/", show = true }) => {
+const ModalRoute: React.FC<ModalProps> = ({ children, onClose, callbackUrl = "/", show = true, className }) => {
     const router = useRouter();
 
     const handleClose = useCallback(() => {
@@ -51,10 +52,10 @@ const ModalRoute: React.FC<ModalProps> = ({ children, onClose, callbackUrl = "/"
 
     return (
         <dialog id="modal" className="modal">
-            <div className="modal-box relative max-w-5xl">
+            <div className={`${className} modal-box relative max-w-5xl`}>
                 {/* Close button */}
                 <button
-                    className="bg-gray-400 hover:bg-gray-300 dark:bg-black dark:hover:bg-gray-700 btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                    className="bg-gray-200 hover:bg-gray-300 dark:bg-black dark:hover:bg-gray-600 btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                     onClick={handleClose}
                 >
                     ✕
