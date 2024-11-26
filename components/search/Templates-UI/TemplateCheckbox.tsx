@@ -27,13 +27,11 @@ const TemplateCheckbox = <T extends string>({
   const isMaxSelected = selectedOptions.length >= selectedOptionsLimit;
 
   return (
-    <div className="mb-4">
-      <label className="block form-control text-md font-medium mb-2 text-base-content">
-        {title}
-      </label>
-      <div>
+    <div className="bg-base-100 shadow-md rounded-lg p-4">
+      <h3 className="text-lg font-semibold text-primary mb-4">{title}</h3>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {options.map((option) => (
-          <div key={option} className="flex items-center mb-2">
+          <div key={option} className="flex items-center">
             <input
               type="checkbox"
               id={option}
@@ -41,14 +39,14 @@ const TemplateCheckbox = <T extends string>({
               checked={selectedOptions.includes(option)}
               onChange={() => handleCheckboxChange(option)}
               disabled={!selectedOptions.includes(option) && isMaxSelected}
-              className="mr-2"
+              className="checkbox checkbox-primary mr-2"
             />
             <label
               htmlFor={option}
-              className={`text-sm ${
+              className={`text-sm font-medium ${
                 !selectedOptions.includes(option) && isMaxSelected
                   ? "text-gray-400"
-                  : "text-black"
+                  : "text-base-content"
               }`}
             >
               {option.replace(/_/g, " ")}
@@ -57,8 +55,8 @@ const TemplateCheckbox = <T extends string>({
         ))}
       </div>
       {isMaxSelected && (
-        <p className="mt-2 text-xs text-red-500">
-          Maximum of {selectedOptionsLimit} options can be selected.
+        <p className="mt-3 text-sm text-error">
+          You can only select up to {selectedOptionsLimit} options.
         </p>
       )}
     </div>
