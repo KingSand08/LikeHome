@@ -30,7 +30,7 @@ const ProfilePage = ({ user }: { user: User }) => {
                     <h2 className="text-xl text-base-content font-semibold">Profile Navigation</h2>
                     <div className="flex items-center justify-center w-full">
                         <button
-                            className="flex items-center justify-center btn btn-secondary w-full p-2 rounded-lg shadow-md dark:shadow-lg"
+                            className="flex items-center justify-center btn btn-primary w-full p-2 rounded-lg shadow-md dark:shadow-lg"
                             onClick={() => {
                                 setShowContent(!showContent);
                             }}
