@@ -28,10 +28,10 @@ const TemplateCheckbox = <T extends string>({
 
   return (
     <div className="mb-4">
-      <label className="block text-sm font-medium mb-2 text-white">
+      <label className="block form-control text-md font-medium mb-2 text-base-content">
         {title}
       </label>
-      <div className="border p-2 rounded bg-white max-h-60 overflow-y-auto">
+      <div>
         {options.map((option) => (
           <div key={option} className="flex items-center mb-2">
             <input

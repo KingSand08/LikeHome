@@ -1,5 +1,5 @@
 // To get the middle ware started, you must first navigate to the like home folder
-// In this folder, open a termina and run "npx prisma generate"
+// In this folder, open a terminal and run "npx prisma generate"
 // Following this, make sure prisma is up to date with the DB by running "npx prisma db pull" *only run this once or it will say smt about Re-Introspection
 // To check if the DB is linked and working run "npx prisma studio" (it will display the database)
 
@@ -13,38 +13,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//May need to update model for photos
-model Hotel {
-  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
-  name                 String
-  location             Location
-  amenities            String[]
-  pricePerNight        Int
-  ratings              Ratings?
-  roomsAvailable       Int
-  description          String
-  singleRoomsAvailable Int
-  doubleRoomsAvailable Int
-  createdAt            DateTime?
+model User {
+  // Bare minimum data
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  email         String    @unique
 
-  @@map("hotels") // Maps the model to "hotels" collection in MongoDB
+  rewardPoints Int
+  reservations Reservation[]
 }
 
-type Location {
-  address     String
-  city        String
-  state       String
-  zip         String
-  country     String
-  coordinates Coordinates? // Make coordinates nullable
+model Reservation {
+  id               String          @id @default(auto()) @map("_id") @db.ObjectId
+  bookingId        String          @unique
+  userEmail        String
+  user             User            @relation(fields: [userEmail], references: [email])
+  checkin_date     String
+  checkout_date    String
+  adults_number    Int
+  numDays          Int
+  hotel_id         String
+  room_id          String
+  payment_info     PaymentInfo
+  transaction_info TransactionInfo
+  verified         Boolean
+  room_cost        Float
 }
 
-type Coordinates {
-  latitude  Float
-  longitude Float
+type PaymentInfo {
+  firstName      String
+  lastName       String
+  billingAddress String
+  city           String
+  state          String
+  zipCode        String
+  email          String
 }
 
-type Ratings {
-  average      Float
-  reviewsCount Int
+type TransactionInfo {
+  dateCreated     String
+  stripePaymentId String
 }
