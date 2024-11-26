@@ -14,6 +14,9 @@
   "dependencies": {
     "@auth/core": "^0.37.0",
     "@prisma/client": "^5.21.1",
+    "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-popover": "^1.1.2",
+    "@radix-ui/react-slot": "^1.1.0",
     "@stripe/react-stripe-js": "^2.8.1",
     "@stripe/stripe-js": "^4.9.0",
     "@tailwindcss/forms": "^0.5.9",
@@ -21,6 +24,7 @@
     "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "cmdk": "^1.0.0",
     "jest-dom": "^4.0.0",
     "likehome": "file:",
     "lucide-react": "^0.460.0",
