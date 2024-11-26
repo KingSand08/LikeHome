@@ -51,7 +51,7 @@ const TemplateInput: React.FC<TemplateInputProps> = ({
         value={value}
         onChange={handleChange}
         onBlur={handleBlur}
-        className={`input w-full p-2 border rounded-lg text-base-content${
+        className={`input input-bordered input-secondary bg-gray-800 w-full p-2 border-primary rounded-md text-base-content${
           error ? "border-red-500" : "border-gray-300 shadow"
         }`}
         required={required}

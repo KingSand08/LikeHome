@@ -21,7 +21,7 @@ const TemplateCheckbox = <T extends string>({
 
   return (
     <div className="mb-4">
-      <label className="block form-control text-md font-medium mb-2 text-neutral-content">
+      <label className="block form-control text-md font-medium mb-2 text-base-content">
         {title}
       </label>
       <div>
@@ -35,7 +35,7 @@ const TemplateCheckbox = <T extends string>({
               onChange={() => handleCheckboxChange(option)}
               className="mr-2"
             />
-            <label htmlFor={option} className="text-sm text-neutral">
+            <label htmlFor={option} className="text-sm text-neutral-content">
               {option.replace(/_/g, " ")}
             </label>
           </div>

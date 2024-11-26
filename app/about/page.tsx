@@ -1,91 +1,58 @@
+import ContactUs from "@/components/about/contact-us";
 import Image from "next/image";
 import React from "react";
-
-const DEFAULT_IMAGE = "/icons/app/stellarHorizons.png" as const;
-
-const team = [
-  {
-    name: "Mauricio Curiel",
-    image: DEFAULT_IMAGE,
-    description:
-      "Project Manager overseeing development and project milestones",
-  },
-  {
-    name: "Ahsan Ali",
-    image: DEFAULT_IMAGE,
-    description:
-      "Backend Developer specializing in server-side development and testing.",
-  },
-  {
-    name: "Ali Altimimi",
-    image: DEFAULT_IMAGE,
-    description:
-      "Backend Developer focused on database architecture and optimization.",
-  },
-  {
-    name: "Connor Linville",
-    image: DEFAULT_IMAGE,
-    description:
-      "Backend Developer with expertise in deployment strategies and user authentication systems.",
-  },
-  {
-    name: "Steven Lu",
-    image: DEFAULT_IMAGE,
-    description:
-      "Frontend Developer responsible for implementing designs from Figma into a responsive UI.",
-  },
-  {
-    name: "Raymund Mercader",
-    image: DEFAULT_IMAGE,
-    description:
-      "Full Stack Developer experienced in both backend and frontend development.",
-  },
-  {
-    name: "Minh Nguyen",
-    image: DEFAULT_IMAGE,
-    description:
-      "UI/UX Designer skilled in creating intuitive user interfaces using Figma.",
-  },
-  {
-    name: "Ryan Tang",
-    image: DEFAULT_IMAGE,
-    description: "Backend Developer with expertise in payment systems.",
-  },
-];
+import developers from "@/data/developers.json";
 
 const AboutPage = () => {
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-800 p-8">
-      {/* Team Introduction */}
-      <section className="text-center mb-12">
-        <h1 className="text-5xl font-bold mb-6">Meet the LikeHome Team</h1>
-        <p className="text-lg">
-          We are a group of passionate developers committed to building the best
-          hotel-booking platform.
-        </p>
-      </section>
+    <div className="text-gray-800 dark:text-gray-100 p-8 bg-gradient-to-b from-gray-100 via-gray-200 to-gray-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="flex-[1] lg:flex-[0.6] max-w-6xl mx-auto">
+        <section className="text-center mb-12">
+          <h2 className="text-4xl font-extrabold mb-6 text-blue-700 dark:text-blue-400">
+            Meet Our Team
+          </h2>
+          <p className="text-lg">
+            We are a group of passionate developers committed to building the
+            best hotel-booking platform.
+          </p>
+        </section>
 
-      {/* Team Cards */}
-      <section className="flex justify-center">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 place-items-center">
-          {team.map((member, index) => (
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {developers.map((member, index) => (
             <div
               key={index}
-              className="bg-white p-6 rounded-lg shadow-lg text-center"
+              className="bg-white text-gray-800 dark:bg-slate-700 dark:text-gray-100 p-6 rounded-xl shadow-lg transition transform hover:scale-105 hover:shadow-xl"
             >
               <Image
                 src={member.image}
-                alt={member.name}
-                className="w-32 h-32 rounded-full mx-auto mb-4"
+                alt={`${member.name}'s picture`}
+                className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-blue-700 dark:border-blue-500"
                 width={100}
                 height={100}
+                quality={100}
               />
-              <h3 className="text-2xl font-semibold mb-2">{member.name}</h3>
-              <p>{member.description}</p>
+              <h3 className="text-xl font-semibold mb-2">{member.name}</h3>
+              <p className="mb-4 text-sm">{member.description}</p>
+              {member.linkedin && (
+                <p>
+                  <a
+                    href={member.linkedin}
+                    className="text-blue-600 dark:text-blue-400 hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    My LinkedIn Profile
+                  </a>
+                </p>
+              )}
             </div>
           ))}
+        </section>
+
+        <div className="mt-12">
+          <ContactUs />
         </div>
-      </section>
+      </div>
     </div>
   );
 };
