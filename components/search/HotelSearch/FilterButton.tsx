@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-
+import { Filter } from "lucide-react";
 const FilterButton: React.FC = () => {
   const [buttonOffset, setButtonOffset] = useState(80); // Initial offset from the top of the navbar
   const [isSticky, setIsSticky] = useState(false); // To check if the button should stick
@@ -28,14 +28,14 @@ const FilterButton: React.FC = () => {
   return (
     <label
       htmlFor="my-drawer-2"
-      className={`btn btn-primary fixed left-4 z-20 transition-transform duration-300 ${
+      className={`btn btn-outline btn-primary fixed left-4 z-20 transition-transform duration-300 ${
         isSticky ? "top-4" : ""
       }`}
       style={{
         top: isSticky ? undefined : `${buttonOffset + 25}px`, // Use sticky class if applicable
       }}
     >
-      Sort and Filter
+      <Filter/>
     </label>
   );
 };

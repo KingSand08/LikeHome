@@ -16,6 +16,7 @@ import LodgingOptionsCheckbox from "./HotelSearchComponents/LodgingOptionsCheckb
 import SortOrderDropdown from "./HotelSearchComponents/SortOrderDropdown";
 import PriceRangeInput from "./HotelSearchComponents/PriceRangeInput";
 
+
 type SidebarFiltersProps = {
   hotelSearchInputs: {
     accessibilityOptions: HotelsSearchAccessibilityOptionsType[];
