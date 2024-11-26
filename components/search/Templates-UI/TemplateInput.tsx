@@ -40,8 +40,8 @@ const TemplateInput: React.FC<TemplateInputProps> = ({
   };
 
   return (
-    <div className="mb-4">
-      <label className="text-lg block font-semibold text-base-content">
+    <div className="mb-6">
+      <label className="block text-sm font-medium text-primary mb-2">
         {title}
       </label>
       <input
@@ -50,12 +50,14 @@ const TemplateInput: React.FC<TemplateInputProps> = ({
         value={value}
         onChange={handleChange}
         onBlur={handleBlur}
-        className={`input input-bordered input-secondary w-full p-2 border-primary rounded-md text-base-content${
-          error ? "border-red-500" : "border-gray-300 shadow"
+        className={`input input-bordered w-full p-3 rounded-md shadow-sm ${
+          error
+            ? "input-error border-error text-error-content"
+            : "input-secondary"
         }`}
         required={required}
       />
-      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+      {error && <p className="mt-2 text-sm text-error">{error}</p>}
     </div>
   );
 };
