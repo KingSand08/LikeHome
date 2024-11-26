@@ -11,6 +11,7 @@ import {
   DEFAULT_MAX_PRICE,
   DEFAULT_MIN_PRICE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
+import { Loader } from "lucide-react";
 
 export type bookingParamsType = z.infer<typeof hotelSearchParamsRefinedSchema>;
 
@@ -76,7 +77,55 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
       }
     };
 
-    handleFindHotels();
+    if (process.env.NODE_ENV === "production") {
+      handleFindHotels();
+    } else {
+      setLoading(true);
+      setTimeout(() => {
+        setHotelsData({
+          priceRange: {
+            maxPrice: 5000,
+            minPrice: 0,
+          },
+          properties: [
+            {
+              region_id: "1",
+              hotel_id: "1",
+              name: "Hotel 1",
+              image: { description: "img", url: "", alt: "alt" },
+              coordinates: { lat: 0, long: 0 },
+              availability: { available: true, minRoomsLeft: 10 },
+              reviews: { score: 4, totalReviews: 100, starRating: 4 },
+              price: { amount: 100, currency: { code: "USD", symbol: "$" } },
+            },
+            {
+              region_id: "2",
+              hotel_id: "2",
+              name: "Hotel 2",
+              image: { description: "img", url: "", alt: "alt" },
+              coordinates: { lat: 0, long: 0 },
+              availability: { available: true, minRoomsLeft: 10 },
+              reviews: { score: 4, totalReviews: 100, starRating: 4 },
+              price: { amount: 100, currency: { code: "USD", symbol: "$" } },
+            },
+            {
+              region_id: "3",
+              hotel_id: "3",
+              name: "Hotel 3",
+              image: { description: "img", url: "", alt: "alt" },
+              coordinates: { lat: 0, long: 0 },
+              availability: { available: true, minRoomsLeft: 10 },
+              reviews: { score: 4, totalReviews: 100, starRating: 4 },
+              price: { amount: 100, currency: { code: "USD", symbol: "$" } },
+            },
+          ],
+          summary: {
+            matchedPropertiesSize: 3,
+          },
+        });
+        setLoading(false);
+      }, 5000);
+    }
   }, [region]);
 
   return (
@@ -112,7 +161,14 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
 
       {/* Hotel List Display */}
       <div className="mt-6">
-        {loading ? null : hotelsData && hotelsData.properties.length > 0 ? (
+        {loading ? (
+          <span className="rounded bg-primary text-primary-content flex flex-row justify-center align-middle text-center gap-1 p-4">
+            <Loader size={32} className="animate-spin" />
+            <p className="h-full text-middle text-center text-2xl">
+              Loading Hotels that fit your needs!
+            </p>
+          </span>
+        ) : hotelsData && hotelsData.properties.length > 0 ? (
           <HotelList hotelsData={hotelsData} bookingParams={bookingParams} />
         ) : (
           <p className="text-gray-500">No hotels found.</p>
