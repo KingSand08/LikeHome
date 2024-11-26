@@ -144,15 +144,12 @@ export function refinePriceAndDateValidationZod<T extends ZodRawShape>(
         const today = new Date();
 
         if (checkin < today) {
-          console.log("if1 checkin", checkin, "today ", today)
           return false; // Check-in date is in the past
         }
         if (checkout < checkin) {
-          console.log("if2 checkin ", checkin, "checkout ", checkout,"today ", today)
           return false; // Check-out date is before check-in date
           
         }
-        console.log("if2 checkin ", checkin, "checkout ", checkout,"today ", today)
         return true;
       },
       {
