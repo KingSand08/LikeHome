@@ -103,14 +103,11 @@ const HomeSearchPage: React.FC = () => {
   const [region] = useContext(RegionContext);
   useEffect(() => {
     // update region search params
-    setSearchParams((prev) =>
-      region
-        ? {
-            ...prev,
-            selectedRegionId: region.region_id ?? null,
-          }
-        : prev
-    );
+    if (!region) return;
+    setSearchParams((prev) => ({
+      ...prev,
+      selectedRegionId: region.region_id,
+    }));
   }, [region, setSearchParams]);
 
   return (

@@ -106,14 +106,15 @@ export default function LocationCombobox() {
   };
   const handleSelection = (currentValue: string, loc: APIRegion) => {
     const isDeselect = currentValue === value?.name;
-    // if (isDeselect) {
-    //   setValue({});
-    //   return;
-    // }
-    // setValue({
-    //   region_id: loc.region_id,
-    //   name: loc.regionNames.displayName,
-    // });
+    if (isDeselect) {
+      setValue(undefined);
+      return;
+    }
+    setValue({
+      region_id: loc.region_id,
+      name: loc.regionNames.displayName,
+    });
+    setQuery(loc.regionNames.displayName);
     setOpen(false);
 
     if (pathname !== "/") {
@@ -131,8 +132,7 @@ export default function LocationCombobox() {
       } text-neutral dark:text-gray-100 dark:bg-gray-800 border-2 border-primary focus:outline-none focus:ring-2 focus:ring-blue-500`}
     >
       <CommandInput
-        placeholder="Search locations..."
-        value={value?.name ?? query}
+        placeholder={value?.name ?? "Search locations..."}
         onValueChange={setQuery}
         onKeyDown={(e) => {
           if (e.key === "Enter") findRegion();
@@ -186,7 +186,6 @@ const handleFindRegion = async (
   const response = await fetch(
     `${REGION_SEARCH_API_URL}?${urlParams.toString()}`
   );
-  console.log(response);
   if (!response.ok) alert(`Failed to fetch regions.`);
 
   const REGION_DATA: APIRegion[] = await response.json();
