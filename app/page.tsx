@@ -105,7 +105,7 @@ const HomeSearchPage: React.FC = () => {
   ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
 
   return (
-    <div className="bg-slate-gray container mx-auto p-4">
+    <div className="bg-base-300 container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Browsing Search Page</h1>
       <h2 className="text-xl font-bold mb-4">
         This will end up in / (the landing/browsing page)

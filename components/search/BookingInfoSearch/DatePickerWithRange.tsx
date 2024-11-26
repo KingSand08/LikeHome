@@ -43,7 +43,7 @@ export function DatePickerWithRange({
     generateDefaultDates(defaultNumDays);
 
   const [dateRange, setDateRange] = React.useState<DateRange>({
-    from: new Date(DEFAULT_CHECKIN_BOOKING_DATE),
+    from: new Date(),
     to: new Date(DEFAULT_CHECKOUT_BOOKING_DATE),
   });
 
@@ -101,10 +101,10 @@ export function DatePickerWithRange({
       <Popover>
         <PopoverTrigger asChild>
           <Button
-            id="date"
-            variant={"outline"}
+            id="outline"
+            variant={"default"}
             className={cn(
-              "btn btn-wide justify-start text-left font-normal text-neutral-content dark:text-neutral-content",
+              "btn btn-wide justify-start text-left font-normal text-base-content ",
               !dateRange && "text-muted-foreground"
             )}
           >

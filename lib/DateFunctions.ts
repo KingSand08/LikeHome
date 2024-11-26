@@ -15,13 +15,11 @@ export const generateDefaultDates = (
   DEFAULT_CHECKOUT_BOOKING_DATE: string;
 } => {
   // Calculate checkinDate to be X DEFAULT_DAYS_FROM_TODAY from today's date
-  const today = new Date();
-  const checkinDate = new Date(today);
-  checkinDate.setDate(today.getDate() + DEFAULT_DAYS_FROM_TODAY);
+  const checkinDate = new Date();
 
   // Calculate checkoutDate to be numDays from today's date
   const checkoutDate = new Date(checkinDate);
-  checkoutDate.setDate(checkinDate.getDate() + numDays); // Don't include the last day (checkout day)
+  checkoutDate.setDate(checkinDate.getDate() + DEFAULT_DAYS_FROM_TODAY); // Don't include the last day (checkout day)
 
   return {
     DEFAULT_CHECKIN_BOOKING_DATE: formatDate(checkinDate),
