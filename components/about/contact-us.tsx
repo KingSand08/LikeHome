@@ -77,7 +77,7 @@ const ContactUs = () => {
         <div className="flex justify-center">
           <button
             type="submit"
-            className="btn-primary bg-blue-600 text-white py-3 px-10 rounded-lg font-semibold hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition-all"
+            className="btn btn-primary py-3 px-10 rounded-lg font-semibold transition-all"
           >
             Submit
           </button>
