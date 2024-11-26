@@ -11,7 +11,7 @@ export type PartialReservation = Omit<
 
 export async function createReservation(data: PartialReservation) {
   try {
-    const reservation = await prisma.reservation.create({
+    const reservation: PartialReservation[] | [] = await prisma.reservation.create({
       data: {
         bookingId: data.bookingId,
         userEmail: data.userEmail,

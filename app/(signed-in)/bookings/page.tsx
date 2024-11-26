@@ -1,56 +1,16 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import {
-  PartialReservation,
-  retrieveAllReservations,
-} from "@/server-actions/reservation-actions";
+import { PartialReservation, retrieveAllReservations } from "@/server-actions/reservation-actions";
 import Link from "next/link";
+import { auth } from "@/auth";
 
-const BookingsPage = () => {
-  const { data: session, status } = useSession();
-  const [reservations, setReservations] = useState<PartialReservation[] | []>(
-    []
-  );
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const BookingsPage = async () => {
+  const session = await auth();
 
-  useEffect(() => {
-    const fetchReservations = async () => {
-      if (!session || !session.user.email) {
-        setLoading(false);
-        setError("You must be logged in to view your reservations.");
-        return;
-      }
-
-      try {
-        const fetchedReservations = await retrieveAllReservations(
-          session.user.email
-        );
-        setReservations(fetchedReservations);
-      } catch (error: any) {
-        console.error("Error retrieving reservations:", error.message);
-        setError("Failed to load reservations.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (status === "authenticated") {
-      fetchReservations();
-    }
-  }, [session, status]);
-
-  if (loading) {
-    return <div>Loading your reservations...</div>;
+  if (!session || !session.user?.email) {
+    return <div>Please sign in to view your reservations.</div>;
   }
+  const reservations = await retrieveAllReservations(session.user.email);
 
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  if (reservations.length === 0) {
+  if (!reservations || reservations.length === 0) {
     return <div>You have no reservations.</div>;
   }
 
@@ -58,7 +18,7 @@ const BookingsPage = () => {
     <div>
       <h1>Your Reservations</h1>
       <ul className="list-disc pl-6">
-        {reservations.map((reservation) => (
+        {reservations.map((reservation: PartialReservation) => (
           <li key={reservation.bookingId} className="mb-4">
             <div>
               <strong>Booking ID:</strong> {reservation.bookingId}
