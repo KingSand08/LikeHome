@@ -8,7 +8,6 @@ import {
   DEFAULT_SORT_ORDER,
 } from "../constants/USER_OPTIONS";
 import { isBefore, isEqual, startOfDay } from "date-fns";
-import { isBefore, isEqual, startOfDay } from "date-fns";
 
 export const API_HOTEL_SEARCH_URL =
   "https://hotels-com-provider.p.rapidapi.com/v2/hotels/search" as const;
