@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { format, isBefore, isEqual, isToday } from "date-fns";
+import { format, isBefore, isEqual, startOfDay } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 
@@ -18,7 +18,10 @@ import {
   dateRegex,
   refinePriceAndDateValidationZod,
 } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
-import { generateDefaultDates, calculateNumDays } from "../../../lib/DateFunctions";
+import {
+  generateDefaultDates,
+  calculateNumDays,
+} from "../../../lib/DateFunctions";
 
 // Zod validation schema for dates
 const dateSchema = z.object({
@@ -29,7 +32,11 @@ const validatedDateSchema = refinePriceAndDateValidationZod(dateSchema);
 
 type DatePickerWithRangeProps = {
   className?: string;
-  onChange?: (dates: { checkinDate: string; checkoutDate: string; numDays: number }) => void;
+  onChange?: (dates: {
+    checkinDate: string;
+    checkoutDate: string;
+    numDays: number;
+  }) => void;
   defaultNumDays?: number;
 };
 
@@ -49,7 +56,10 @@ export function DatePickerWithRange({
 
   const [error, setError] = React.useState<string | null>(null);
 
-  const validateDates = (from: Date | undefined, to: Date | undefined): boolean => {
+  const validateDates = (
+    from: Date | undefined,
+    to: Date | undefined
+  ): boolean => {
     if (!from || !to) {
       setError("Please select a valid date range.");
       return false;
@@ -131,7 +141,20 @@ export function DatePickerWithRange({
             selected={dateRange}
             onSelect={handleDateRangeChange}
             numberOfMonths={2}
-            disabled={(date)=> isBefore(date, new Date() || isEqual(date, new Date()))}
+            disabled={(date) => {
+              const today = startOfDay(new Date());
+              const fromDay = dateRange?.from
+                ? startOfDay(dateRange.from)
+                : null;
+
+              // Disable dates before today and the same as 'from' if 'to' is not selected
+              return (
+                isBefore(startOfDay(date), today) ||
+                (fromDay !== null &&
+                  isEqual(startOfDay(date), fromDay) &&
+                  !dateRange.to)
+              );
+            }}
           />
         </PopoverContent>
       </Popover>

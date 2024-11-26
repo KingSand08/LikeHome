@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,
@@ -31,10 +31,10 @@ import {
 } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
 import { generateDefaultDates } from "@/lib/DateFunctions";
 import BookingInfoUISearchComplete from "@/components/search/BookingInfoSearch/BookingInfoSearchUIComplete";
-import RegionSearchUIComplete from "@/components/search/RegionSearch/RegionSearchUIComplete";
 import HotelSearchUIComplete from "@/components/search/HotelSearch/HotelSearchUIComplete";
-import HotelResultUIComplete from "@/components/search/HotelResults/HotelResultsUIComplete";
-import SearchParamsDisplay from "@/components/search/Testing/SearchParamsDisplay";
+import LocationCombobox from "@/components/ui/location-combobox";
+import HotelSelect from "@/components/search/HotelResults/HotelSelect";
+import { RegionContext } from "@/components/providers/RegionProvider";
 
 export type searchParamsType = {
   // RegionSearch inputs
@@ -92,10 +92,6 @@ const HomeSearchPage: React.FC = () => {
   });
 
   // Handlers to update specific sections of searchParams
-  const updateRegionSearchParams = (
-    newSearchParams: Partial<typeof searchParams>
-  ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
-
   const updateBookingInfoParams = (
     newSearchParams: Partial<typeof searchParams>
   ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
@@ -104,38 +100,24 @@ const HomeSearchPage: React.FC = () => {
     newSearchParams: Partial<typeof searchParams>
   ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
 
+  const [region] = useContext(RegionContext);
+  useEffect(() => {
+    // update region search params
+    if (!region) return;
+    setSearchParams((prev) => ({
+      ...prev,
+      selectedRegionId: region.region_id,
+    }));
+  }, [region, setSearchParams]);
+
   return (
-    <div className="bg-base-300 container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Browsing Search Page</h1>
-      <h2 className="text-xl font-bold mb-4">
-        This will end up in / (the landing/browsing page)
-      </h2>
+    <div className="bg-slate-gray container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">
+        {region
+          ? `Browsing Hotels in ${region.name} 🏨`
+          : "Select a location to start!"}
+      </h1>
 
-      {/* RegionSearch Component */}
-      <RegionSearchUIComplete
-        regionSearchInputs={{
-          query: searchParams.query,
-          domain: searchParams.domain,
-          locale: searchParams.locale,
-        }}
-        selectedRegionId={searchParams.selectedRegionId}
-        setRegionSearchInputs={(newParams: {
-          query: string;
-          domain: RegionSearchDomainType;
-          locale: RegionSearchLocaleType;
-        }) =>
-          updateRegionSearchParams({
-            query: newParams.query,
-            domain: newParams.domain,
-            locale: newParams.locale,
-          })
-        }
-        setSelectedRegionId={(regionId: string | null) =>
-          updateRegionSearchParams({ selectedRegionId: regionId })
-        }
-      />
-
-      <hr></hr>
       {/* BookingInfo Component */}
       <BookingInfoUISearchComplete
         bookingInfo={{
@@ -149,14 +131,7 @@ const HomeSearchPage: React.FC = () => {
           checkoutDate: string;
           adultsNumber: number;
           numDays: number;
-        }) =>
-          updateBookingInfoParams({
-            checkinDate: newParams.checkinDate,
-            checkoutDate: newParams.checkoutDate,
-            adultsNumber: newParams.adultsNumber,
-            numDays: newParams.numDays,
-          })
-        }
+        }) => updateBookingInfoParams(newParams)}
       />
 
       <hr></hr>
@@ -190,11 +165,11 @@ const HomeSearchPage: React.FC = () => {
 
       <hr></hr>
       {/* Displaying all search parameters */}
-      <SearchParamsDisplay searchParams={searchParams} />
+      {/* <SearchParamsDisplay searchParams={searchParams} /> */}
 
       <hr></hr>
       {/* HotelSelectUIComplete Component */}
-      <HotelResultUIComplete
+      <HotelSelect
         bookingParams={{
           checkin_date: searchParams.checkinDate,
           checkout_date: searchParams.checkoutDate,

@@ -59,7 +59,7 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
   };
 
   return (
-    <div>
+    <div className="container mx-auto p-4">
       <h2 className="text-lg font-semibold mb-4">Available Hotels</h2>
 
       {/* Button to Trigger Hotel Search */}
@@ -73,9 +73,7 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
 
       {/* Hotel List Display */}
       <div className="mt-6">
-        {loading ? (
-          null
-        ) : hotelsData && hotelsData.properties.length > 0 ? (
+        {loading ? null : hotelsData && hotelsData.properties.length > 0 ? (
           <HotelList hotelsData={hotelsData} bookingParams={bookingParams} />
         ) : (
           <p className="text-gray-500">No hotels found.</p>
