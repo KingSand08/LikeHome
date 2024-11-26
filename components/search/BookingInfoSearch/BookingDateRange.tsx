@@ -8,7 +8,7 @@ import { z } from "zod";
 import { generateDefaultDates } from "../../../lib/DateFunctions";
 import BookingDateInput from "./SearchComponents/BookingDateInput";
 import { DEFAULT_BOOKING_NUM_DAYS } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
-
+import { DatePickerWithRange } from "@/components/search/BookingInfoSearch/DatePickerWithRange";
 // Date validation using Zod
 const dateSchema = z.object({
   checkin_date: z.string().regex(dateRegex),
@@ -70,21 +70,9 @@ const BookingDateRange: React.FC<BookingDateRangeProps> = ({
   return (
     <div>
       <div className="flex flex-row gap-2">
-        <div className="flex-1">
-          <BookingDateInput
-            selectedDate={dateRange.checkinDate}
-            onChange={handleCheckinDateChange}
-            title="Check-in Date"
-          />
-        </div>
-        <div className="flex-1">
-          <BookingDateInput
-            selectedDate={dateRange.checkoutDate}
-            onChange={handleCheckoutDateChange}
-            title="Check-out Date"
-          />
-        </div>
+      <DatePickerWithRange />
       </div>
+      
       {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
     </div>
   );

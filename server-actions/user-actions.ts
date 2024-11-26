@@ -1,7 +1,10 @@
 "use server";
 import prisma from "@/prisma/client";
 
-export async function createUser(email: string, name: string) {
+// Rewards
+const DEFAULT_REWARDS_MULTIPLIER: number = 0.1 as const;
+
+export async function createUser(email: string) {
   const existingUser = await prisma.user.findUnique({
     where: { email },
   });
@@ -12,14 +15,13 @@ export async function createUser(email: string, name: string) {
 
   return await prisma.user.create({
     data: {
-      name,
       email,
       rewardPoints: 0,
     },
   });
 }
 
-export async function updatePoints(email: string, pointChange: number) {
+export async function updateUserRewards(email: string, payment: number) {
   const user = await prisma.user.findUnique({
     where: { email },
     select: { rewardPoints: true },
