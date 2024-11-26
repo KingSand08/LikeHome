@@ -5,6 +5,7 @@ import Link from "next/link";
 import SignOutButton from "@/components/auth/SignOutButton";
 import SigninButton from "@/components/auth/SigninButton";
 import Avatar from "@/components/auth/Avatar";
+import LocationCombobox from "../ui/location-combobox";
 
 export default async function Header() {
   const session = await auth();
@@ -37,12 +38,8 @@ export default async function Header() {
             </div>
           </Link>
           {/* Searh Bar */}
-          <div className="flex items-center justify-center w-[90%]">
-            <input
-              type="text"
-              placeholder="Search"
-              className="input input-primary w-full flex-grow rounded-lg text-neutral dark:text-gray-100 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+          <div className="flex-1 mx-5 relative">
+            <LocationCombobox />
           </div>
           <div className="flex flex-grow-0 items-center justify-center gap-8 ">
             {/* Navigation Links */}
@@ -64,9 +61,7 @@ export default async function Header() {
                 >
                   Profile
                 </Link>
-                <Link
-                  href="/profile"
-                >
+                <Link href="/profile">
                   <Avatar
                     image={session?.user.image ?? undefined}
                     size={"3.4em"}
