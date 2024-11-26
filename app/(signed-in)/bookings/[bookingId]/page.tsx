@@ -1,42 +1,86 @@
-"use client";
-import { useParams, useSearchParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React from "react";
+import { retrieveSpecificReservation } from "@/server-actions/reservation-actions";
+import Link from "next/link";
+import { auth } from "@/auth";
 
-const Page = () => {
-  const { bookingId: bookingIdSlug } = useParams();
-  const searchParams = useSearchParams();
-  const isBookingSuccessful = searchParams.get("success") === "true";
+const BookingIDPage = async ({
+  params,
+  searchParams,
+}: {
+  params: { bookingId: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}) => { 
+  const bookingId = params.bookingId;
+  const isBookingSuccessful = searchParams.success === "true";
+  const session = await auth();
 
-  useEffect(() => {
-    // Retrieve booking information from DB.
-    // Call hoteldetails and hotelroom API for hotel information.
-  }, [bookingIdSlug, searchParams]);
+  if (!session || !session.user.email) {
+    return (
+      <div>
+        <h1>You must be logged in to view your reservation.</h1>
+        <Link href="/bookings" className="p-2 bg-red-500 text-white">
+          Navigate back to bookings page
+        </Link>
+      </div>
+    );
+  }
+
+  const reservationDetails = await retrieveSpecificReservation(
+    bookingId,
+    session.user.email
+  );
+
+  if (!reservationDetails) {
+    return (
+      <div>
+        <h1>Failed to load reservation details.</h1>
+        <p>An unexpected error occurred.</p>
+        <Link href="/bookings" className="p-2 bg-red-500 text-white">
+          Navigate back to bookings page
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <h1>
-        Dynamic booking page. This is the specific booking ID: {bookingIdSlug}
-      </h1>
-      <div className="mb-10">
-        {isBookingSuccessful ? (
-          <div>
-            <h1 className="text-3xl font-extrabold mb-2">
-              Booking Successful!
-            </h1>
-            <h2 className="text-2xl">Thank you for your booking!</h2>
-            <p>Your stay is confirmed. We hope you enjoy your time with us!</p>
-          </div>
-        ) : (
-          <div>
-            <h1 className="text-3xl font-extrabold mb-2">
-              Thank you! Here are your reservation details.
-            </h1>
-            <h2 className="text-2xl">Enjoy Your Stay!</h2>
-          </div>
-        )}
+      <h1>Reservation Details for Booking ID: {bookingId}</h1>
+      {isBookingSuccessful ? (
+        <div>
+          <h2>Booking Successful!</h2>
+          <p>Thank you for your booking!</p>
+        </div>
+      ) : (
+        <div>
+          <h2>Reservation Details</h2>
+        </div>
+      )}
+      <div>
+        <p>
+          <strong>Hotel ID:</strong> {reservationDetails.hotel_id}
+        </p>
+        <p>
+          <strong>Room ID:</strong> {reservationDetails.room_id}
+        </p>
+        <p>
+          <strong>Check-in Date:</strong> {reservationDetails.checkin_date}
+        </p>
+        <p>
+          <strong>Check-out Date:</strong> {reservationDetails.checkout_date}
+        </p>
+        <p>
+          <strong>Number of Adults:</strong> {reservationDetails.adults_number}
+        </p>
+        <p>
+          <strong>Total Cost:</strong> $
+          {reservationDetails.room_cost.toFixed(2)}
+        </p>
       </div>
+      <Link href="/bookings" className="p-2 bg-red-500 text-white">
+        Navigate back to bookings page
+      </Link>
     </div>
   );
 };
 
-export default Page;
+export default BookingIDPage;

@@ -14,7 +14,7 @@ import {
   FINAL_PAYMENT_INFO,
 } from "@/lib/rapid-hotel-api/api-setup";
 import { generateBookingId } from "@/lib/BookingFunctions";
-import { PartialReservation } from "@/server-actions/reservation-actions";
+import { createReservation, PartialReservation } from "@/server-actions/reservation-actions";
 import { useSession } from "next-auth/react";
 
 type CheckoutConfirmationProps = {
@@ -92,13 +92,12 @@ const CheckoutConfirmation = ({
     };
 
     try {
-      // use reservation-actions.ts functions to call the DB
-
       const currentUrl =
         typeof window !== "undefined" ? window.location.origin : "";
       const returnUrl = `${currentUrl}/payment?bookingId=${PrismaReservationDB.bookingId}`;
 
-      console.log("before redir");
+      console.log("Create a reservation....")
+      await createReservation(PrismaReservationDB);
 
       const { error } = await stripe.confirmPayment({
         elements,
@@ -114,9 +113,9 @@ const CheckoutConfirmation = ({
         throw new Error("Payment confirmation failed.");
       }
 
-      console.log("after redir");
     } catch (error) {
       console.error("Error in reservation and payment flow:", error);
+      alert(`Error in payment and reservation flow: ${error}`);
     }
 
     setLoading(false);

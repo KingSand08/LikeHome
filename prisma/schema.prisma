@@ -15,10 +15,10 @@ datasource db {
 
 model User {
   // Bare minimum data
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  email         String    @unique
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  email String @unique
 
-  rewardPoints Int
+  rewardPoints Int           @default(0)
   reservations Reservation[]
 }
 
@@ -35,7 +35,7 @@ model Reservation {
   room_id          String
   payment_info     PaymentInfo
   transaction_info TransactionInfo
-  verified         Boolean
+  verified         Boolean         @default(false)
   room_cost        Float
 }
 
