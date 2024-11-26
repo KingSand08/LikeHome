@@ -5,38 +5,21 @@ import { updateUserRewards } from "./user-actions";
 export type PartialReservation = Omit<
   Reservation,
   "id" | "userId" | "verified"
-> & {
-  userEmail: string;
-};
+>;
 
 export async function createReservation(data: PartialReservation) {
-  try {
-    const reservation: PartialReservation[] | [] =
-      await prisma.reservation.create({
-        data: {
-          bookingId: data.bookingId,
-          userEmail: data.userEmail,
-          checkin_date: data.checkin_date,
-          checkout_date: data.checkout_date,
-          adults_number: data.adults_number,
-          numDays: data.numDays,
-          hotel_id: data.hotel_id,
-          room_id: data.room_id,
-          payment_info: data.payment_info,
-          transaction_info: data.transaction_info,
-          room_cost: data.room_cost,
-          verified: false,
-        },
-      });
-    console.log("Reservation created successfully:", reservation);
-    return reservation;
-  } catch (error: any) {
-    console.error("Error creating reservation:", error.message);
-    throw new Error(`Failed to create reservation: ${error.message}`);
-  }
+  const reservation: PartialReservation[] | [] =
+    await prisma.reservation.create({
+      data: {
+        ...data,
+        verified: false,
+      },
+    });
+  console.log("Reservation created successfully:", reservation);
+  return reservation;
 }
 
-export async function updateReservationPaymentAndRewards(
+export async function verifyReservation(
   email: string,
   bookingId: string,
   stripePaymentId: string
@@ -61,27 +44,35 @@ export async function updateReservationPaymentAndRewards(
     updatedReservation.room_cost
   );
   console.log("Updated rewards:", updatedRewards);
-  return {
-    success: true,
-    message: "Reservation and rewards updated successfully.",
-  };
+  return true;
+}
+
+export async function cancelReservation(email: string, bookingId: string) {
+  const deletedReservation = await prisma.reservation.delete({
+    where: {
+      bookingId: bookingId,
+    },
+  });
+  console.log("Deleted reservation:", deletedReservation);
+  const updatedRewards = await updateUserRewards(
+    email,
+    -deletedReservation.room_cost
+  );
+  console.log("Updated rewards:", updatedRewards);
+  return true;
 }
 
 export async function retrieveAllReservations(email: string) {
-  try {
-    const reservations = await prisma.reservation.findMany({
-      where: {
-        userEmail: email,
-      },
-      orderBy: {
-        checkin_date: "asc", // Optional: Order reservations by check-in date
-      },
-    });
+  const reservations = await prisma.reservation.findMany({
+    where: {
+      userEmail: email,
+    },
+    orderBy: {
+      checkin_date: "asc", // Optional: Order reservations by check-in date
+    },
+  });
 
-    return reservations;
-  } catch (error: any) {
-    console.error("Error fetching reservations:", error.message);
-  }
+  return reservations;
 }
 
 export async function retrieveSpecificReservation(
