@@ -8,7 +8,7 @@ const AccountInformation = ({ user }: { user: User }) => {
   return (
     <div className="p-6">
       <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Account Information</h3>
-      <div className="max-[1300px]:flex hidden items-center pt-2 pb-6">
+      <div className="max-[1300pxa]:flex hidden items-center pt-2 pb-6">
         <Avatar
           image={user?.image ?? undefined}
           size={"8em"}
@@ -18,14 +18,22 @@ const AccountInformation = ({ user }: { user: User }) => {
       <div className="space-y-4">
         {/* Display Name */}
         <div>
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Name</p>
-          <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{user?.name}</p>
+          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+            Name
+          </p>
+          <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            {user?.name}
+          </p>
         </div>
 
         {/* Display Email */}
         <div>
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Email</p>
-          <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{user?.email}</p>
+          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+            Email
+          </p>
+          <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            {user?.email}
+          </p>
         </div>
 
         {/* Sign Out Button */}
