@@ -12,6 +12,9 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { useEffect } from "react";
+import { PartialReservation, redeemFreeStay } from "@/server-actions/reservation-actions";
+import { getUserRewards } from "@/server-actions/user-actions";
 
 // Check for the Stripe public key
 if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
@@ -44,13 +47,55 @@ export default function CheckoutInfo({
     city: "",
     state: "",
     zipCode: "",
-    email: session?.user.email || "",
   });
 
   // Calculate total amount
+  
   const totalAmount =
     pricePerDay * numberOfDays + pricePerDay * numberOfDays * 0.1;
   const roundedTotalAmount = parseFloat(totalAmount.toFixed(2));
+
+  // Redeem points
+  const [hasEnoughRewards, setHasEnoughRewards] = useState(false);
+
+  useEffect(() => {
+    const checkUserRewardPoints = async () => {
+      if (session?.user.email) {
+        const userRewards = await getUserRewards(session?.user.email);
+        setHasEnoughRewards(userRewards >= roundedTotalAmount);
+      }
+    };
+    checkUserRewardPoints();
+  }, [session?.user.email]);
+
+  const redeemPoints = async () => {
+    if (!session || typeof session?.user.email !== "string") {
+      // add toast / sonar alerting user that the email couldn't be found
+      console.error("Email not found")
+      return;
+    }
+
+    const PrismaReservationDB: PartialReservation = {
+      userEmail: session?.user.email!,
+      checkin_date: bookingDetails.checkin_date,
+      checkout_date: bookingDetails.checkout_date,
+      adults_number: Number(bookingDetails.adults_number),
+      numDays: Number(bookingDetails.numDays),
+      hotel_id: hotelRoomOffer.hotel_id,
+      room_id: hotelRoomOffer.hotel_room_id,
+      payment_info: {
+        ...userInfo,
+        email: session?.user.email
+      },
+      transaction_info: {
+        dateCreated: new Date().toISOString(),
+        stripePaymentId: "free stay",
+      },
+      room_cost: 0,// set to free such that, on cancelation the user isn't charge.
+    };
+
+    redeemFreeStay(session?.user.email, PrismaReservationDB);
+  }
 
   // Handle input change for user information fields
   const handleUserInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +108,7 @@ export default function CheckoutInfo({
 
   return (
     <div className="flex flex-col">
-      <div className="mb-10 text-white">
+      <div className="mb-10 text-black">
         <h1 className="text-3xl font-bold mb-2">Payment</h1>
         <h2 className="text-2xl">
           <span className="font-bold"> {numberOfDays} days </span> at
@@ -135,16 +180,14 @@ export default function CheckoutInfo({
           onChange={handleUserInfoChange}
           className="w-full p-2 mb-4 rounded-md text-white"
         />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={userInfo.email}
-          onChange={handleUserInfoChange}
-          className="w-full p-2 mb-4 rounded-md text-white"
-        />
       </div>
 
+      {/* Add Button here on click --> checks if user has enough points to redeem
+          If they do have enough points to redeem, user server action to update their points and set roundedTotalAmount == 0;
+          else display not enough points (could display neededPoints if wanted which is totalPointsNeeded - rewardPoints) */}
+
+      {hasEnoughRewards && (<button className="btn" onClick={redeemPoints}>Redeem Points</button>)}
+      
       {/* Stripe Payment Elements */}
       <Elements
         stripe={stripePromise}

@@ -10,6 +10,7 @@ export async function createUser(email: string) {
   });
 
   if (existingUser) {
+    console.log("LOG: existing user", existingUser);
     return existingUser;
   }
 

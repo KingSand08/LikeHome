@@ -42,7 +42,6 @@ export type FINAL_PAYMENT_INFO = {
   city: string;
   state: string;
   zipCode: string;
-  email: string;
 };
 export type FINAL_STRIPE_TRANSACTION_INFO = {
   dateCreated: string;

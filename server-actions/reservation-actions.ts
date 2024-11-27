@@ -4,11 +4,11 @@ import { redeemRewards, updateUserRewards } from "./user-actions";
 
 export type PartialReservation = Omit<
   Reservation,
-  "id" | "userId" | "verified"
+  "bookingId" | "userId" | "verified"
 >;
 
 export async function createReservation(data: PartialReservation) {
-  const reservation: PartialReservation[] | [] =
+  const reservation =
     await prisma.reservation.create({
       data: {
         ...data,
@@ -19,12 +19,10 @@ export async function createReservation(data: PartialReservation) {
   return reservation;
 }
 
-export async function redeemFreeStay(email: string, bookingId: string) {
-  const updatedReservation = await prisma.reservation.update({
-    where: {
-      bookingId: bookingId,
-    },
+export async function redeemFreeStay(email: string, data: PartialReservation) {
+  const updatedReservation = await prisma.reservation.create({
     data: {
+      ...data,
       verified: true,
     },
   });
@@ -67,7 +65,6 @@ export async function verifyReservation(
   return true;
 }
 
-// TODO: @ryanhtang use this function in a cancel reservation button that charges a constant fee
 export async function cancelReservation(email: string, bookingId: string) {
   const deletedReservation = await prisma.reservation.delete({
     where: {
