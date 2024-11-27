@@ -23,7 +23,8 @@ model User {
 }
 
 model Reservation {
-  bookingId        String          @id @map("_id") @db.ObjectId
+  id               String          @id @default(auto()) @map("_id") @db.ObjectId
+  bookingId        String          @unique
   userEmail        String
   user             User            @relation(fields: [userEmail], references: [email])
   checkin_date     String
