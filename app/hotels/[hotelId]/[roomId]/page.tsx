@@ -1,15 +1,12 @@
 "use client";
-import {
-  APIHotelRoomOffersJSONFormatted,
-  HotelRoomOffer,
-} from "@/app/api/hotels/search/rooms/route";
-import { HOTEL_ROOM_OFFERS_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
-import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
+
+import { HotelRoomOffer } from "@/app/api/hotels/search/rooms/route";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CheckoutInfo from "@/components/checkout/CheckoutInfo";
 import { calculateNumDays } from "@/lib/DateFunctions";
 import Image from "next/image";
+import { fetchHotelRoomOffer } from "@/server-actions/api-actions";
 
 export type BookingDetailsType = {
   checkin_date: string;
@@ -34,31 +31,19 @@ const HotelRoomIDPage: React.FC = () => {
   const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
-    const handleFindValidHotelRoom = async () => {
+    const fetchData = async () => {
       setLoading(true);
-      setError(false);
-
-      const queryParams = Object.fromEntries(searchParams.entries());
-      const hotelRoomJSON = {
-        ...queryParams,
-        hotel_id: hotelIdSlug,
-      };
-      const urlParams = JSONToURLSearchParams(hotelRoomJSON);
 
       try {
-        const response = await fetch(
-          `${HOTEL_ROOM_OFFERS_API_URL}?${urlParams.toString()}`
+        const HOTEL_ROOM_DATA = await fetchHotelRoomOffer(
+          hotelIdSlug,
+          roomIdSlug,
+          searchParams
         );
-        if (!response.ok) {
-          throw new Error("Failed to retrieve hotel room offers");
-        } else {
-          const HOTEL_ROOM_DATA: APIHotelRoomOffersJSONFormatted =
-            await response.json();
-          const room = HOTEL_ROOM_DATA.hotelRoomOffers.find(
-            (offer) => offer.hotel_room_id === roomIdSlug
-          );
-          setHotelRoomData(room || null);
+        if (!HOTEL_ROOM_DATA) {
+          throw new Error("Hotel room offers not found");
         }
+        setHotelRoomData(HOTEL_ROOM_DATA);
       } catch (error) {
         setError(true);
       } finally {
@@ -66,7 +51,7 @@ const HotelRoomIDPage: React.FC = () => {
       }
     };
 
-    handleFindValidHotelRoom();
+    fetchData();
   }, [hotelIdSlug, roomIdSlug, searchParams]);
 
   // Collect searchParams into an object for display
