@@ -12,7 +12,7 @@ const ProfilePage = async () => {
     throw Error("User not authenticated but accessing the profile page.");
   }
 
-  const user = session.user as unknown as User;
+  const user = session.user as User;
 
   return <ProfilePageClient user={user} />;
 };

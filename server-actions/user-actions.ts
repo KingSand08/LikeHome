@@ -24,14 +24,14 @@ export async function createUser(email: string) {
 export async function getUserRewards(email: string) {
   const user = await prisma.user.findUnique({
     where: { email },
-    select: { rewardPoints: true },
+    select: { rewardPoints: true, redeemedPoints: true },
   });
 
   if (!user) {
     throw new Error("User not found");
   }
 
-  return user.rewardPoints;
+  return user;
 }
 
 /**
