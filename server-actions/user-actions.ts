@@ -34,46 +34,36 @@ export async function getUserRewards(email: string) {
   return user;
 }
 
+/**
+ * Adds or subtracts reward points based on the total price of the booking.
+ * To subtract points, pass a negative number.
+ * @param email User's email to identify the user
+ * @param payment total price of the booking to determine the reward points
+ */
 export async function updateUserRewards(email: string, payment: number) {
-  const user = await prisma.user.findUnique({
-    where: { email },
-    select: { rewardPoints: true },
-  });
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-  const oldPoints = user.rewardPoints;
-
-  const rewardPoints = oldPoints ?? 0 + payment * DEFAULT_REWARDS_MULTIPLIER;
-
   return prisma.user.update({
     where: { email },
-    data: { rewardPoints },
+    data: {
+      rewardPoints: {
+        increment: Math.floor(payment * DEFAULT_REWARDS_MULTIPLIER),
+      },
+    },
   });
 }
 
 //TODO: @ryanhtang use this function along with getUserRewards to conditionally render a redeem free stay button
+/**
+ * Moves `points` from `rewardPoints` to `redeemedPoints`
+ * @param email User's email to identify the user
+ * @param points Number of points to redeem
+ */
 export async function redeemRewards(email: string, points: number) {
-  const user = await prisma.user.findUnique({
-    where: { email },
-    select: { rewardPoints: true },
-  });
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-
-  const rewardPoints = user.rewardPoints - points;
-
-  if (rewardPoints < 0) {
-    throw new Error("Not enough points to redeem");
-  }
-
   return prisma.user.update({
     where: { email },
     data: {
-      rewardPoints,
+      rewardPoints: {
+        decrement: points,
+      },
       redeemedPoints: {
         increment: points,
       },
