@@ -21,25 +21,52 @@ export async function createUser(email: string) {
   });
 }
 
-export async function updateUserRewards(email: string, room_cost: number) {
-  try {
-    const pointsToAdd = room_cost * DEFAULT_REWARDS_MULTIPLIER;
+export async function getUserRewards(email: string) {
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { rewardPoints: true },
+  });
 
-    const updatedRewards = await prisma.user.update({
-      where: {
-        email: email,
-      },
-      data: {
-        rewardPoints: {
-          increment: pointsToAdd,
-        },
-      },
-    });
-
-    console.log("Updated rewards:", updatedRewards);
-    return updatedRewards;
-  } catch (error: any) {
-    console.error("Error updating rewards:", error.message);
-    throw error;
+  if (!user) {
+    throw new Error("User not found");
   }
+
+  return user.rewardPoints;
+}
+
+/**
+ * Adds or subtracts reward points based on the total price of the booking.
+ * To subtract points, pass a negative number.
+ * @param email User's email to identify the user
+ * @param payment total price of the booking to determine the reward points
+ */
+export async function updateUserRewards(email: string, payment: number) {
+  return prisma.user.update({
+    where: { email },
+    data: {
+      rewardPoints: {
+        increment: Math.floor(payment * DEFAULT_REWARDS_MULTIPLIER),
+      },
+    },
+  });
+}
+
+//TODO: @ryanhtang use this function along with getUserRewards to conditionally render a redeem free stay button
+/**
+ * Moves `points` from `rewardPoints` to `redeemedPoints`
+ * @param email User's email to identify the user
+ * @param points Number of points to redeem
+ */
+export async function redeemRewards(email: string, points: number) {
+  return prisma.user.update({
+    where: { email },
+    data: {
+      rewardPoints: {
+        decrement: points,
+      },
+      redeemedPoints: {
+        increment: points,
+      },
+    },
+  });
 }
