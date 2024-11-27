@@ -16,7 +16,7 @@ const SignInModal = ({ searchParams }: Props) => {
                 className={`h-screen w-screen absolute inset-0 bg-gradient-to-br from-purple-500 via-indigo-700 to-blue-500 
                             ${styles["animate-gradient"]} bg-[length:400%_400%]`}
             ></div>
-            <div className="absolute inset-0 mix-blend-overlay bg-[url('/patterns/dots-wave-animated.svg')] opacity-15"></div>
+            <div className="absolute inset-0 mix-blend-overlay bg-[url('/animations/patterns/dots-wave-animated.svg')] opacity-15"></div>
 
             {/* Modal and Rendered Child Page */}
             <ModalRoute

@@ -15,7 +15,7 @@ const Page = (props: Props) => {
         className={`absolute inset-0 bg-gradient-to-br from-purple-500 via-indigo-700 to-blue-500 
           ${styles["animate-gradient"]} bg-[length:400%_400%]`}
       ></div>
-      <div className="absolute inset-0 mix-blend-overlay bg-[url('/patterns/dots-wave-animated.svg')] opacity-15"></div>
+      <div className="absolute inset-0 mix-blend-overlay bg-[url('/animations/patterns/dots-wave-animated.svg')] opacity-15"></div>
 
       {/* Sign-in Card + Positioning */}
       <div className="w-3/4 max-w-fit relative z-10 p-3 bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl border border-slate-300/30 dark:border-slate-700/50">
