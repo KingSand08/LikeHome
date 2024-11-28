@@ -15,10 +15,15 @@ import {
   HOTEL_SEARCH_API_URL,
   REGION_SEARCH_API_URL,
 } from "@/lib/rapid-hotel-api/constants/ROUTES";
-import { DEFAULT_DOMAIN, DEFAULT_LOCALE } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
+import {
+  DEFAULT_DOMAIN,
+  DEFAULT_LOCALE,
+} from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import { ReadonlyURLSearchParams } from "next/navigation";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+const IS_MOCK = process.env.NODE_ENV === "development";
+const MOCK_DELAY = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
 export async function fetchRegionDetails(
   query: string,
@@ -47,7 +52,7 @@ export async function fetchRegionDetails(
   }
 }
 
-export async function fetchSearchHotelsFromRegion(
+async function hotelsFromRegionImpl(
   bookingParams: bookingParamsType
 ): Promise<APIHotelSearchJSONFormatted | null> {
   const mutableSearchParams = JSONToURLSearchParams(bookingParams);
@@ -70,6 +75,46 @@ export async function fetchSearchHotelsFromRegion(
     );
     return null;
   }
+}
+
+const mockHotelsFromRegionData = {
+  priceRange: {
+    maxPrice: 5000,
+    minPrice: 0,
+  },
+  properties: Array(20).map((_, index) => ({
+    region_id: `${index}`,
+    hotel_id: `${index}`,
+    name: `Hotel ${index}`,
+    image: {
+      description: "img",
+      url: "https://picsum.photos/200/300",
+      alt: "alt",
+    },
+    coordinates: { lat: 0, long: 0 },
+    availability: { available: true, minRoomsLeft: 10 },
+    reviews: { score: 4, totalReviews: 100, starRating: 4 },
+    price: { amount: 100, currency: { code: "USD", symbol: "$" } },
+  })),
+  summary: {
+    matchedPropertiesSize: 20,
+  },
+};
+
+export async function hotelsFromRegion(
+  bookingParams: bookingParamsType
+): Promise<APIHotelSearchJSONFormatted | null> {
+  if (IS_MOCK) {
+    await MOCK_DELAY();
+    return mockHotelsFromRegionData;
+  }
+
+  // const cachedData = some prisma call
+  // if (cachedData) {
+  //   return cachedData;
+  // }
+
+  return hotelsFromRegionImpl(bookingParams);
 }
 
 export async function fetchHotelDetails(

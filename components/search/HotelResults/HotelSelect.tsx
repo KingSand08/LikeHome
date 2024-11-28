@@ -12,7 +12,7 @@ import {
   DEFAULT_MIN_PRICE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import { Loader } from "lucide-react";
-import { fetchSearchHotelsFromRegion } from "@/server-actions/api-actions";
+import { hotelsFromRegion } from "@/server-actions/api-actions";
 
 export type bookingParamsType = z.infer<typeof hotelSearchParamsRefinedSchema>;
 
@@ -49,7 +49,7 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
     });
     setLoading(true);
     try {
-      const HOTEL_DATA = await fetchSearchHotelsFromRegion(bookingParams);
+      const HOTEL_DATA = await hotelsFromRegion(bookingParams);
       setHotelsData(HOTEL_DATA);
     } catch (error) {
       alert("An unexpected error occurred. Please try again.");
@@ -59,66 +59,13 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
     }
   };
 
-  const handleFindHotelsCached = async () => {
-    setLoading(true);
-    setTimeout(() => {
-      setHotelsData({
-        priceRange: {
-          maxPrice: 5000,
-          minPrice: 0,
-        },
-        properties: [
-          {
-            region_id: "1",
-            hotel_id: "1",
-            name: "Hotel 1",
-            image: { description: "img", url: "", alt: "alt" },
-            coordinates: { lat: 0, long: 0 },
-            availability: { available: true, minRoomsLeft: 10 },
-            reviews: { score: 4, totalReviews: 100, starRating: 4 },
-            price: { amount: 100, currency: { code: "USD", symbol: "$" } },
-          },
-          {
-            region_id: "2",
-            hotel_id: "2",
-            name: "Hotel 2",
-            image: { description: "img", url: "", alt: "alt" },
-            coordinates: { lat: 0, long: 0 },
-            availability: { available: true, minRoomsLeft: 10 },
-            reviews: { score: 4, totalReviews: 100, starRating: 4 },
-            price: { amount: 100, currency: { code: "USD", symbol: "$" } },
-          },
-          {
-            region_id: "3",
-            hotel_id: "3",
-            name: "Hotel 3",
-            image: { description: "img", url: "", alt: "alt" },
-            coordinates: { lat: 0, long: 0 },
-            availability: { available: true, minRoomsLeft: 10 },
-            reviews: { score: 4, totalReviews: 100, starRating: 4 },
-            price: { amount: 100, currency: { code: "USD", symbol: "$" } },
-          },
-        ],
-        summary: {
-          matchedPropertiesSize: 3,
-        },
-      });
-      setLoading(false);
-    }, 5000);
-  };
-
   // Only re-renders on initial load and region change.
   // We don't want to call the API after clicking one checkbox.
   // So, in the future we could have an "apply new filters button" if filters change.
   // Also, store filters in searchParams or localStorage...
   useEffect(() => {
     if (!isValid) return;
-
-    if (process.env.NODE_ENV === "production") {
-      handleFindHotels();
-    } else {
-      handleFindHotelsCached();
-    }
+    handleFindHotels();
   }, [region]);
 
   return (
