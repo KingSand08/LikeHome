@@ -2,7 +2,6 @@
 import React, { useState } from 'react'
 import Image from "next/image";
 import { APIHotelDetailsJSONFormatted } from '@/app/api/hotels/details/route'
-import Modal from '../modal/Modal';
 import ImageModal from '../modal/ImageModal';
 
 const PaginatedRoomImageGrid: React.FC<{ hotelDetails: APIHotelDetailsJSONFormatted }> = ({ hotelDetails }) => {
