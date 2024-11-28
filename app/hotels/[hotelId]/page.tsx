@@ -1,20 +1,21 @@
 "use client";
 
-import HotelRoomList from "@/components/booking/HotelRooms/HotelRoomList";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { CompleteHotelInfo } from "@/types/rapid-hotels-api/CompleteHotelInformation";
 import { APIHotelDetailsJSONFormatted } from "@/app/api/hotels/details/route";
 import { APIHotelRoomOffersJSONFormatted } from "@/app/api/hotels/search/rooms/route";
-import Image from "next/image";
 import {
   fetchAllHotelRoomOffers,
   fetchHotelDetails,
 } from "@/server-actions/api-actions";
+import LoadingPage from "@/components/ui/LoadingPage";
+import ErrorPage from "@/components/ui/ErrorPage";
+import HotelLocation from "@/components/HotelListing/HotelLocation";
+import RoomImageCarousel from "@/components/HotelListing/RoomImageCarousel";
+import PaginatedRoomImageGrid from "@/components/HotelListing/PaginatedRoomImageGrid";
+import RoomOffers from "@/components/HotelListing/RoomOffers";
 
-type CompleteHotelInfo = {
-  hotelDetails: APIHotelDetailsJSONFormatted | null;
-  hotelRooms: APIHotelRoomOffersJSONFormatted | null;
-} | null;
 
 const HotelIDPage: React.FC = () => {
   const { hotelId: hotelIdSlug } = useParams();
@@ -60,11 +61,15 @@ const HotelIDPage: React.FC = () => {
   }, [hotelIdSlug, searchParams]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <LoadingPage />
+    );
   }
 
   if (error || !hotelData) {
-    return <p>Error loading hotel data.</p>;
+    return (
+      <ErrorPage />
+    );
   }
 
   const { hotelDetails, hotelRooms } = hotelData;
@@ -78,62 +83,20 @@ const HotelIDPage: React.FC = () => {
       </div>
 
       {/* Hotel Location */}
-      <div className="mb-8 bg-white shadow-lg rounded-lg p-6">
-        <h3 className="text-2xl font-semibold mb-4 text-black">Location</h3>
-        <div className="text-gray-700 space-y-2">
-          <p>{hotelDetails?.location.address.addressLine}</p>
-          <p>
-            {hotelDetails?.location.address.city},{" "}
-            {hotelDetails?.location.address.province}
-          </p>
-          <p>{hotelDetails?.location.address.countryCode}</p>
-          <p>Latitude: {hotelDetails?.location.coordinates.latitude}</p>
-          <p>Longitude: {hotelDetails?.location.coordinates.longitude}</p>
-        </div>
-      </div>
+      <HotelLocation hotelDetails={hotelDetails as APIHotelDetailsJSONFormatted} />
 
       {/* Hotel Images */}
       <div className="mb-8">
-        <h3 className="text-2xl font-semibold mb-4">Images</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {hotelDetails?.images
-            .sort((a, b) => a.description.localeCompare(b.description))
-            .map((image, index) => (
-              <div key={index} className="overflow-hidden rounded-lg shadow-lg">
-                <Image
-                  src={image.url}
-                  alt={image.alt}
-                  width={500}
-                  height={500}
-                  className="w-full h-48 object-cover"
-                />
-                <p className="text-center p-2 text-white">
-                  {image.description}
-                </p>
-              </div>
-            ))}
-        </div>
-      </div>
+        <h3 className="text-2xl font-semibold mb-4">Hotel Images</h3>
 
-      {/* Room Offers */}
-      <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
-        <h2 className="text-2xl font-semibold mb-4 text-black">Room Offers</h2>
-        {hotelRooms ? (
-          <div>
-            <p className="text-gray-700 mb-6">
-              Base Price Per Night:{" "}
-              <span className="font-semibold">
-                {hotelRooms.basePricePerNight}
-              </span>
-            </p>
-            <div>
-              <h3 className="text-xl font-semibold mb-4">Room List</h3>
-              <HotelRoomList rooms={hotelRooms.hotelRoomOffers} />
-            </div>
-          </div>
-        ) : (
-          <p className="text-gray-500">No rooms available</p>
-        )}
+        {/* Room Images Carousel */}
+        <RoomImageCarousel hotelDetails={hotelDetails as APIHotelDetailsJSONFormatted} />
+
+        {/* Paginated Non-Room Images */}
+        <PaginatedRoomImageGrid hotelDetails={hotelDetails as APIHotelDetailsJSONFormatted} />
+
+        {/* Room Offers */}
+        <RoomOffers hotelRooms={hotelRooms as APIHotelRoomOffersJSONFormatted} />
       </div>
     </div>
   );
