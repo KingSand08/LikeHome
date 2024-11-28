@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import SigninPage from '@/components/auth/SigninPage'
-import ModalRoute from "@/components/modal/ModalRoute";
+import Modal from "@/components/modal/Modal";
 import styles from "@/app/styles/AnimatedBackground.module.css";
 
 type Props = {
@@ -19,7 +19,7 @@ const SignInModal = ({ searchParams }: Props) => {
             <div className="absolute inset-0 mix-blend-overlay bg-[url('/animations/patterns/dots-wave-animated.svg')] opacity-15"></div>
 
             {/* Modal and Rendered Child Page */}
-            <ModalRoute
+            <Modal
                 callbackUrl={searchParams?.callbackUrl}
                 className="dark:bg-gradient-to-r dark:from-slate-800 dark:to-slate-900 
                            bg-gradient-to-r from-slate-200 to-slate-300">
@@ -27,7 +27,7 @@ const SignInModal = ({ searchParams }: Props) => {
                     {/* Sign-in Card */}
                     <SigninPage error={searchParams?.error} callbackUrl={searchParams?.callbackUrl} />
                 </div>
-            </ModalRoute>
+            </Modal>
         </div>
     );
 };
