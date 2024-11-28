@@ -11,7 +11,7 @@ import {
 } from "@/server-actions/api-actions";
 import LoadingPage from "@/components/ui/LoadingPage";
 import ErrorPage from "@/components/ui/ErrorPage";
-import HotelLocation from "@/components/HotelListing/hotelLocation";
+import HotelLocation from "@/components/HotelListing/HotelLocation";
 import RoomImageCarousel from "@/components/HotelListing/RoomImageCarousel";
 import PaginatedRoomImageGrid from "@/components/HotelListing/PaginatedRoomImageGrid";
 import RoomOffers from "@/components/HotelListing/RoomOffers";
