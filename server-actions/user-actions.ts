@@ -59,6 +59,18 @@ export async function updateUserRewards(email: string, payment: number) {
  * @param points Number of points to redeem
  */
 export async function redeemRewards(email: string, points: number) {
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { rewardPoints: true },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+  if (user.rewardPoints < points) {
+    throw new Error("Not enough points to redeem");
+  }
+
   return prisma.user.update({
     where: { email },
     data: {
