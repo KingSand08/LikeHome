@@ -210,7 +210,7 @@ const HotelIDPage: React.FC = () => {
         {/* Room Images Carousel */}
         <div className="mb-12">
           <h4 className="text-xl font-semibold mb-4">Room Images</h4>
-          <div className="carousel w-full">
+          <div className="carousel w-full bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 rounded-xl  shadow-lg">
             {hotelData?.hotelDetails?.images
               .filter((image) => image.description.toLowerCase().includes("room"))
               .map((image, index, roomImages) => (
@@ -228,9 +228,9 @@ const HotelIDPage: React.FC = () => {
                       quality={100}
                       unoptimized
                       onClick={() => openModal(image.url)} // Open modal on click
-                      className="w-full h-96 object-cover rounded-lg shadow-lg cursor-pointer"
+                      className="w-full h-96 object-contain rounded-lg cursor-pointer bg-slate-900 bg-opacity-25 shadow-md"
                     />
-                    <p className="text-center text-lg mt-4">{image.description}</p>
+                    <p className="text-center text-lg my-4 pb-4">{image.description}</p>
                   </div>
                   <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
                     <a
@@ -264,7 +264,7 @@ const HotelIDPage: React.FC = () => {
               .map((image, index) => (
                 <div
                   key={index}
-                  className="rounded-lg shadow-lg overflow-hidden flex flex-col items-center bg-base"
+                  className="rounded-lg shadow-lg overflow-hidden flex flex-col items-center bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700"
                 >
                   <Image
                     src={image.url}
@@ -280,7 +280,7 @@ const HotelIDPage: React.FC = () => {
           </div>
 
           {/* Pagination Controls */}
-          <div className="flex justify-center mt-6 mb-14 space-x-4">
+          <div className="flex justify-center items-center mt-6 mb-14 space-x-4">
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               className="btn btn-accent"
