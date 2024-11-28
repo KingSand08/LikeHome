@@ -68,7 +68,7 @@ const CheckoutConfirmation = ({
     }
 
     if (!session || typeof session.user.email !== "string") {
-      console.error("Email not found")
+      console.error("Email not found");
       return;
     }
 
@@ -83,7 +83,7 @@ const CheckoutConfirmation = ({
       room_id: hotelRoomOffer.hotel_room_id,
       payment_info: {
         ...paymentInfo,
-        email: session.user.email
+        email: session.user.email,
       },
       transaction_info: {
         dateCreated: new Date().toISOString(),
@@ -98,7 +98,10 @@ const CheckoutConfirmation = ({
 
       const currentUrl =
         typeof window !== "undefined" ? window.location.origin : "";
-      const returnUrl = `${currentUrl}/payment?bookingId=${booking.bookingId}`;
+      const returnUrl = `${currentUrl}/payment?bookingId=${PrismaReservationDB.bookingId}`;
+
+      console.log("Create a reservation....");
+      await createReservation(PrismaReservationDB);
 
       const { error } = await stripe.confirmPayment({
         elements,

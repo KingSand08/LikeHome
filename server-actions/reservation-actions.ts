@@ -8,13 +8,12 @@ export type PartialReservation = Omit<
 >;
 
 export async function createReservation(data: PartialReservation) {
-  const reservation =
-    await prisma.reservation.create({
-      data: {
-        ...data,
-        verified: false,
-      },
-    });
+  const reservation = await prisma.reservation.create({
+    data: {
+      ...data,
+      verified: false,
+    },
+  });
   console.log("Reservation created successfully:", reservation);
   return reservation;
 }

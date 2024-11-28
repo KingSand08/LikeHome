@@ -1,8 +1,9 @@
-export const JSONToURLSearchParams = (JSON: {
+export const JSONToURLSearchParams = (data: {
   [key: string]: any;
 }): URLSearchParams => {
   const urlParams = new URLSearchParams();
-  Object.entries(JSON).forEach(([key, value]) => {
+
+  Object.entries(data).forEach(([key, value]) => {
     if (
       value !== undefined &&
       value !== null &&
@@ -10,11 +11,12 @@ export const JSONToURLSearchParams = (JSON: {
       (!Array.isArray(value) || value.length > 0)
     ) {
       if (Array.isArray(value)) {
-        urlParams.append(key, value.join(","));
+        urlParams.set(key, value.join(","));
       } else {
-        urlParams.append(key, value.toString());
+        urlParams.set(key, value.toString());
       }
     }
   });
+
   return urlParams;
 };

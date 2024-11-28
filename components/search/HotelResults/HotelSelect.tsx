@@ -12,6 +12,7 @@ import {
   DEFAULT_MIN_PRICE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import { Loader } from "lucide-react";
+import { fetchSearchHotelsFromRegion } from "@/server-actions/api-actions";
 
 export type bookingParamsType = z.infer<typeof hotelSearchParamsRefinedSchema>;
 
@@ -41,90 +42,82 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
     max: DEFAULT_MAX_PRICE,
     min: DEFAULT_MIN_PRICE,
   });
+  const handleFindHotels = async () => {
+    setLastPriceRange({
+      max: hotelsData?.priceRange?.maxPrice!,
+      min: hotelsData?.priceRange?.minPrice!,
+    });
+    setLoading(true);
+    try {
+      const HOTEL_DATA = await fetchSearchHotelsFromRegion(bookingParams);
+      setHotelsData(HOTEL_DATA);
+    } catch (error) {
+      alert("An unexpected error occurred. Please try again.");
+      setHotelsData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const handleFindHotelsCached = async () => {
+    setLoading(true);
+    setTimeout(() => {
+      setHotelsData({
+        priceRange: {
+          maxPrice: 5000,
+          minPrice: 0,
+        },
+        properties: [
+          {
+            region_id: "1",
+            hotel_id: "1",
+            name: "Hotel 1",
+            image: { description: "img", url: "", alt: "alt" },
+            coordinates: { lat: 0, long: 0 },
+            availability: { available: true, minRoomsLeft: 10 },
+            reviews: { score: 4, totalReviews: 100, starRating: 4 },
+            price: { amount: 100, currency: { code: "USD", symbol: "$" } },
+          },
+          {
+            region_id: "2",
+            hotel_id: "2",
+            name: "Hotel 2",
+            image: { description: "img", url: "", alt: "alt" },
+            coordinates: { lat: 0, long: 0 },
+            availability: { available: true, minRoomsLeft: 10 },
+            reviews: { score: 4, totalReviews: 100, starRating: 4 },
+            price: { amount: 100, currency: { code: "USD", symbol: "$" } },
+          },
+          {
+            region_id: "3",
+            hotel_id: "3",
+            name: "Hotel 3",
+            image: { description: "img", url: "", alt: "alt" },
+            coordinates: { lat: 0, long: 0 },
+            availability: { available: true, minRoomsLeft: 10 },
+            reviews: { score: 4, totalReviews: 100, starRating: 4 },
+            price: { amount: 100, currency: { code: "USD", symbol: "$" } },
+          },
+        ],
+        summary: {
+          matchedPropertiesSize: 3,
+        },
+      });
+      setLoading(false);
+    }, 5000);
+  };
+
+  // Only re-renders on initial load and region change.
+  // We don't want to call the API after clicking one checkbox.
+  // So, in the future we could have an "apply new filters button" if filters change.
+  // Also, store filters in searchParams or localStorage...
   useEffect(() => {
     if (!isValid) return;
-
-    const handleFindHotels = async () => {
-      setLastPriceRange({
-        max: hotelsData?.priceRange?.maxPrice!,
-        min: hotelsData?.priceRange?.minPrice!,
-      });
-      setLoading(true);
-      try {
-        const urlParams = JSONToURLSearchParams(bookingParams);
-
-        const response = await fetch(
-          `${HOTEL_SEARCH_API_URL}?${urlParams.toString()}`
-        );
-        if (!response.ok) {
-          alert(
-            `Failed to fetch hotels. Status: ${response?.status}. StatusText: ${
-              response?.statusText
-            } Url: ${HOTEL_SEARCH_API_URL}?${urlParams.toString()}`
-          );
-          setHotelsData(null);
-        } else {
-          const HOTEL_DATA: APIHotelSearchJSONFormatted = await response.json();
-
-          setHotelsData(HOTEL_DATA);
-        }
-      } catch (error) {
-        alert("An unexpected error occurred. Please try again.");
-        setHotelsData(null);
-      } finally {
-        setLoading(false);
-      }
-    };
 
     if (process.env.NODE_ENV === "production") {
       handleFindHotels();
     } else {
-      setLoading(true);
-      setTimeout(() => {
-        setHotelsData({
-          priceRange: {
-            maxPrice: 5000,
-            minPrice: 0,
-          },
-          properties: [
-            {
-              region_id: "1",
-              hotel_id: "1",
-              name: "Hotel 1",
-              image: { description: "img", url: "", alt: "alt" },
-              coordinates: { lat: 0, long: 0 },
-              availability: { available: true, minRoomsLeft: 10 },
-              reviews: { score: 4, totalReviews: 100, starRating: 4 },
-              price: { amount: 100, currency: { code: "USD", symbol: "$" } },
-            },
-            {
-              region_id: "2",
-              hotel_id: "2",
-              name: "Hotel 2",
-              image: { description: "img", url: "", alt: "alt" },
-              coordinates: { lat: 0, long: 0 },
-              availability: { available: true, minRoomsLeft: 10 },
-              reviews: { score: 4, totalReviews: 100, starRating: 4 },
-              price: { amount: 100, currency: { code: "USD", symbol: "$" } },
-            },
-            {
-              region_id: "3",
-              hotel_id: "3",
-              name: "Hotel 3",
-              image: { description: "img", url: "", alt: "alt" },
-              coordinates: { lat: 0, long: 0 },
-              availability: { available: true, minRoomsLeft: 10 },
-              reviews: { score: 4, totalReviews: 100, starRating: 4 },
-              price: { amount: 100, currency: { code: "USD", symbol: "$" } },
-            },
-          ],
-          summary: {
-            matchedPropertiesSize: 3,
-          },
-        });
-        setLoading(false);
-      }, 5000);
+      handleFindHotelsCached();
     }
   }, [region]);
 
