@@ -9,6 +9,7 @@ import {
   retrieveCacheHotelRoomOffer,
 } from "@/server-actions/cache-actions";
 import Link from "next/link";
+import HTMLSafeDescription from "@/components/booking/HTMLDescription";
 
 
 type CachedData = {
@@ -106,12 +107,7 @@ const BookingsPage = () => {
               <p className="font-medium mb-2">
                 Room: {roomOffer?.name || "Room details not available"}
               </p>
-              <div
-                className="text-sm mb-2"
-                dangerouslySetInnerHTML={{
-                  __html: roomOffer?.description || "",
-                }}
-              ></div>
+              <HTMLSafeDescription html={roomOffer?.description} />
               <p className="text-sm mb-2">
                 Check-in: {reservation.checkin_date}
               </p>

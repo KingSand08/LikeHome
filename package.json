@@ -26,6 +26,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
+    "dompurify": "^3.2.1",
     "framer-motion": "^11.11.17",
     "jest-dom": "^4.0.0",
     "likehome": "file:",
