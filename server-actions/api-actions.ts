@@ -15,8 +15,12 @@ import {
   HOTEL_SEARCH_API_URL,
   REGION_SEARCH_API_URL,
 } from "@/lib/rapid-hotel-api/constants/ROUTES";
-import { DEFAULT_DOMAIN, DEFAULT_LOCALE } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
+import {
+  DEFAULT_DOMAIN,
+  DEFAULT_LOCALE,
+} from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import { ReadonlyURLSearchParams } from "next/navigation";
+import { cacheHotelDetails, cacheHotelRoomOffer } from "./cache-actions";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -93,7 +97,13 @@ export async function fetchHotelDetails(
       );
     }
 
-    return (await response.json()) as APIHotelDetailsJSONFormatted;
+    const hotelDetails =
+      (await response.json()) as APIHotelDetailsJSONFormatted;
+
+    // Cache the hotel details after successful retrieval
+    await cacheHotelDetails(hotelDetails);
+
+    return hotelDetails;
   } catch (error) {
     console.error("Error fetching hotel details:", error);
     return null;
@@ -154,6 +164,10 @@ export async function fetchHotelRoomOffer(
     const ROOM_DATA = HOTEL_ROOMS.hotelRoomOffers.find(
       (offer) => offer.hotel_room_id === roomId
     );
+
+    if (ROOM_DATA) {
+      await cacheHotelRoomOffer(ROOM_DATA);
+    }
 
     return ROOM_DATA ? ROOM_DATA : null;
   } catch (error) {
