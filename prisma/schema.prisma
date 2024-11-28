@@ -53,3 +53,47 @@ type TransactionInfo {
   dateCreated     String
   stripePaymentId String
 }
+
+// Caching
+model CachedHotel {
+  id              String                 @id @default(auto()) @map("_id") @db.ObjectId
+  hotel_id        String                 @unique
+  tagline         String
+  location        Location
+  images          Image[]
+  hotelRoomOffers CachedHotelRoomOffer[]
+}
+
+model CachedHotelRoomOffer {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  hotel_id      String
+  hotel         CachedHotel @relation(fields: [hotel_id], references: [hotel_id])
+  hotel_room_id String      @unique
+  description   String
+  name          String
+  galleryImages Image[]
+
+  @@index([hotel_id])
+}
+
+type Location {
+  address     Address
+  coordinates Coordinates
+}
+type Address {
+  addressLine String
+  city        String
+  province    String
+  countryCode String
+}
+type Coordinates {
+  latitude  Float
+  longitude Float
+}
+
+type Image {
+  description String
+  url         String
+  alt         String
+  index       Int
+}
