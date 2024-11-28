@@ -78,3 +78,51 @@ export async function cacheHotelRoomOffer(APIHotelRoomOffer: HotelRoomOffer) {
     `HotelID ${hotel_id} - Hotel room offer with ID ${hotel_room_id} cached successfully.`
   );
 }
+
+export async function retrieveCacheHotelDetails(hotel_id: string) {
+  try {
+    const cachedHotel = await prisma.cachedHotel.findUnique({
+      where: { hotel_id },
+    });
+
+    if (!cachedHotel) {
+      console.log(`No cached hotel found for hotel_id: ${hotel_id}`);
+      return null;
+    }
+
+    console.log(`Cached hotel retrieved for hotel_id: ${hotel_id}`);
+    return cachedHotel;
+  } catch (error) {
+    console.error(
+      `Error retrieving cached hotel for hotel_id: ${hotel_id}`,
+      error
+    );
+    return null;
+  }
+}
+
+export async function retrieveCacheHotelRoomOffer(hotel_room_id: string) {
+  try {
+    const cachedRoomOffer = await prisma.cachedHotelRoomOffer.findUnique({
+      where: { hotel_room_id },
+    });
+
+    if (!cachedRoomOffer) {
+      console.log(
+        `No cached room offer found for hotel_room_id: ${hotel_room_id}`
+      );
+      return null;
+    }
+
+    console.log(
+      `Cached room offer retrieved for hotel_room_id: ${hotel_room_id}`
+    );
+    return cachedRoomOffer;
+  } catch (error) {
+    console.error(
+      `Error retrieving cached room offer for hotel_room_id: ${hotel_room_id}`,
+      error
+    );
+    return null;
+  }
+}
