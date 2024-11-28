@@ -65,11 +65,11 @@ export default function CheckoutInfo({
     const checkUserRewardPoints = async () => {
       if (session?.user.email) {
         const userRewards = await getUserRewards(session?.user.email);
-        setHasEnoughRewards(userRewards >= roundedTotalAmount);
+        setHasEnoughRewards(userRewards.rewardPoints >= roundedTotalAmount);
       }
     };
     checkUserRewardPoints();
-  }, [session?.user.email]);
+  }, [session?.user.email, roundedTotalAmount]);
 
   const redeemPoints = async () => {
     if (!session || typeof session?.user.email !== "string") {

@@ -7,7 +7,9 @@ export type PartialReservation = Omit<
   "bookingId" | "userId" | "verified"
 >;
 
-export async function createReservation(data: PartialReservation) {
+export async function createReservation(
+  data: PartialReservation
+): Promise<Reservation> {
   const reservation = await prisma.reservation.create({
     data: {
       ...data,
