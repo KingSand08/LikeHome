@@ -11,10 +11,13 @@ import { FINAL_PAYMENT_INFO } from "@/lib/rapid-hotel-api/api-setup";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
-import { useEffect } from "react";
-import { PartialReservation, redeemFreeStay } from "@/server-actions/reservation-actions";
+import { useState, useEffect } from "react";
+import {
+  PartialReservation,
+  redeemFreeStay,
+} from "@/server-actions/reservation-actions";
 import { getUserRewards } from "@/server-actions/user-actions";
+import { RainbowButton } from "../ui/rainbow-button";
 
 // Check for the Stripe public key
 if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
@@ -50,7 +53,7 @@ export default function CheckoutInfo({
   });
 
   // Calculate total amount
-  
+
   const totalAmount =
     pricePerDay * numberOfDays + pricePerDay * numberOfDays * 0.1;
   const roundedTotalAmount = parseFloat(totalAmount.toFixed(2));
@@ -71,7 +74,7 @@ export default function CheckoutInfo({
   const redeemPoints = async () => {
     if (!session || typeof session?.user.email !== "string") {
       // add toast / sonar alerting user that the email couldn't be found
-      console.error("Email not found")
+      console.error("Email not found");
       return;
     }
 
@@ -85,17 +88,17 @@ export default function CheckoutInfo({
       room_id: hotelRoomOffer.hotel_room_id,
       payment_info: {
         ...userInfo,
-        email: session?.user.email
+        email: session?.user.email,
       },
       transaction_info: {
         dateCreated: new Date().toISOString(),
         stripePaymentId: "free stay",
       },
-      room_cost: 0,// set to free such that, on cancelation the user isn't charge.
+      room_cost: 0, // set to free such that, on cancelation the user isn't charge.
     };
 
     redeemFreeStay(session?.user.email, PrismaReservationDB);
-  }
+  };
 
   // Handle input change for user information fields
   const handleUserInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -186,8 +189,10 @@ export default function CheckoutInfo({
           If they do have enough points to redeem, user server action to update their points and set roundedTotalAmount == 0;
           else display not enough points (could display neededPoints if wanted which is totalPointsNeeded - rewardPoints) */}
 
-      {hasEnoughRewards && (<button className="btn" onClick={redeemPoints}>Redeem Points</button>)}
-      
+      {hasEnoughRewards && (
+        <RainbowButton onClick={redeemPoints}>Redeem Points</RainbowButton>
+      )}
+
       {/* Stripe Payment Elements */}
       <Elements
         stripe={stripePromise}
