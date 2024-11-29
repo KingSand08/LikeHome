@@ -55,20 +55,22 @@ const mockHotelsFromRegionData = {
     maxPrice: 5000,
     minPrice: 0,
   },
-  properties: Array(20).map((_, index) => ({
-    region_id: `${index}`,
-    hotel_id: `${index}`,
-    name: `Hotel ${index}`,
-    image: {
-      description: "img",
-      url: "https://picsum.photos/200/300",
-      alt: "alt",
-    },
-    coordinates: { lat: 0, long: 0 },
-    availability: { available: true, minRoomsLeft: 10 },
-    reviews: { score: 4, totalReviews: 100, starRating: 4 },
-    price: { amount: 100, currency: { code: "USD", symbol: "$" } },
-  })),
+  properties: Array(20)
+    .fill(0)
+    .map((_, index) => ({
+      region_id: `${index}`,
+      hotel_id: `${index}`,
+      name: `Hotel ${index}`,
+      image: {
+        description: "img",
+        url: "https://picsum.photos/200/300",
+        alt: "alt",
+      },
+      coordinates: { lat: 0, long: 0 },
+      availability: { available: true, minRoomsLeft: 10 },
+      reviews: { score: 4, totalReviews: 100, starRating: 4 },
+      price: { amount: 100, currency: { code: "USD", symbol: "$" } },
+    })),
   summary: {
     matchedPropertiesSize: 20,
   },
