@@ -80,12 +80,14 @@ type Location {
   address     Address
   coordinates Coordinates
 }
+
 type Address {
   addressLine String
   city        String
   province    String
   countryCode String
 }
+
 type Coordinates {
   latitude  Float
   longitude Float
@@ -96,4 +98,26 @@ type Image {
   url         String
   alt         String
   index       Int
+}
+
+// Cached Regions
+model CachedRegion {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  region_id   String
+  type        String
+  regionNames RegionNames
+  coordinates Coordinates
+  country     Country
+}
+type RegionNames {
+  fullName             String
+  shortName            String
+  displayName          String
+  primaryDisplayName   String
+  secondaryDisplayName String
+  lastSearchName       String
+}
+type Country {
+  name   String
+  domain String
 }
