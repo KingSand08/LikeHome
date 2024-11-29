@@ -15,3 +15,9 @@
 .animate-gradient {
   animation: gradient-shift 8s ease infinite;
 }
+
+.animate-text-pulse {
+  animation: opacityPulse 2s ease-out;
+  animation-iteration-count: infinite;
+  opacity: 1;
+}
