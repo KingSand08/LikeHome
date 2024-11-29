@@ -26,8 +26,8 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export async function fetchRegionDetails(
   query: string,
-  domain?: string,
-  locale?: string
+  domain?: string | null,
+  locale?: string | null,
 ): Promise<APIRegion[] | null> {
   const mutableSearchParams = new URLSearchParams();
   mutableSearchParams.set("query", query);
