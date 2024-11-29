@@ -188,6 +188,7 @@ const handleFindRegion = async (
   );
   if (!response.ok) alert(`Failed to fetch regions.`);
 
-  const REGION_DATA: APIRegion[] = await response.json();
-  setOps([...REGION_DATA, ...ops]);
+  const regionData: APIRegion[] = await response.json();
+  console.log(regionData);
+  setOps([...regionData, ...ops]);
 };

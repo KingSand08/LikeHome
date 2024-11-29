@@ -39,6 +39,11 @@ function validateSearchParams(
 }
 
 export async function GET(req: NextRequest) {
+  if (process.env.NODE_ENV === "development") {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return NextResponse.json(mockRegionDetailsData, { status: 200 });
+  }
+
   const { searchParams } = new URL(req.url);
   const { query, endpoint, error } = validateSearchParams(searchParams);
   if (error) {
@@ -120,3 +125,18 @@ export type APIRegion = {
     domain: string; // Using isoCode2 as domain.
   };
 };
+
+const mockRegionDetailsData: APIRegion[] = Array(10).map((_, index) => ({
+  region_id: `${index}`,
+  type: "Resort",
+  regionNames: {
+    shortName: `Resort Short Name ${index}`,
+    fullName: `Resort Full Name ${index}`,
+    displayName: `Resort Display Name ${index}`,
+    primaryDisplayName: `Resort Primary Display Name ${index}`,
+    secondaryDisplayName: `Resort Secondary Display Name ${index}`,
+    lastSearchName: `Resort Last Search Name ${index}`,
+  },
+  coordinates: { lat: "0", long: "0" },
+  country: { name: "USA", domain: "US" },
+}));
