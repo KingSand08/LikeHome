@@ -20,13 +20,16 @@ const HotelList: React.FC<HotelListProps> = ({ hotelsData, bookingParams }) => {
         {hotelsData.priceRange.maxPrice}
       </p>
       <div className="list-disc list-inside text-black">
-        {hotelsData.properties.map((hotel) => (
-          <HotelListItem
-            key={hotel.hotel_id}
-            hotel={hotel}
-            bookingParams={bookingParams}
-          />
-        ))}
+        {hotelsData.properties.map(
+          (hotel) =>
+            hotel.image.url !== "" && (
+              <HotelListItem
+                key={hotel.hotel_id}
+                hotel={hotel}
+                bookingParams={bookingParams}
+              />
+            )
+        )}
       </div>
     </div>
   );

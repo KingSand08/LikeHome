@@ -63,7 +63,7 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
             region_id: "1",
             hotel_id: "1",
             name: "Hotel 1",
-            image: { description: "img", url: "", alt: "alt" },
+            image: { description: "img", url: "/image-url", alt: "alt" },
             coordinates: { lat: 0, long: 0 },
             availability: { available: true, minRoomsLeft: 10 },
             reviews: { score: 4, totalReviews: 100, starRating: 4 },
@@ -73,7 +73,7 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
             region_id: "2",
             hotel_id: "2",
             name: "Hotel 2",
-            image: { description: "img", url: "", alt: "alt" },
+            image: { description: "img", url: "/image-url", alt: "alt" },
             coordinates: { lat: 0, long: 0 },
             availability: { available: true, minRoomsLeft: 10 },
             reviews: { score: 4, totalReviews: 100, starRating: 4 },
@@ -83,7 +83,7 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
             region_id: "3",
             hotel_id: "3",
             name: "Hotel 3",
-            image: { description: "img", url: "", alt: "alt" },
+            image: { description: "img", url: "/image-url", alt: "alt" },
             coordinates: { lat: 0, long: 0 },
             availability: { available: true, minRoomsLeft: 10 },
             reviews: { score: 4, totalReviews: 100, starRating: 4 },
@@ -131,18 +131,18 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
         </div>
       ) : hotelsData &&
         lastPriceRange &&
-        lastPriceRange.min > hotelsData?.priceRange?.minPrice ? (
-        <div className="text-red text-2xl">
-          Sorry, there are no hotels with min price over{" "}
-          {`$${lastPriceRange.min}`}. Here are some other hotels you can check
-          out...
-        </div>
-      ) : hotelsData &&
-        lastPriceRange &&
         lastPriceRange.max < hotelsData?.priceRange?.maxPrice ? (
         <div className="text-red text-2xl">
           Sorry, there are no hotels with max price under{" "}
           {`$${lastPriceRange.max}`}. Here are some other hotels you can check
+          out...
+        </div>
+      ) : hotelsData &&
+        lastPriceRange &&
+        lastPriceRange.min > hotelsData?.priceRange?.minPrice ? (
+        <div className="text-red text-2xl">
+          Sorry, there are no hotels with min price over{" "}
+          {`$${lastPriceRange.min}`}. Here are some other hotels you can check
           out...
         </div>
       ) : null}

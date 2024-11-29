@@ -38,7 +38,7 @@ const HotelListItem: React.FC<HotelListItemProps> = ({
       <div className="p-5 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 mb-6 cursor-pointer border border-gray-200 hover:border-gray-300">
         <div className="flex items-start">
           <Image
-            src={hotel.image.url}
+            src={hotel.image.url ?? ""}
             alt={hotel.image.alt ?? hotel.image.description ?? ""}
             width={100}
             height={100}
