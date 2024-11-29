@@ -151,5 +151,12 @@ const handleFindRegion = async (
     return;
   }
 
-  setOps([...REGION_DATA, ...ops]);
+  const newOps = [...ops];
+  REGION_DATA.forEach((region) => {
+    if (!newOps.some((op) => op.region_id === region.region_id)) {
+      newOps.push(region);
+    }
+  });
+
+  setOps(newOps);
 };
