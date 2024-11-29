@@ -31,13 +31,9 @@ import {
 } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
 import { generateDefaultDates } from "@/lib/DateFunctions";
 import BookingInfoUISearchComplete from "@/components/search/BookingInfoSearch/BookingInfoSearchUIComplete";
-import HotelSearchUIComplete from "@/components/search/HotelSearch/HotelSearchUIComplete";
-import LocationCombobox from "@/components/ui/location-combobox";
 import HotelSelect from "@/components/search/HotelResults/HotelSelect";
 import { RegionContext } from "@/components/providers/RegionProvider";
 import  DrawerComponent from "@/components/search/HotelSearch/DrawerComponent"
-import SidebarFilters from "@/components/search/HotelSearch/SidebarFilters";
-import FilterButton from "@/components/search/HotelSearch/FilterButton";
 
 export type searchParamsType = {
   // RegionSearch inputs
@@ -66,6 +62,7 @@ export type searchParamsType = {
 
 const HomeSearchPage: React.FC = () => {
   // Combined state to track inputs from all components
+  const [region] = useContext(RegionContext)
   const { DEFAULT_CHECKIN_BOOKING_DATE, DEFAULT_CHECKOUT_BOOKING_DATE } =
     generateDefaultDates(DEFAULT_BOOKING_NUM_DAYS);
 
@@ -74,7 +71,7 @@ const HomeSearchPage: React.FC = () => {
     query: DEFAULT_QUERY,
     domain: DEFAULT_DOMAIN,
     locale: DEFAULT_LOCALE,
-    selectedRegionId: "",
+    selectedRegionId: region?.region_id || "",
 
     // BookingInfo default inputs
     checkinDate: DEFAULT_CHECKIN_BOOKING_DATE,
@@ -94,26 +91,28 @@ const HomeSearchPage: React.FC = () => {
     price_max: DEFAULT_MAX_PRICE,
   });
 
-  // Handlers to update specific sections of searchParams
   const updateBookingInfoParams = (
     newSearchParams: Partial<typeof searchParams>
   ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
 
-  const updateHotelSearchParams = (
-    newSearchParams: Partial<typeof searchParams>
-  ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
-
-  const [region] = useContext(RegionContext);
   useEffect(() => {
-    // update region search params
-    if (!region) return;
+    console.log(
+      `Called useEffect in Search Page. Region: ${
+        region?.region_id || undefined
+      }`
+    );
+    console.log(
+      `Called useEffect in Search Page. Selected Region ID: ${
+        searchParams.selectedRegionId || undefined
+      }`
+    );
+    if (!region?.region_id || region?.region_id === undefined) return;
     setSearchParams((prev) => ({
       ...prev,
-      selectedRegionId: region.region_id,
+      selectedRegionId: region?.region_id
     }));
-  }, [region, setSearchParams]);
-  
-  
+  }, [region, searchParams.selectedRegionId]);
+
   
   return (
     <DrawerComponent
@@ -143,7 +142,7 @@ const HomeSearchPage: React.FC = () => {
             checkin_date: searchParams.checkinDate,
             checkout_date: searchParams.checkoutDate,
             adults_number: searchParams.adultsNumber,
-            region_id: searchParams.selectedRegionId ?? "",
+            region_id: region?.region_id ?? "",
             sort_order: searchParams.sortOrder,
             locale: searchParams.locale,
             domain: searchParams.domain,
@@ -155,7 +154,6 @@ const HomeSearchPage: React.FC = () => {
             meal_plan: searchParams.mealPlanOptions,
             available_filter: searchParams.availableOnly,
           }}
-          validRegionId={!!searchParams.selectedRegionId}
         />
       </div>
     </DrawerComponent>

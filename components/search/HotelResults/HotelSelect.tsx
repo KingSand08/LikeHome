@@ -4,8 +4,6 @@ import { APIHotelSearchJSONFormatted } from "@/app/api/hotels/search/route";
 import HotelList from "./HotelList/HotelList";
 import { z } from "zod";
 import { hotelSearchParamsRefinedSchema } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
-import { HOTEL_SEARCH_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
-import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import { RegionContext } from "@/components/providers/RegionProvider";
 import {
   DEFAULT_MAX_PRICE,
@@ -18,7 +16,6 @@ export type bookingParamsType = z.infer<typeof hotelSearchParamsRefinedSchema>;
 
 type HotelSelectUICompleteProps = {
   bookingParams: bookingParamsType;
-  validRegionId: boolean;
 };
 
 const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
@@ -28,12 +25,6 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
     useState<APIHotelSearchJSONFormatted | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [region] = useContext(RegionContext);
-
-  const isValid: boolean =
-    hotelSearchParamsRefinedSchema.safeParse(bookingParams).success &&
-    !!region &&
-    region.region_id !== "" &&
-    !loading;
 
   const [lastPriceRange, setLastPriceRange] = useState<{
     max: number;
@@ -112,12 +103,16 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
   // So, in the future we could have an "apply new filters button" if filters change.
   // Also, store filters in searchParams or localStorage...
   useEffect(() => {
-    if (!isValid) return;
-
-    if (process.env.NODE_ENV === "production") {
-      handleFindHotels();
-    } else {
-      handleFindHotelsCached();
+    if (
+      region &&
+      region.region_id &&
+      hotelSearchParamsRefinedSchema.safeParse(bookingParams).success
+    ) {
+      if (process.env.NODE_ENV === "production") {
+        handleFindHotels();
+      } else {
+        handleFindHotelsCached();
+      }
     }
   }, [region]);
 
