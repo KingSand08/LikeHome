@@ -1,7 +1,6 @@
 "use server";
 
 import { APIHotelDetailsJSONFormatted } from "@/app/api/hotels/details/route";
-import { APIRegion } from "@/app/api/hotels/region/route";
 import {
   APIHotelRoomOffersJSONFormatted,
   HotelRoomOffer,

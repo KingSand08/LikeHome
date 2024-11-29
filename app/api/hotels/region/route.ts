@@ -9,6 +9,8 @@ import {
   API_REGION_SEARCH_URL,
   regionSearchParamsSchema,
 } from "@/lib/rapid-hotel-api/zod/region-search-schemas";
+import prisma from "@/prisma/client";
+import { Region } from "@prisma/client";
 
 function validateSearchParams(
   searchParams: URLSearchParams
@@ -42,7 +44,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   if (process.env.NODE_ENV === "development") {
     const query = searchParams.get("query") ?? "Unknown";
-    const mockRegionDetailsData: APIRegion[] = Array(10)
+    const mockRegionDetailsData: Omit<Region, "id">[] = Array(10)
       .fill(0)
       .map((_, index) => ({
         region_id: `${index}`,
@@ -85,7 +87,7 @@ export async function GET(req: NextRequest) {
     }
 
     const JSON_DATA: APIRegionSearchResponseJSON = await response.json();
-    const PAYLOAD: APIRegion[] =
+    const PAYLOAD: Omit<Region, "id">[] =
       JSON_DATA.data?.map((regionItem) => ({
         region_id: regionItem.gaiaId ?? "",
         type: regionItem.type ?? "Unknown",
@@ -110,6 +112,10 @@ export async function GET(req: NextRequest) {
         },
       })) ?? [];
 
+    // update the cached regions before returning the response
+    prisma.region.createMany({
+      data: PAYLOAD,
+    });
     return NextResponse.json(PAYLOAD, { status: 200 });
   } catch (error) {
     return NextResponse.json(
@@ -120,25 +126,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-
-export type APIRegion = {
-  region_id: string;
-  type: string;
-  regionNames: {
-    fullName: string;
-    shortName: string;
-    displayName: string; // Would recommend this as the name
-    primaryDisplayName: string;
-    secondaryDisplayName: string;
-    lastSearchName: string;
-  };
-  coordinates: {
-    // Geocode
-    lat: string;
-    long: string;
-  };
-  country: {
-    name: string;
-    domain: string; // Using isoCode2 as domain.
-  };
-};
