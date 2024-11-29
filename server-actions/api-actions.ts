@@ -25,7 +25,7 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 const IS_MOCK = process.env.NODE_ENV === "development";
 const MOCK_DELAY = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
-export async function fetchRegionDetails(
+async function fetchRegionDetailsImpl(
   query: string,
   domain?: string,
   locale?: string
@@ -50,6 +50,43 @@ export async function fetchRegionDetails(
     console.error("Error fetching region details:", error);
     return null;
   }
+}
+
+const mockRegionDetailsData: APIRegion[] = Array(10).map((_, index) => ({
+  region_id: `${index}`,
+  type: "Resort",
+  regionNames: {
+    shortName: `Resort Short Name ${index}`,
+    fullName: `Resort Full Name ${index}`,
+    displayName: `Resort Display Name ${index}`,
+    primaryDisplayName: `Resort Primary Display Name ${index}`,
+    secondaryDisplayName: `Resort Secondary Display Name ${index}`,
+    lastSearchName: `Resort Last Search Name ${index}`,
+  },
+  coordinates: { lat: "0", long: "0" },
+  country: { name: "USA", domain: "US" },
+}));
+
+export async function fetchRegionDetails(
+  query: string,
+  domain?: string,
+  locale?: string
+): Promise<APIRegion[] | null> {
+  if (IS_MOCK) {
+    await MOCK_DELAY();
+    return mockRegionDetailsData;
+  }
+
+  // const cachedData = some prisma call
+  // if (cachedData) {
+  //   return cachedData;
+  // }
+
+  const params: [string, string?, string?] = [query];
+  if (domain) params[1] = domain;
+  if (locale) params[2] = locale;
+
+  return fetchRegionDetailsImpl.apply(null, params);
 }
 
 async function hotelsFromRegionImpl(
