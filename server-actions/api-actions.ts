@@ -20,7 +20,7 @@ import {
   DEFAULT_LOCALE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import { ReadonlyURLSearchParams } from "next/navigation";
-import { cacheHotelDetails, cacheHotelRoomOffer } from "./cache-actions";
+import { cacheHotelDetails, cacheHotelRoomOffer, cacheRegion } from "./cache-actions";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -39,12 +39,14 @@ export async function fetchRegionDetails(
     const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error(
-        `Failed to retrieve region details. ${response.statusText}`
-      );
+      throw new Error(`Failed to retrieve region details. ${response.statusText}`);
     }
 
-    return (await response.json()) as APIRegion[];
+    const regionArray = (await response.json()) as APIRegion[];
+
+    await Promise.all(regionArray.map(region => cacheRegion(region)));
+
+    return regionArray;
   } catch (error) {
     console.error("Error fetching region details:", error);
     return null;

@@ -16,90 +16,47 @@ import {
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import { APIRegion } from "@/app/api/hotels/region/route";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { RegionContext } from "../providers/RegionProvider";
 import { CommandEmpty } from "cmdk";
 import { usePathname, useRouter } from "next/navigation";
 import { fetchRegionDetails } from "@/server-actions/api-actions";
+import { retrieveCacheRegions } from "@/server-actions/cache-actions";
 
 // TODO: Replace with a DB call to get the cached regions
-const cachedLocations: APIRegion[] = [
-  {
-    region_id: "602703",
-    type: "CITY",
-    regionNames: {
-      fullName: "San Jose, California, United States",
-      shortName: "San Jose",
-      displayName: "San Jose, California, United States",
-      primaryDisplayName: "San Jose",
-      secondaryDisplayName: "California, United States",
-      lastSearchName: "San Jose, California, United States",
-    },
-    coordinates: {
-      lat: "37.3354",
-      long: "-121.891907",
-    },
-    country: {
-      name: "United States",
-      domain: "US",
-    },
-  },
-  {
-    region_id: "4409939",
-    type: "AIRPORT",
-    regionNames: {
-      fullName:
-        "San Jose (SJC - Norman Y. Mineta San Jose Intl.), California, United States",
-      shortName: "SJC",
-      displayName: "San Jose Airport",
-      primaryDisplayName: "Norman Y. Mineta San Jose Intl.",
-      secondaryDisplayName: "San Jose, California, United States",
-      lastSearchName: "San Jose (SJC - Norman Y. Mineta San Jose Intl.)",
-    },
-    coordinates: {
-      lat: "37.369739",
-      long: "-121.929225",
-    },
-    country: {
-      name: "United States",
-      domain: "US",
-    },
-  },
-  {
-    region_id: "3177",
-    type: "CITY",
-    regionNames: {
-      fullName: "San José, San José Province, Costa Rica",
-      shortName: "San José",
-      displayName: "San José, Costa Rica",
-      primaryDisplayName: "San José",
-      secondaryDisplayName: "San José Province, Costa Rica",
-      lastSearchName: "San José, Costa Rica",
-    },
-    coordinates: {
-      lat: "9.93286",
-      long: "-84.079559",
-    },
-    country: {
-      name: "Costa Rica",
-      domain: "CR",
-    },
-  },
+const cachedLocationIds: string[] = [
+  "602703", // San Jose, California, United States
+  "4409939", // San Jose (SJC - Norman Y. Mineta San Jose Intl.), California, United States
+  "2011", // Los Angeles, California, United States"
+  "3132", // San Francisco, California, United States"
+  "2621", // New York, New York, United States
+  "2008", // Las Vegas, Nevada, United States
 ];
 
 export default function LocationCombobox() {
   const [value, setValue] = useContext(RegionContext);
   const [open, setOpen] = useState(false);
-  const [ops, setOps] = useState(cachedLocations);
+  const [ops, setOps] = useState<APIRegion[]>([]);
   const [query, setQuery] = useState("");
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    const retrieveCache = async () => {
+      const dbCache = await retrieveCacheRegions(cachedLocationIds);
+      console.log(`Length: ${dbCache.length}`);
+      if (dbCache && dbCache.length > 0) {
+        setOps(dbCache);
+      }
+    };
+    retrieveCache();
+  }, []);
+
   const findRegion = () => {
     handleFindRegion(query, ops, setOps);
   };
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const handleBlur = (e: React.FocusEvent) => {
-    // Check if focus is still within the dropdown
     if (!dropdownRef.current?.contains(e.relatedTarget as Node)) {
       setOpen(false);
     }

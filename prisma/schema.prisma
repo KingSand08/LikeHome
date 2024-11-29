@@ -103,12 +103,13 @@ type Image {
 // Cached Regions
 model CachedRegion {
   id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  region_id   String
+  region_id   String      @unique
   type        String
   regionNames RegionNames
   coordinates Coordinates
   country     Country
 }
+
 type RegionNames {
   fullName             String
   shortName            String
@@ -117,6 +118,7 @@ type RegionNames {
   secondaryDisplayName String
   lastSearchName       String
 }
+
 type Country {
   name   String
   domain String

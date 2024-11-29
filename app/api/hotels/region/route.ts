@@ -79,8 +79,8 @@ export async function GET(req: NextRequest) {
         },
         coordinates: {
           // Geocode
-          lat: regionItem.coordinates?.lat ?? "0",
-          long: regionItem.coordinates?.long ?? "0",
+          latitude: Number(regionItem.coordinates?.lat) ?? 0,
+          longitude: Number(regionItem.coordinates?.long) ?? 0,
         },
         country: {
           name: regionItem.hierarchyInfo?.country?.name ?? "Unknown",
@@ -112,8 +112,8 @@ export type APIRegion = {
   };
   coordinates: {
     // Geocode
-    lat: string;
-    long: string;
+    latitude: number;
+    longitude: number;
   };
   country: {
     name: string;

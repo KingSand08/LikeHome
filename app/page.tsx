@@ -96,16 +96,6 @@ const HomeSearchPage: React.FC = () => {
   ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
 
   useEffect(() => {
-    console.log(
-      `Called useEffect in Search Page. Region: ${
-        region?.region_id || undefined
-      }`
-    );
-    console.log(
-      `Called useEffect in Search Page. Selected Region ID: ${
-        searchParams.selectedRegionId || undefined
-      }`
-    );
     if (!region?.region_id || region?.region_id === undefined) return;
     setSearchParams((prev) => ({
       ...prev,

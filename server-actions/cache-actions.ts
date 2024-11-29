@@ -1,8 +1,81 @@
 "use server";
 
 import { APIHotelDetailsJSONFormatted } from "@/app/api/hotels/details/route";
+import { APIRegion } from "@/app/api/hotels/region/route";
 import { HotelRoomOffer } from "@/app/api/hotels/search/rooms/route";
 import prisma from "@/prisma/client";
+
+export async function cacheRegion(region: APIRegion) {
+  if (!region.region_id || region.region_id === "") {
+    console.log("Skipping cacheRegion from invalid region id");
+    return;
+  }
+  try {
+    await prisma.cachedRegion.upsert({
+      where: {
+        region_id: region.region_id,
+      },
+      update: {
+        type: region.type,
+        regionNames: {
+          fullName: region.regionNames.fullName,
+          shortName: region.regionNames.shortName,
+          displayName: region.regionNames.displayName,
+          primaryDisplayName: region.regionNames.primaryDisplayName,
+          secondaryDisplayName: region.regionNames.secondaryDisplayName,
+          lastSearchName: region.regionNames.lastSearchName,
+        },
+        coordinates: {
+          latitude: region.coordinates.latitude,
+          longitude: region.coordinates.longitude,
+        },
+        country: {
+          name: region.country.name,
+          domain: region.country.domain,
+        },
+      },
+      create: {
+        region_id: region.region_id,
+        type: region.type,
+        regionNames: {
+          fullName: region.regionNames.fullName,
+          shortName: region.regionNames.shortName,
+          displayName: region.regionNames.displayName,
+          primaryDisplayName: region.regionNames.primaryDisplayName,
+          secondaryDisplayName: region.regionNames.secondaryDisplayName,
+          lastSearchName: region.regionNames.lastSearchName,
+        },
+        coordinates: {
+          latitude: region.coordinates.latitude,
+          longitude: region.coordinates.longitude,
+        },
+        country: {
+          name: region.country.name,
+          domain: region.country.domain,
+        },
+      },
+    });
+    console.log("Region cached successfully:", region.region_id);
+  } catch (error) {
+    console.error("Error caching region:", region.region_id, error);
+  }
+}
+
+export async function retrieveCacheRegions(selectedRegionIDs: string[]) {
+  try {
+    const fetchPromises = selectedRegionIDs.map(async (selectedRegionID) => {
+      return await prisma.cachedRegion.findUnique({
+        where: { region_id: selectedRegionID },
+      });
+    });
+
+    const regions = await Promise.all(fetchPromises);
+    return regions.filter((region) => region !== null);
+  } catch (error) {
+    console.error("Failed to retrieve regions:", error);
+    return [] as APIRegion[];
+  }
+}
 
 export async function cacheHotelDetails(
   APIHotelDetails: APIHotelDetailsJSONFormatted
