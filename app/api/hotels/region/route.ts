@@ -39,12 +39,29 @@ function validateSearchParams(
 }
 
 export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
   if (process.env.NODE_ENV === "development") {
+    const query = searchParams.get("query") ?? "Unknown";
+    const mockRegionDetailsData: APIRegion[] = Array(10)
+      .fill(0)
+      .map((_, index) => ({
+        region_id: `${index}`,
+        type: `${query}`,
+        regionNames: {
+          shortName: `${query} Short Name ${index}`,
+          fullName: `${query} Full Name ${index}`,
+          displayName: `${query} ${index}`,
+          primaryDisplayName: `${query} Primary Display Name ${index}`,
+          secondaryDisplayName: `${query} Secondary Display Name ${index}`,
+          lastSearchName: `${query} Last Search Name ${index}`,
+        },
+        coordinates: { lat: "0", long: "0" },
+        country: { name: "USA", domain: "US" },
+      }));
+
     await new Promise((resolve) => setTimeout(resolve, 1000));
     return NextResponse.json(mockRegionDetailsData, { status: 200 });
   }
-
-  const { searchParams } = new URL(req.url);
   const { query, endpoint, error } = validateSearchParams(searchParams);
   if (error) {
     return NextResponse.json(
@@ -125,18 +142,3 @@ export type APIRegion = {
     domain: string; // Using isoCode2 as domain.
   };
 };
-
-const mockRegionDetailsData: APIRegion[] = Array(10).map((_, index) => ({
-  region_id: `${index}`,
-  type: "Resort",
-  regionNames: {
-    shortName: `Resort Short Name ${index}`,
-    fullName: `Resort Full Name ${index}`,
-    displayName: `Resort Display Name ${index}`,
-    primaryDisplayName: `Resort Primary Display Name ${index}`,
-    secondaryDisplayName: `Resort Secondary Display Name ${index}`,
-    lastSearchName: `Resort Last Search Name ${index}`,
-  },
-  coordinates: { lat: "0", long: "0" },
-  country: { name: "USA", domain: "US" },
-}));
