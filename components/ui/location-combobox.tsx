@@ -21,17 +21,22 @@ import { RegionContext } from "../providers/RegionProvider";
 import { CommandEmpty } from "cmdk";
 import { usePathname, useRouter } from "next/navigation";
 import { Region } from "@prisma/client";
+import { getCachedRegions } from "@/server-actions/region-actions";
 
 export default function LocationCombobox() {
-  const [value, setValue] = useContext(RegionContext);
   const [open, setOpen] = useState(false);
   const [ops, setOps] = useState<Omit<Region, "id">[]>([]);
-  const [query, setQuery] = useState("");
+
+  React.useEffect(() => {
+    getCachedRegions().then((regions) => setOps(regions));
+  }, []);
+
   const pathname = usePathname();
   const router = useRouter();
-  const findRegion = () => {
-    handleFindRegion(query, ops, setOps);
-  };
+
+  const [value, setValue] = useContext(RegionContext);
+  const [query, setQuery] = useState("");
+
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const handleBlur = (e: React.FocusEvent) => {
     // Check if focus is still within the dropdown
@@ -70,7 +75,7 @@ export default function LocationCombobox() {
         placeholder={value?.name ?? "Search locations..."}
         onValueChange={setQuery}
         onKeyDown={(e) => {
-          if (e.key === "Enter") findRegion();
+          if (e.key === "Enter") handleFindRegion(query, setOps);
           else if (e.key === "Escape") setOpen(false);
         }}
       />
@@ -81,9 +86,9 @@ export default function LocationCombobox() {
             Press Enter to search for more locations.
           </CommandEmpty>
           <CommandGroup>
-            {ops.map((loc) => (
+            {ops.map((loc, index) => (
               <CommandItem
-                key={loc.region_id}
+                key={index}
                 value={loc.regionNames.displayName}
                 onSelect={(currentValue) => handleSelection(currentValue, loc)}
               >
@@ -107,8 +112,7 @@ export default function LocationCombobox() {
 
 const handleFindRegion = async (
   query: string,
-  ops: Omit<Region, "id">[],
-  setOps: React.Dispatch<Omit<Region, "id">[]>,
+  setOps: React.Dispatch<React.SetStateAction<Omit<Region, "id">[]>>,
   domain?: string,
   locale?: string
 ) => {
@@ -124,5 +128,11 @@ const handleFindRegion = async (
   if (!response.ok) alert(`Failed to fetch regions.`);
 
   const regionData: Omit<Region, "id">[] = await response.json();
-  setOps([...regionData, ...ops]);
+  // remove duplicates by region_id
+  setOps((prev: Omit<Region, "id">[]) =>
+    [...prev, ...regionData].filter(
+      (value, index, self) =>
+        self.findIndex((t) => t.region_id === value.region_id) === index
+    )
+  );
 };

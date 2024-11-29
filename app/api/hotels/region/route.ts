@@ -113,9 +113,7 @@ export async function GET(req: NextRequest) {
       })) ?? [];
 
     // update the cached regions before returning the response
-    prisma.region.createMany({
-      data: PAYLOAD,
-    });
+    mongoDBCreateMany(PAYLOAD);
     return NextResponse.json(PAYLOAD, { status: 200 });
   } catch (error) {
     return NextResponse.json(
@@ -125,4 +123,17 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+function mongoDBCreateMany(data: Omit<Region, "id">[]) {
+  // remove duplicates by region_id
+  const uniqueData = data.filter(
+    (value, index, self) =>
+      self.findIndex((t) => t.region_id === value.region_id) === index
+  );
+
+  // create many
+  prisma.region.createMany({
+    data: uniqueData,
+  });
 }
