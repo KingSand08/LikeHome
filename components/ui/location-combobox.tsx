@@ -27,8 +27,9 @@ import { retrieveCacheRegions } from "@/server-actions/cache-actions";
 const cachedLocationIds: string[] = [
   "602703", // San Jose, California, United States
   "4409939", // San Jose (SJC - Norman Y. Mineta San Jose Intl.), California, United States
-  "2011", // Los Angeles, California, United States"
-  "3132", // San Francisco, California, United States"
+  "652645981589159936", // Lake Tahoe, United States of America
+  "2011", // Los Angeles, California, United States
+  "3132", // San Francisco, California, United States
   "2621", // New York, New York, United States
   "2008", // Las Vegas, Nevada, United States
 ];
@@ -44,7 +45,6 @@ export default function LocationCombobox() {
   useEffect(() => {
     const retrieveCache = async () => {
       const dbCache = await retrieveCacheRegions(cachedLocationIds);
-      console.log(`Length: ${dbCache.length}`);
       if (dbCache && dbCache.length > 0) {
         setOps(dbCache);
       }
