@@ -18,7 +18,9 @@ import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
+import { ApiError } from "next/dist/server/api-utils";
 import { ReadonlyURLSearchParams } from "next/navigation";
+import { mock } from "node:test";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 const IS_MOCK = process.env.NODE_ENV === "development";
@@ -91,7 +93,7 @@ export async function hotelsFromRegion(
   return hotelsFromRegionImpl(bookingParams);
 }
 
-export async function fetchHotelDetails(
+async function fetchHotelDetailsImpl(
   hotelId: string | string[],
   searchParams: ReadonlyURLSearchParams
 ): Promise<APIHotelDetailsJSONFormatted | null> {
@@ -119,7 +121,42 @@ export async function fetchHotelDetails(
   }
 }
 
-export async function fetchAllHotelRoomOffers(
+const mockHotelDetailsData: APIHotelDetailsJSONFormatted = {
+  hotel_id: "0",
+  name: "Mock Hotel",
+  tagline: "Mock Tagline",
+  location: {
+    address: {
+      addressLine: "123 Mock St",
+      city: "Mock City",
+      province: "Mock Province",
+      countryCode: "US",
+    },
+    coordinates: { latitude: 0, longitude: 0 },
+  },
+  images: Array(5)
+    .fill(0)
+    .map((_, index) => ({
+      alt: `Image ${index}`,
+      description: `Image ${index}`,
+      url: `https://picsum.photos/200/300`,
+      index,
+    })),
+};
+
+export async function fetchHotelDetails(
+  hotelId: string | string[],
+  searchParams: ReadonlyURLSearchParams
+): Promise<APIHotelDetailsJSONFormatted | null> {
+  if (IS_MOCK) {
+    await MOCK_DELAY();
+    return mockHotelDetailsData;
+  }
+
+  return fetchHotelDetailsImpl(hotelId, searchParams);
+}
+
+async function fetchAllHotelRoomOffersImpl(
   hotelId: string | string[],
   searchParams: ReadonlyURLSearchParams
 ): Promise<APIHotelRoomOffersJSONFormatted | null> {
@@ -145,6 +182,44 @@ export async function fetchAllHotelRoomOffers(
     console.error("Error fetching hotel room offers:", error);
     return null;
   }
+}
+
+const mockHotelRoomOffersData: APIHotelRoomOffersJSONFormatted = {
+  hotel_id: "0",
+  soldOut: false,
+  basePricePerNight: "$100",
+  hotelRoomOffers: Array(5)
+    .fill(0)
+    .map((_, index) => ({
+      hotel_id: "0",
+      hotel_room_id: `${index}`,
+      description: `Room ${index} is a mock room.`,
+      name: `Room ${index}`,
+      galleryImages: Array(5)
+        .fill(0)
+        .map((_, index) => ({
+          description: `Image ${index}`,
+          url: `https://picsum.photos/200/300`,
+          alt: `Image ${index}`,
+          index,
+        })),
+      pricePerNight: {
+        amount: 100,
+        currency: { code: "USD", symbol: "$" },
+      },
+    })),
+};
+
+export async function fetchAllHotelRoomOffers(
+  hotelId: string | string[],
+  searchParams: ReadonlyURLSearchParams
+): Promise<APIHotelRoomOffersJSONFormatted | null> {
+  if (IS_MOCK) {
+    await MOCK_DELAY();
+    return mockHotelRoomOffersData;
+  }
+
+  return fetchAllHotelRoomOffersImpl(hotelId, searchParams);
 }
 
 export async function fetchHotelRoomOffer(
