@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
           secondaryDisplayName: `${query} Secondary Display Name ${index}`,
           lastSearchName: `${query} Last Search Name ${index}`,
         },
-        coordinates: { lat: "0", long: "0" },
+        coordinates: { latitude: 0, longitude: 0 },
         country: { name: "USA", domain: "US" },
       }));
 
@@ -103,8 +103,8 @@ export async function GET(req: NextRequest) {
         },
         coordinates: {
           // Geocode
-          lat: regionItem.coordinates?.lat ?? "0",
-          long: regionItem.coordinates?.long ?? "0",
+          latitude: Number(regionItem.coordinates?.lat) ?? 0,
+          longitude: Number(regionItem.coordinates?.long) ?? 0,
         },
         country: {
           name: regionItem.hierarchyInfo?.country?.name ?? "Unknown",

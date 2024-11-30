@@ -15,8 +15,8 @@ export async function cacheHotelDetails(
       location: {
         ...data.location,
         coordinates: {
-          lat: `${data.location.coordinates.latitude}`,
-          long: `${data.location.coordinates.longitude}`,
+          latitude: data.location.coordinates.latitude,
+          longitude: data.location.coordinates.longitude,
         },
       },
     },
@@ -25,8 +25,8 @@ export async function cacheHotelDetails(
       location: {
         ...data.location,
         coordinates: {
-          lat: `${data.location.coordinates.latitude}`,
-          long: `${data.location.coordinates.longitude}`,
+          latitude: data.location.coordinates.latitude,
+          longitude: data.location.coordinates.longitude,
         },
       },
     },
