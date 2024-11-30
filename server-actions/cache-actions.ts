@@ -7,7 +7,7 @@ import prisma from "@/prisma/client";
 export async function cacheHotelDetails(
   APIHotelDetails: APIHotelDetailsJSONFormatted
 ) {
-  const { hotel_id, tagline, location, images } = APIHotelDetails;
+  const { hotel_id, name, tagline, location, images } = APIHotelDetails;
 
   const transformedLocation = {
     address: {
@@ -33,11 +33,13 @@ export async function cacheHotelDetails(
     where: { hotel_id },
     create: {
       hotel_id,
+      name,
       tagline,
       location: transformedLocation,
       images: transformedImages,
     },
     update: {
+      name,
       tagline,
       location: transformedLocation,
       images: transformedImages,
@@ -50,6 +52,10 @@ export async function cacheHotelDetails(
 export async function cacheHotelRoomOffer(APIHotelRoomOffer: HotelRoomOffer) {
   const { hotel_id, hotel_room_id, description, name, galleryImages } =
     APIHotelRoomOffer;
+
+  if (!hotel_id || hotel_id === "" || !hotel_room_id || hotel_room_id === "") {
+    return;
+  }
 
   const transformedGalleryImages = galleryImages.map((image) => ({
     description: image.description,
