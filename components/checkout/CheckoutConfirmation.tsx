@@ -9,10 +9,7 @@ import {
 import convertToSubcurrency from "@/lib/convertPrice";
 import { HotelRoomOffer } from "@/app/api/hotels/search/rooms/route";
 import { BookingDetailsType } from "@/app/hotels/[hotelId]/[roomId]/page";
-import {
-  FINAL_BOOKING_INFO,
-  FINAL_PAYMENT_INFO,
-} from "@/lib/rapid-hotel-api/api-setup";
+import { FINAL_PAYMENT_INFO } from "@/lib/rapid-hotel-api/api-setup";
 import {
   createReservation,
   PartialReservation,

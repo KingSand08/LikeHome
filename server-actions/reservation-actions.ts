@@ -43,12 +43,12 @@ export async function redeemFreeStay(
 
 export async function verifyReservation(
   email: string,
-  bookingId: string,
+  id: string,
   stripePaymentId: string
 ) {
   const updatedReservation = await prisma.reservation.update({
     where: {
-      bookingId: bookingId,
+      id,
     },
     data: {
       transaction_info: {
@@ -69,10 +69,10 @@ export async function verifyReservation(
   return true;
 }
 
-export async function cancelReservation(email: string, bookingId: string) {
+export async function cancelReservation(email: string, id: string) {
   const deletedReservation = await prisma.reservation.delete({
     where: {
-      bookingId: bookingId,
+      id,
     },
   });
   console.log("Deleted reservation:", deletedReservation);
