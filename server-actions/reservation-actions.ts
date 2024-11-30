@@ -20,7 +20,10 @@ export async function createReservation(
   return reservation;
 }
 
-export async function redeemFreeStay(email: string, data: PartialReservation) {
+export async function redeemFreeStay(
+  email: string,
+  data: PartialReservation
+): Promise<Reservation> {
   const updatedReservation = await prisma.reservation.create({
     data: {
       ...data,
@@ -35,7 +38,7 @@ export async function redeemFreeStay(email: string, data: PartialReservation) {
     updatedReservation.room_cost
   );
   console.log("Updated rewards:", updatedRewards);
-  return true;
+  return updatedReservation;
 }
 
 export async function verifyReservation(

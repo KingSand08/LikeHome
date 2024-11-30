@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  APIHotelRoomOffersJSONFormatted,
-  HotelRoomOffer,
-} from "@/app/api/hotels/search/rooms/route";
+import { HotelRoomOffer } from "@/app/api/hotels/search/rooms/route";
 import { BookingDetailsType } from "@/app/hotels/[hotelId]/[roomId]/page";
 import CheckoutConfirmation from "@/components/checkout/CheckoutConfirmation";
 import convertToSubcurrency from "@/lib/convertPrice";
@@ -18,6 +15,7 @@ import {
 } from "@/server-actions/reservation-actions";
 import { getUserRewards } from "@/server-actions/user-actions";
 import { RainbowButton } from "../ui/rainbow-button";
+import { useRouter } from "next/navigation";
 
 // Check for the Stripe public key
 if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
@@ -70,6 +68,8 @@ export default function CheckoutInfo({
     checkUserRewardPoints();
   }, [session?.user.email, roundedTotalAmount]);
 
+  const router = useRouter();
+
   const redeemPoints = async () => {
     if (!session || typeof session?.user.email !== "string") {
       // add toast / sonar alerting user that the email couldn't be found
@@ -96,7 +96,8 @@ export default function CheckoutInfo({
       room_cost: pretax,
     };
 
-    redeemFreeStay(session?.user.email, PrismaReservationDB);
+    const res = await redeemFreeStay(session?.user.email, PrismaReservationDB);
+    router.push("/bookings/" + res.id);
   };
 
   // Handle input change for user information fields
