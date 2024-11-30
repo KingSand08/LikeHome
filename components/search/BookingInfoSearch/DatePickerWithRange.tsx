@@ -19,13 +19,7 @@ import {
   refinePriceAndDateValidationZod,
 } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
 import { calculateNumDays } from "../../../lib/DateFunctions";
-
-type BookingInfo = {
-  checkinDate: string;
-  checkoutDate: string;
-  adultsNumber: number;
-  numDays: number;
-};
+import { searchParamsType } from "@/app/page";
 
 // Zod validation schema for dates
 const dateSchema = z.object({
@@ -42,7 +36,7 @@ type DatePickerWithRangeProps = {
     numDays: number;
   }) => void;
   onValidationChange?: (isValid: boolean) => void;
-  bookingInfo: BookingInfo;
+  bookingInfo: searchParamsType;
 };
 
 export function DatePickerWithRange({

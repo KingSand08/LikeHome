@@ -8,15 +8,6 @@ import LodgingOptionsCheckbox from "./HotelSearchComponents/LodgingOptionsCheckb
 import SortOrderDropdown from "./HotelSearchComponents/SortOrderDropdown";
 import PriceRangeInput from "./HotelSearchComponents/PriceRangeInput";
 import {
-  HotelsSearchAccessibilityOptionsType,
-  HotelSearchSortOrderOptionsType,
-  HotelsSearchAmenitiesOptionsType,
-  HotelsSearchMealPlanOptionsType,
-  HotelsSearchAvailableFilterOptionsType,
-  HotelsSearchLodgingOptionsType,
-  HotelsSearchPaymentTypeOptionsType,
-} from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
-import {
   DEFAULT_ACCESSIBILITY_OPTIONS,
   DEFAULT_AMENITIES_OPTIONS,
   DEFAULT_AVAILABILITY_FILTER_OPTIONS,
@@ -27,20 +18,11 @@ import {
   DEFAULT_PAYMENT_TYPE_OPTIONS,
   DEFAULT_SORT_ORDER,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
+import { searchParamsType } from "@/app/page";
 
 type SidebarFiltersProps = {
-  hotelSearchInputs: {
-    accessibilityOptions: HotelsSearchAccessibilityOptionsType[];
-    amenitiesOptions: HotelsSearchAmenitiesOptionsType[];
-    mealPlanOptions: HotelsSearchMealPlanOptionsType[];
-    lodgingOptions: HotelsSearchLodgingOptionsType[];
-    paymentType: HotelsSearchPaymentTypeOptionsType[];
-    sortOrder: HotelSearchSortOrderOptionsType;
-    availableOnly: HotelsSearchAvailableFilterOptionsType[];
-    price_min: number;
-    price_max: number;
-  };
-  setHotelSearchInputs: (inputs: any) => void;
+  hotelSearchInputs: searchParamsType;
+  setHotelSearchInputs: (inputs: searchParamsType) => void;
 };
 
 const SidebarFilters: React.FC<SidebarFiltersProps> = ({
@@ -55,8 +37,11 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
   };
 
   const handleResetFilters = () => {
-    if (window.confirm("Are you sure you want to reset all filters?")) {
-      setTempFilters({
+    if (
+      window.confirm("Are you sure you want to reset all filters to default?")
+    ) {
+      setTempFilters((prev) => ({
+        ...prev,
         accessibilityOptions: DEFAULT_ACCESSIBILITY_OPTIONS,
         amenitiesOptions: DEFAULT_AMENITIES_OPTIONS,
         mealPlanOptions: DEFAULT_MEAL_PLAN_OPTIONS,
@@ -66,8 +51,25 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
         availableOnly: DEFAULT_AVAILABILITY_FILTER_OPTIONS,
         price_min: DEFAULT_MIN_PRICE,
         price_max: DEFAULT_MAX_PRICE,
-      });
+      }));
     }
+  };
+
+  const areFiltersEqual = (
+    filters1: searchParamsType,
+    filters2: searchParamsType
+  ): boolean => {
+    return (
+      filters1.accessibilityOptions === filters2.accessibilityOptions &&
+      filters1.amenitiesOptions === filters2.amenitiesOptions &&
+      filters1.mealPlanOptions === filters2.mealPlanOptions &&
+      filters1.lodgingOptions === filters2.lodgingOptions &&
+      filters1.paymentType === filters2.paymentType &&
+      filters1.sortOrder === filters2.sortOrder &&
+      filters1.availableOnly === filters2.availableOnly &&
+      filters1.price_min === filters2.price_min &&
+      filters1.price_max === filters2.price_max
+    );
   };
 
   return (
@@ -144,7 +146,7 @@ const SidebarFilters: React.FC<SidebarFiltersProps> = ({
         <button
           onClick={handleResetFilters}
           className="btn btn-warning w-1/2"
-          disabled={tempFilters === hotelSearchInputs}
+          disabled={areFiltersEqual(tempFilters, hotelSearchInputs)}
         >
           Reset
         </button>

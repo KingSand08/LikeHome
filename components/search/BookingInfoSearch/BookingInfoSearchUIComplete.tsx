@@ -2,17 +2,11 @@
 import { useState } from "react";
 import AdultsNumberInput from "./SearchComponents/AdultsNumberInput";
 import { DatePickerWithRange } from "./DatePickerWithRange";
-
-type BookingInfo = {
-  checkinDate: string;
-  checkoutDate: string;
-  adultsNumber: number;
-  numDays: number;
-};
+import { searchParamsType } from "@/app/page";
 
 type BookingInfoUISearchCompleteProps = {
-  bookingInfo: BookingInfo;
-  setBookingInfo: (info: BookingInfo) => void;
+  bookingInfo: searchParamsType;
+  setBookingInfo: (info: searchParamsType) => void;
 };
 
 const BookingInfoUISearchComplete: React.FC<
@@ -45,6 +39,16 @@ const BookingInfoUISearchComplete: React.FC<
     }
   };
 
+  const handleRevertChanges = () => {
+    const confirmRevert = window.confirm(
+      "Are you sure you want to revert your booking changes?"
+    );
+    if (confirmRevert) {
+      setTempBookingInfo(bookingInfo);
+      setBookingInfo(tempBookingInfo);
+    }
+  };
+
   return (
     <div>
       <h2 className="text-2xl font-bold">Booking Information</h2>
@@ -69,15 +73,25 @@ const BookingInfoUISearchComplete: React.FC<
           )}
         </div>
       </div>
-      <div className="join-item">
-        <button
-          onClick={handleApplyFilters}
-          className="btn btn-primary w-1/2"
-          disabled={!isValid || !isDateValid || bookingInfo === tempBookingInfo}
-        >
-          Apply
-        </button>
-      </div>
+      {(bookingInfo.checkinDate !== tempBookingInfo.checkinDate ||
+        bookingInfo.checkoutDate !== tempBookingInfo.checkoutDate ||
+        bookingInfo.adultsNumber !== tempBookingInfo.adultsNumber) && (
+        <div className="join-item flex gap-4">
+          <button
+            onClick={handleRevertChanges}
+            className="btn btn-secondary w-1/2"
+          >
+            Revert changes
+          </button>
+          <button
+            onClick={handleApplyFilters}
+            className="btn btn-primary w-1/2"
+            disabled={!isValid || !isDateValid}
+          >
+            Apply new booking info
+          </button>
+        </div>
+      )}
     </div>
   );
 };

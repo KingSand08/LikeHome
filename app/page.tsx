@@ -100,6 +100,10 @@ const HomeSearchPage: React.FC = () => {
     newSearchParams: Partial<typeof searchParams>
   ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
 
+  const updateHotelSearchParams = (newHotelSearch: searchParamsType) => {
+    setSearchParams(newHotelSearch);
+  };
+
   useEffect(() => {
     if (!region) return;
     setSearchParams((prev) => ({
@@ -111,7 +115,7 @@ const HomeSearchPage: React.FC = () => {
   return (
     <DrawerComponent
       hotelSearchInputs={searchParams}
-      setHotelSearchInputs={setSearchParams}
+      setHotelSearchInputs={updateHotelSearchParams}
     >
       <div>
         <h1 className="text-2xl font-bold mb-4">
@@ -120,12 +124,7 @@ const HomeSearchPage: React.FC = () => {
             : "Select a location to start!"}
         </h1>
         <BookingInfoUISearchComplete
-          bookingInfo={{
-            checkinDate: searchParams.checkinDate,
-            checkoutDate: searchParams.checkoutDate,
-            adultsNumber: searchParams.adultsNumber,
-            numDays: searchParams.numDays,
-          }}
+          bookingInfo={searchParams}
           setBookingInfo={(newParams) => updateBookingInfoParams(newParams)}
         />
         <hr />
