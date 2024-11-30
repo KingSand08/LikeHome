@@ -36,8 +36,8 @@ const cachedLocations: APIRegion[] = [
       lastSearchName: "San Jose, California, United States",
     },
     coordinates: {
-      lat: "37.3354",
-      long: "-121.891907",
+      latitude: 37.3354,
+      longitude: -121.891907,
     },
     country: {
       name: "United States",
@@ -57,8 +57,8 @@ const cachedLocations: APIRegion[] = [
       lastSearchName: "San Jose (SJC - Norman Y. Mineta San Jose Intl.)",
     },
     coordinates: {
-      lat: "37.369739",
-      long: "-121.929225",
+      latitude: 37.369739,
+      longitude: -121.929225,
     },
     country: {
       name: "United States",
@@ -77,8 +77,8 @@ const cachedLocations: APIRegion[] = [
       lastSearchName: "San José, Costa Rica",
     },
     coordinates: {
-      lat: "9.93286",
-      long: "-84.079559",
+      latitude: 9.93286,
+      longitude: -84.079559,
     },
     country: {
       name: "Costa Rica",
