@@ -64,8 +64,11 @@ const HomeSearchPage: React.FC = () => {
   // Combined state to track inputs from all components
   const [region] = useContext(RegionContext);
   const regionContextID = region?.region_id || "";
-  const { DEFAULT_CHECKIN_BOOKING_DATE, DEFAULT_CHECKOUT_BOOKING_DATE } =
-    generateDefaultDates(DEFAULT_BOOKING_NUM_DAYS);
+  const {
+    DEFAULT_CHECKIN_BOOKING_DATE,
+    DEFAULT_CHECKOUT_BOOKING_DATE,
+    DEFAULT_NUM_DAYS,
+  } = generateDefaultDates(DEFAULT_BOOKING_NUM_DAYS);
 
   const [searchParams, setSearchParams] = useState<searchParamsType>({
     // RegionSearch default inputs
@@ -78,7 +81,7 @@ const HomeSearchPage: React.FC = () => {
     checkinDate: DEFAULT_CHECKIN_BOOKING_DATE,
     checkoutDate: DEFAULT_CHECKOUT_BOOKING_DATE,
     adultsNumber: DEFAULT_ADULTS_NUMBER,
-    numDays: DEFAULT_BOOKING_NUM_DAYS,
+    numDays: DEFAULT_NUM_DAYS,
 
     // HotelSearch default inputs
     accessibilityOptions: DEFAULT_ACCESSIBILITY_OPTIONS,
