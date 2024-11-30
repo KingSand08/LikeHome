@@ -19,6 +19,7 @@ const BookingInfoUISearchComplete: React.FC<
   BookingInfoUISearchCompleteProps
 > = ({ bookingInfo, setBookingInfo }) => {
   const [tempBookingInfo, setTempBookingInfo] = useState(bookingInfo);
+  const [isDateValid, setIsDateValid] = useState(true);
   const [isValid, setIsValid] = useState(true);
 
   const handleDateChange = (dates: {
@@ -47,27 +48,32 @@ const BookingInfoUISearchComplete: React.FC<
   return (
     <div>
       <h2 className="text-2xl font-bold">Booking Information</h2>
-      <div className="gap-5">
-        <h3 className="text-primary font-semibold">Booking Dates</h3>
-        <DatePickerWithRange
-          onChange={handleDateChange}
-          defaultNumDays={tempBookingInfo.numDays}
-        />
-        <AdultsNumberInput
-          selectedNumber={tempBookingInfo.adultsNumber}
-          onChange={handleAdultsNumberChange}
-        />
-        {!isValid && (
-          <p className="text-red-500 text-sm">
-            Adults number is invalid. Please enter a valid number.
-          </p>
-        )}
+      <div className="gap-5 join">
+        <div className="join-item">
+          <h3 className="text-primary font-semibold">Booking Dates</h3>
+          <DatePickerWithRange
+            bookingInfo={bookingInfo}
+            onChange={handleDateChange}
+            onValidationChange={setIsDateValid}
+          />
+        </div>
+        <div className="join-item">
+          <AdultsNumberInput
+            selectedNumber={tempBookingInfo.adultsNumber}
+            onChange={handleAdultsNumberChange}
+          />
+          {!isValid && (
+            <p className="text-red-500 text-sm">
+              Adults number is invalid. Please enter a valid number.
+            </p>
+          )}
+        </div>
       </div>
-      <div className="mt-4 flex gap-2">
+      <div className="join-item">
         <button
           onClick={handleApplyFilters}
           className="btn btn-primary w-1/2"
-          disabled={!isValid}
+          disabled={!isValid || !isDateValid || bookingInfo === tempBookingInfo}
         >
           Apply
         </button>
