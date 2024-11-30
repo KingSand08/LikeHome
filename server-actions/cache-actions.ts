@@ -36,22 +36,27 @@ export async function cacheHotelDetails(
 }
 
 export async function cacheHotelRoomOffer(APIHotelRoomOffer: HotelRoomOffer) {
-  const data = APIHotelRoomOffer;
+  const { hotel_id, hotel_room_id, description, name, galleryImages } =
+    APIHotelRoomOffer;
 
   await prisma.cachedHotelRoomOffer.upsert({
-    where: { hotel_room_id: data.hotel_room_id },
+    where: { hotel_room_id: hotel_room_id },
     create: {
-      ...data,
+      hotel_id,
+      hotel_room_id,
+      description,
+      name,
+      galleryImages,
     },
     update: {
-      description: data.description,
-      name: data.name,
-      galleryImages: data.galleryImages,
+      description,
+      name,
+      galleryImages,
     },
   });
 
   console.log(
-    `HotelID ${data.hotel_id} - Hotel room offer with ID ${data.hotel_room_id} cached successfully.`
+    `HotelID ${hotel_id} - Hotel room offer with ID ${hotel_room_id} cached successfully.`
   );
 }
 
