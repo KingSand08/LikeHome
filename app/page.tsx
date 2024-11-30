@@ -31,13 +31,9 @@ import {
 } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
 import { generateDefaultDates } from "@/lib/DateFunctions";
 import BookingInfoUISearchComplete from "@/components/search/BookingInfoSearch/BookingInfoSearchUIComplete";
-import HotelSearchUIComplete from "@/components/search/HotelSearch/HotelSearchUIComplete";
-import LocationCombobox from "@/components/ui/location-combobox";
 import HotelSelect from "@/components/search/HotelResults/HotelSelect";
 import { RegionContext } from "@/components/providers/RegionProvider";
-import  DrawerComponent from "@/components/search/HotelSearch/DrawerComponent"
-import SidebarFilters from "@/components/search/HotelSearch/SidebarFilters";
-import FilterButton from "@/components/search/HotelSearch/FilterButton";
+import DrawerComponent from "@/components/search/HotelSearch/DrawerComponent";
 
 export type searchParamsType = {
   // RegionSearch inputs
@@ -66,6 +62,8 @@ export type searchParamsType = {
 
 const HomeSearchPage: React.FC = () => {
   // Combined state to track inputs from all components
+  const [region] = useContext(RegionContext);
+  const regionContextID = region?.region_id || "";
   const { DEFAULT_CHECKIN_BOOKING_DATE, DEFAULT_CHECKOUT_BOOKING_DATE } =
     generateDefaultDates(DEFAULT_BOOKING_NUM_DAYS);
 
@@ -74,7 +72,7 @@ const HomeSearchPage: React.FC = () => {
     query: DEFAULT_QUERY,
     domain: DEFAULT_DOMAIN,
     locale: DEFAULT_LOCALE,
-    selectedRegionId: "",
+    selectedRegionId: regionContextID,
 
     // BookingInfo default inputs
     checkinDate: DEFAULT_CHECKIN_BOOKING_DATE,
@@ -99,22 +97,14 @@ const HomeSearchPage: React.FC = () => {
     newSearchParams: Partial<typeof searchParams>
   ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
 
-  const updateHotelSearchParams = (
-    newSearchParams: Partial<typeof searchParams>
-  ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
-
-  const [region] = useContext(RegionContext);
   useEffect(() => {
-    // update region search params
     if (!region) return;
     setSearchParams((prev) => ({
       ...prev,
       selectedRegionId: region.region_id,
     }));
   }, [region, setSearchParams]);
-  
-  
-  
+
   return (
     <DrawerComponent
       hotelSearchInputs={searchParams}
@@ -133,9 +123,7 @@ const HomeSearchPage: React.FC = () => {
             adultsNumber: searchParams.adultsNumber,
             numDays: searchParams.numDays,
           }}
-          setBookingInfo={(newParams) =>
-            updateBookingInfoParams(newParams)
-          }
+          setBookingInfo={(newParams) => updateBookingInfoParams(newParams)}
         />
         <hr />
         <HotelSelect
@@ -143,7 +131,7 @@ const HomeSearchPage: React.FC = () => {
             checkin_date: searchParams.checkinDate,
             checkout_date: searchParams.checkoutDate,
             adults_number: searchParams.adultsNumber,
-            region_id: searchParams.selectedRegionId ?? "",
+            region_id: regionContextID,
             sort_order: searchParams.sortOrder,
             locale: searchParams.locale,
             domain: searchParams.domain,
@@ -161,5 +149,4 @@ const HomeSearchPage: React.FC = () => {
     </DrawerComponent>
   );
 };
-  export default HomeSearchPage;
-  
+export default HomeSearchPage;
