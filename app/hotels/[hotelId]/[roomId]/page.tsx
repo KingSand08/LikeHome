@@ -31,6 +31,7 @@ const HotelRoomIDPage: React.FC = () => {
   const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
+    console.log("LOG: HotelRoomIDPage - useEffect()");
     const fetchData = async () => {
       setLoading(true);
 
@@ -40,6 +41,7 @@ const HotelRoomIDPage: React.FC = () => {
           roomIdSlug,
           searchParams
         );
+        console.log("LOG: HotelRoomIDPage - HOTEL_ROOM_DATA", HOTEL_ROOM_DATA);
         if (!HOTEL_ROOM_DATA) {
           throw new Error("Hotel room offers not found");
         }

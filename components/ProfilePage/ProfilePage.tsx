@@ -76,9 +76,7 @@ const ProfilePage = ({ user }: { user: User }) => {
           {activeSection === "account" ? (
             <AccountInformation user={user} />
           ) : (
-            <Suspense fallback={<div className="animate-pulse h-96" />}>
-              <Rewards user={user} />
-            </Suspense>
+            <Rewards user={user} />
           )}
         </div>
       </div>

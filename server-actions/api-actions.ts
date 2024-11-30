@@ -12,15 +12,9 @@ import {
   HOTEL_DETAILS_API_URL,
   HOTEL_ROOM_OFFERS_API_URL,
   HOTEL_SEARCH_API_URL,
-  REGION_SEARCH_API_URL,
 } from "@/lib/rapid-hotel-api/constants/ROUTES";
-import {
-  DEFAULT_DOMAIN,
-  DEFAULT_LOCALE,
-} from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
-import { ApiError } from "next/dist/server/api-utils";
 import { ReadonlyURLSearchParams } from "next/navigation";
-import { mock } from "node:test";
+import { cacheHotelDetails, cacheHotelRoomOffer } from "./cache-actions";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 const IS_MOCK = process.env.NODE_ENV === "development";
@@ -114,7 +108,13 @@ async function fetchHotelDetailsImpl(
       );
     }
 
-    return (await response.json()) as APIHotelDetailsJSONFormatted;
+    const hotelDetails =
+      (await response.json()) as APIHotelDetailsJSONFormatted;
+
+    // Cache the hotel details after successful retrieval
+    await cacheHotelDetails(hotelDetails);
+
+    return hotelDetails;
   } catch (error) {
     console.error("Error fetching hotel details:", error);
     return null;
@@ -239,6 +239,7 @@ export async function fetchHotelRoomOffer(
 
   try {
     const HOTEL_ROOMS = await fetchAllHotelRoomOffers(hotelId, searchParams);
+    console.log("LOG: fetchHotelRoomOffer - HOTEL_ROOMS", HOTEL_ROOMS);
 
     if (!HOTEL_ROOMS) {
       throw new Error(
@@ -248,6 +249,10 @@ export async function fetchHotelRoomOffer(
     const ROOM_DATA = HOTEL_ROOMS.hotelRoomOffers.find(
       (offer) => offer.hotel_room_id === roomId
     );
+
+    if (process.env.NODE_ENV === "production" && ROOM_DATA) {
+      await cacheHotelRoomOffer(ROOM_DATA);
+    }
 
     return ROOM_DATA ? ROOM_DATA : null;
   } catch (error) {
