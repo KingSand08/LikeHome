@@ -104,7 +104,7 @@ const BookingIDPage = () => {
         <p className="text-sm mb-4">
           Verified: {reservation.verified ? "Yes" : "No"}
         </p>
-        <p className="text-sm mb-2">Booking ID: {reservation.id}</p>
+        <p className="text-sm mb-2">Booking ID: {reservation.bookingId}</p>
         {hotel?.images?.[0]?.url && (
           <img
             src={hotel.images[0].url}

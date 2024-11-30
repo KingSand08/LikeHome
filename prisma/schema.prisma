@@ -87,6 +87,7 @@ type Country {
 model CachedHotel {
   id              String                 @id @default(auto()) @map("_id") @db.ObjectId
   hotel_id        String                 @unique
+  name            String
   tagline         String
   location        Location
   images          Image[]
