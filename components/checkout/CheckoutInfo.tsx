@@ -97,6 +97,12 @@ export default function CheckoutInfo({
     };
 
     const res = await redeemFreeStay(session?.user.email, PrismaReservationDB);
+    if (!res) {
+      // add toast / sonar alerting user that the reservation failed
+      console.error("Reservation failed");
+      return;
+    }
+
     router.push("/bookings/" + res.id);
   };
 
