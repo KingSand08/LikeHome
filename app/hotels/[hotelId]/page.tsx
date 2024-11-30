@@ -79,7 +79,7 @@ const HotelIDPage: React.FC = () => {
       {/* Hotel Header */}
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold mb-2">{hotelDetails?.name}</h1>
-        <h2 className="text-xl text-white">{hotelDetails?.tagline}</h2>
+        <h2 className="text-xl text-base-content">{hotelDetails?.tagline}</h2>
       </div>
 
       {/* Hotel Location */}
