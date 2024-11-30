@@ -14,7 +14,7 @@ export default function LandingPage() {
     return (
         <div className="w-full flex flex-col min-h-screen bg-white dark:bg-neutral-800">
             {/* Main Content Section */}
-            <div className="flex-grow flex flex-col justify-between pb-8"> 
+            <div className="flex-grow flex flex-col justify-between">
                 <h4 className="text-lg md:text-2xl text-neutral-600 dark:text-neutral-100 font-bold text-center mb-8 pt-12 pb-5">
                     Don't wait- book your stay now at{" "}
                     <span className="px-1 py-0.5 rounded-md bg-gray-100 dark:bg-neutral-800 dark:border-neutral-700 border border-gray-200">
@@ -55,11 +55,13 @@ export default function LandingPage() {
                     <h3 className="text-lg font-semibold text-neutral-700 dark:text-neutral-300 mb-2 ml-20">
                         Explore Your Dream Location Now
                     </h3>
+                    
                     <Link href="/">
                         <button className="bg-black text-white dark:bg-white dark:text-black text-sm px-3 py-3 rounded-md border border-black">
                             Start Your Journey
                         </button>
                     </Link>
+                    
                 </div>
             </footer>
         </div>
