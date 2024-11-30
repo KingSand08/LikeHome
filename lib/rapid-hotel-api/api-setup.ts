@@ -42,22 +42,8 @@ export type FINAL_PAYMENT_INFO = {
   city: string;
   state: string;
   zipCode: string;
-  email: string;
 };
 export type FINAL_STRIPE_TRANSACTION_INFO = {
   dateCreated: string;
   stripePaymentId: string;
-};
-
-export type FINAL_BOOKING_INFO = {
-  email: string;
-  bookingId: string;
-  checkin_date: string;
-  checkout_date: string;
-  adults_number: string;
-  numDays: string;
-  hotel_id: string;
-  room_id: string;
-  payment_info: FINAL_PAYMENT_INFO;
-  transaction_info: FINAL_STRIPE_TRANSACTION_INFO;
 };

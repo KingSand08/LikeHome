@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  APIHotelRoomOffersJSONFormatted,
-  HotelRoomOffer,
-} from "@/app/api/hotels/search/rooms/route";
+import { HotelRoomOffer } from "@/app/api/hotels/search/rooms/route";
 import { BookingDetailsType } from "@/app/hotels/[hotelId]/[roomId]/page";
 import CheckoutConfirmation from "@/components/checkout/CheckoutConfirmation";
 import convertToSubcurrency from "@/lib/convertPrice";
@@ -11,7 +8,14 @@ import { FINAL_PAYMENT_INFO } from "@/lib/rapid-hotel-api/api-setup";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import {
+  PartialReservation,
+  redeemFreeStay,
+} from "@/server-actions/reservation-actions";
+import { getUserRewards } from "@/server-actions/user-actions";
+import { RainbowButton } from "../ui/rainbow-button";
+import { useRouter } from "next/navigation";
 
 // Check for the Stripe public key
 if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
@@ -44,13 +48,63 @@ export default function CheckoutInfo({
     city: "",
     state: "",
     zipCode: "",
-    email: session?.user.email || "",
   });
 
   // Calculate total amount
-  const totalAmount =
-    pricePerDay * numberOfDays + pricePerDay * numberOfDays * 0.1;
+  const pretax = pricePerDay * numberOfDays;
+  const totalAmount = pretax * 1.1;
   const roundedTotalAmount = parseFloat(totalAmount.toFixed(2));
+
+  // Redeem points
+  const [rewardPoints, setRewardPoints] = useState(0);
+
+  useEffect(() => {
+    const checkUserRewardPoints = async () => {
+      if (session?.user.email) {
+        const userRewards = await getUserRewards(session?.user.email);
+        setRewardPoints(userRewards.rewardPoints);
+      }
+    };
+    checkUserRewardPoints();
+  }, [session?.user.email, roundedTotalAmount]);
+
+  const router = useRouter();
+
+  const redeemPoints = async () => {
+    if (!session || typeof session?.user.email !== "string") {
+      // add toast / sonar alerting user that the email couldn't be found
+      console.error("Email not found");
+      return;
+    }
+
+    const PrismaReservationDB: PartialReservation = {
+      userEmail: session?.user.email!,
+      checkin_date: bookingDetails.checkin_date,
+      checkout_date: bookingDetails.checkout_date,
+      adults_number: Number(bookingDetails.adults_number),
+      numDays: Number(bookingDetails.numDays),
+      hotel_id: hotelRoomOffer.hotel_id,
+      room_id: hotelRoomOffer.hotel_room_id,
+      payment_info: {
+        ...userInfo,
+        email: session?.user.email,
+      },
+      transaction_info: {
+        dateCreated: new Date().toISOString(),
+        stripePaymentId: "free stay",
+      },
+      room_cost: pretax,
+    };
+
+    const res = await redeemFreeStay(session?.user.email, PrismaReservationDB);
+    if (!res) {
+      // add toast / sonar alerting user that the reservation failed
+      console.error("Reservation failed");
+      return;
+    }
+
+    router.push("/bookings/" + res.id);
+  };
 
   // Handle input change for user information fields
   const handleUserInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +117,7 @@ export default function CheckoutInfo({
 
   return (
     <div className="flex flex-col">
-      <div className="mb-10 text-white">
+      <div className="mb-10 text-black">
         <h1 className="text-3xl font-bold mb-2">Payment</h1>
         <h2 className="text-2xl">
           <span className="font-bold"> {numberOfDays} days </span> at
@@ -135,14 +189,6 @@ export default function CheckoutInfo({
           onChange={handleUserInfoChange}
           className="w-full p-2 mb-4 rounded-md text-white"
         />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={userInfo.email}
-          onChange={handleUserInfoChange}
-          className="w-full p-2 mb-4 rounded-md text-white"
-        />
       </div>
 
       {/* Stripe Payment Elements */}
@@ -161,6 +207,10 @@ export default function CheckoutInfo({
           paymentInfo={userInfo}
         />
       </Elements>
+
+      {rewardPoints >= pretax && (
+        <RainbowButton onClick={redeemPoints}>Redeem Points</RainbowButton>
+      )}
     </div>
   );
 }

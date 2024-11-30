@@ -24,7 +24,6 @@ model User {
 
 model Reservation {
   id               String          @id @default(auto()) @map("_id") @db.ObjectId
-  bookingId        String          @unique
   userEmail        String
   user             User            @relation(fields: [userEmail], references: [email])
   checkin_date     String
@@ -52,6 +51,36 @@ type PaymentInfo {
 type TransactionInfo {
   dateCreated     String
   stripePaymentId String
+}
+
+model Region {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  region_id   String      @unique
+  type        String
+  regionNames RegionNames
+  coordinates Coordinates
+  country     Country
+
+  // hotels      Hotel[]
+}
+
+type RegionNames {
+  fullName             String
+  shortName            String
+  displayName          String
+  primaryDisplayName   String
+  secondaryDisplayName String
+  lastSearchName       String
+}
+
+type Coordinates {
+  latitude  Float
+  longitude Float
+}
+
+type Country {
+  name   String
+  domain String // Using isoCode2 as domain
 }
 
 // Caching
@@ -89,38 +118,9 @@ type Address {
   countryCode String
 }
 
-type Coordinates {
-  latitude  Float
-  longitude Float
-}
-
 type Image {
   description String
   url         String
   alt         String
   index       Int
-}
-
-// Cached Regions
-model Region {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  region_id   String      @unique
-  type        String
-  regionNames RegionNames
-  coordinates Coordinates
-  country     Country
-}
-
-type RegionNames {
-  fullName             String
-  shortName            String
-  displayName          String
-  primaryDisplayName   String
-  secondaryDisplayName String
-  lastSearchName       String
-}
-
-type Country {
-  name   String
-  domain String
 }

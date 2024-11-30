@@ -7,24 +7,26 @@ export type PartialReservation = Omit<
   "id" | "userId" | "verified"
 >;
 
-export async function createReservation(data: PartialReservation) {
-  const reservation: PartialReservation[] | [] =
-    await prisma.reservation.create({
-      data: {
-        ...data,
-        verified: false,
-      },
-    });
+export async function createReservation(
+  data: PartialReservation
+): Promise<Reservation> {
+  const reservation = await prisma.reservation.create({
+    data: {
+      ...data,
+      verified: false,
+    },
+  });
   console.log("Reservation created successfully:", reservation);
   return reservation;
 }
 
-export async function redeemFreeStay(email: string, bookingId: string) {
-  const updatedReservation = await prisma.reservation.update({
-    where: {
-      bookingId: bookingId,
-    },
+export async function redeemFreeStay(
+  email: string,
+  data: PartialReservation
+): Promise<Reservation> {
+  const updatedReservation = await prisma.reservation.create({
     data: {
+      ...data,
       verified: true,
     },
   });
@@ -36,17 +38,17 @@ export async function redeemFreeStay(email: string, bookingId: string) {
     updatedReservation.room_cost
   );
   console.log("Updated rewards:", updatedRewards);
-  return true;
+  return updatedReservation;
 }
 
 export async function verifyReservation(
   email: string,
-  bookingId: string,
+  id: string,
   stripePaymentId: string
 ) {
   const updatedReservation = await prisma.reservation.update({
     where: {
-      bookingId: bookingId,
+      id,
     },
     data: {
       transaction_info: {
@@ -67,11 +69,10 @@ export async function verifyReservation(
   return true;
 }
 
-// TODO: @ryanhtang use this function in a cancel reservation button that charges a constant fee
-export async function cancelReservation(email: string, bookingId: string) {
+export async function cancelReservation(email: string, id: string) {
   const deletedReservation = await prisma.reservation.delete({
     where: {
-      bookingId: bookingId,
+      id,
     },
   });
   console.log("Deleted reservation:", deletedReservation);
@@ -96,14 +97,11 @@ export async function retrieveAllReservations(email: string) {
   return reservations;
 }
 
-export async function retrieveSpecificReservation(
-  bookingId: string,
-  email: string
-) {
+export async function retrieveSpecificReservation(id: string, email: string) {
   try {
     const reservation = await prisma.reservation.findUnique({
       where: {
-        bookingId: bookingId, // Filter by bookingId
+        id,
       },
     });
 

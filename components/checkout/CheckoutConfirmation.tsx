@@ -9,11 +9,7 @@ import {
 import convertToSubcurrency from "@/lib/convertPrice";
 import { HotelRoomOffer } from "@/app/api/hotels/search/rooms/route";
 import { BookingDetailsType } from "@/app/hotels/[hotelId]/[roomId]/page";
-import {
-  FINAL_BOOKING_INFO,
-  FINAL_PAYMENT_INFO,
-} from "@/lib/rapid-hotel-api/api-setup";
-import { generateBookingId } from "@/lib/BookingFunctions";
+import { FINAL_PAYMENT_INFO } from "@/lib/rapid-hotel-api/api-setup";
 import {
   createReservation,
   PartialReservation,
@@ -68,10 +64,14 @@ const CheckoutConfirmation = ({
       return;
     }
 
+    if (!session || typeof session.user.email !== "string") {
+      console.error("Email not found");
+      return;
+    }
+
     // Create reservation in DB
     const PrismaReservationDB: PartialReservation = {
       userEmail: session?.user.email!,
-      bookingId: generateBookingId(),
       checkin_date: bookingDetails.checkin_date,
       checkout_date: bookingDetails.checkout_date,
       adults_number: Number(bookingDetails.adults_number),
@@ -79,13 +79,8 @@ const CheckoutConfirmation = ({
       hotel_id: hotelRoomOffer.hotel_id,
       room_id: hotelRoomOffer.hotel_room_id,
       payment_info: {
-        firstName: paymentInfo.firstName,
-        lastName: paymentInfo.lastName,
-        billingAddress: paymentInfo.billingAddress,
-        city: paymentInfo.city,
-        state: paymentInfo.state,
-        zipCode: paymentInfo.zipCode,
-        email: paymentInfo.email,
+        ...paymentInfo,
+        email: session.user.email,
       },
       transaction_info: {
         dateCreated: new Date().toISOString(),
@@ -95,12 +90,12 @@ const CheckoutConfirmation = ({
     };
 
     try {
+      console.log("Create a reservation....");
+      const booking = await createReservation(PrismaReservationDB);
+
       const currentUrl =
         typeof window !== "undefined" ? window.location.origin : "";
-      const returnUrl = `${currentUrl}/payment?bookingId=${PrismaReservationDB.bookingId}`;
-
-      console.log("Create a reservation....");
-      await createReservation(PrismaReservationDB);
+      const returnUrl = `${currentUrl}/payment?bookingId=${booking.id}`;
 
       const { error } = await stripe.confirmPayment({
         elements,

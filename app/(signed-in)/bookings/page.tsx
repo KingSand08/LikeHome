@@ -11,7 +11,6 @@ import {
 import Link from "next/link";
 import HTMLSafeDescription from "@/components/booking/HTMLDescription";
 
-
 type CachedData = {
   hotels: Record<string, CachedHotel>;
   roomOffers: Record<string, CachedHotelRoomOffer>;
@@ -93,7 +92,7 @@ const BookingsPage = () => {
 
           return (
             <div
-              key={reservation.bookingId}
+              key={reservation.id}
               className="card bg-base-100 shadow-lg p-6 rounded-lg"
             >
               <h2 className="text-xl font-semibold mb-2">
@@ -120,9 +119,7 @@ const BookingsPage = () => {
                   ${reservation.room_cost.toFixed(2)}
                 </span>
               </p>
-              <p className="text-sm mb-2">
-                Booking ID: {reservation.bookingId}
-              </p>
+              <p className="text-sm mb-2">Booking ID: {reservation.id}</p>
               {hotel?.images?.[0]?.url && (
                 <img
                   src={hotel.images[0].url}
@@ -131,7 +128,7 @@ const BookingsPage = () => {
                 />
               )}
               <Link
-                href={`/bookings/${reservation.bookingId}`}
+                href={`/bookings/${reservation.id}`}
                 className="btn btn-primary w-full"
               >
                 View Booking Details
