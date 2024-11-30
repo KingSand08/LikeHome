@@ -97,14 +97,11 @@ export async function retrieveAllReservations(email: string) {
   return reservations;
 }
 
-export async function retrieveSpecificReservation(
-  bookingId: string,
-  email: string
-) {
+export async function retrieveSpecificReservation(id: string, email: string) {
   try {
     const reservation = await prisma.reservation.findUnique({
       where: {
-        bookingId: bookingId, // Filter by bookingId
+        id,
       },
     });
 
