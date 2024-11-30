@@ -7,75 +7,51 @@ import prisma from "@/prisma/client";
 export async function cacheHotelDetails(
   APIHotelDetails: APIHotelDetailsJSONFormatted
 ) {
-  const { hotel_id, tagline, location, images } = APIHotelDetails;
-
-  const transformedLocation = {
-    address: {
-      addressLine: location.address.addressLine,
-      city: location.address.city,
-      province: location.address.province,
-      countryCode: location.address.countryCode,
-    },
-    coordinates: {
-      latitude: location.coordinates.latitude,
-      longitude: location.coordinates.longitude,
-    },
-  };
-
-  const transformedImages = images.map((image) => ({
-    description: image.description,
-    url: image.url,
-    alt: image.alt,
-    index: image.index,
-  }));
-
+  const data = APIHotelDetails;
   await prisma.cachedHotel.upsert({
-    where: { hotel_id },
+    where: { hotel_id: data.hotel_id },
     create: {
-      hotel_id,
-      tagline,
-      location: transformedLocation,
-      images: transformedImages,
+      ...data,
+      location: {
+        ...data.location,
+        coordinates: {
+          lat: `${data.location.coordinates.latitude}`,
+          long: `${data.location.coordinates.longitude}`,
+        },
+      },
     },
     update: {
-      tagline,
-      location: transformedLocation,
-      images: transformedImages,
+      tagline: data.tagline,
+      location: {
+        ...data.location,
+        coordinates: {
+          lat: `${data.location.coordinates.latitude}`,
+          long: `${data.location.coordinates.longitude}`,
+        },
+      },
     },
   });
 
-  console.log(`Hotel with ID ${hotel_id} cached successfully.`);
+  console.log(`Hotel with ID ${data.hotel_id} cached successfully.`);
 }
 
 export async function cacheHotelRoomOffer(APIHotelRoomOffer: HotelRoomOffer) {
-  const { hotel_id, hotel_room_id, description, name, galleryImages } =
-    APIHotelRoomOffer;
-
-  const transformedGalleryImages = galleryImages.map((image) => ({
-    description: image.description,
-    url: image.url,
-    alt: image.alt,
-    index: image.index,
-  }));
+  const data = APIHotelRoomOffer;
 
   await prisma.cachedHotelRoomOffer.upsert({
-    where: { hotel_room_id },
+    where: { hotel_room_id: data.hotel_room_id },
     create: {
-      hotel_id,
-      hotel_room_id,
-      description,
-      name,
-      galleryImages: transformedGalleryImages,
+      ...data,
     },
     update: {
-      description,
-      name,
-      galleryImages: transformedGalleryImages,
+      description: data.description,
+      name: data.name,
+      galleryImages: data.galleryImages,
     },
   });
 
   console.log(
-    `HotelID ${hotel_id} - Hotel room offer with ID ${hotel_room_id} cached successfully.`
+    `HotelID ${data.hotel_id} - Hotel room offer with ID ${data.hotel_room_id} cached successfully.`
   );
 }
 
