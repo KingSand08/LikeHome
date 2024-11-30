@@ -4,7 +4,7 @@ import { redeemRewards, updateUserRewards } from "./user-actions";
 
 export type PartialReservation = Omit<
   Reservation,
-  "bookingId" | "userId" | "verified"
+  "id" | "userId" | "verified"
 >;
 
 export async function createReservation(

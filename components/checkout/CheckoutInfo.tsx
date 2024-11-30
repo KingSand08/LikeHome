@@ -53,9 +53,8 @@ export default function CheckoutInfo({
   });
 
   // Calculate total amount
-
-  const totalAmount =
-    pricePerDay * numberOfDays + pricePerDay * numberOfDays * 0.1;
+  const pretax = pricePerDay * numberOfDays;
+  const totalAmount = pretax * 1.1;
   const roundedTotalAmount = parseFloat(totalAmount.toFixed(2));
 
   // Redeem points
@@ -65,7 +64,7 @@ export default function CheckoutInfo({
     const checkUserRewardPoints = async () => {
       if (session?.user.email) {
         const userRewards = await getUserRewards(session?.user.email);
-        setHasEnoughRewards(userRewards.rewardPoints >= roundedTotalAmount);
+        setHasEnoughRewards(userRewards.rewardPoints >= pretax);
       }
     };
     checkUserRewardPoints();
@@ -94,7 +93,7 @@ export default function CheckoutInfo({
         dateCreated: new Date().toISOString(),
         stripePaymentId: "free stay",
       },
-      room_cost: 0, // set to free such that, on cancelation the user isn't charge.
+      room_cost: pretax,
     };
 
     redeemFreeStay(session?.user.email, PrismaReservationDB);

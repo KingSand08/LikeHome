@@ -98,10 +98,7 @@ const CheckoutConfirmation = ({
 
       const currentUrl =
         typeof window !== "undefined" ? window.location.origin : "";
-      const returnUrl = `${currentUrl}/payment?bookingId=${booking.bookingId}`;
-
-      console.log("Create a reservation....");
-      await createReservation(PrismaReservationDB);
+      const returnUrl = `${currentUrl}/payment?bookingId=${booking.id}`;
 
       const { error } = await stripe.confirmPayment({
         elements,
