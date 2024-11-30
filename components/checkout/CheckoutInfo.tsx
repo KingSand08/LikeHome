@@ -58,13 +58,13 @@ export default function CheckoutInfo({
   const roundedTotalAmount = parseFloat(totalAmount.toFixed(2));
 
   // Redeem points
-  const [hasEnoughRewards, setHasEnoughRewards] = useState(false);
+  const [rewardPoints, setRewardPoints] = useState(0);
 
   useEffect(() => {
     const checkUserRewardPoints = async () => {
       if (session?.user.email) {
         const userRewards = await getUserRewards(session?.user.email);
-        setHasEnoughRewards(userRewards.rewardPoints >= pretax);
+        setRewardPoints(userRewards.rewardPoints);
       }
     };
     checkUserRewardPoints();
@@ -201,7 +201,7 @@ export default function CheckoutInfo({
         />
       </Elements>
 
-      {hasEnoughRewards && (
+      {rewardPoints >= pretax && (
         <RainbowButton onClick={redeemPoints}>Redeem Points</RainbowButton>
       )}
     </div>

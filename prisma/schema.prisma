@@ -74,8 +74,8 @@ type RegionNames {
 }
 
 type Coordinates {
-  lat  String
-  long String
+  latitude  Float
+  longitude Float
 }
 
 type Country {
