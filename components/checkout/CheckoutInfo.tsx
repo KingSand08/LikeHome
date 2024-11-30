@@ -184,14 +184,6 @@ export default function CheckoutInfo({
         />
       </div>
 
-      {/* Add Button here on click --> checks if user has enough points to redeem
-          If they do have enough points to redeem, user server action to update their points and set roundedTotalAmount == 0;
-          else display not enough points (could display neededPoints if wanted which is totalPointsNeeded - rewardPoints) */}
-
-      {hasEnoughRewards && (
-        <RainbowButton onClick={redeemPoints}>Redeem Points</RainbowButton>
-      )}
-
       {/* Stripe Payment Elements */}
       <Elements
         stripe={stripePromise}
@@ -208,6 +200,10 @@ export default function CheckoutInfo({
           paymentInfo={userInfo}
         />
       </Elements>
+
+      {hasEnoughRewards && (
+        <RainbowButton onClick={redeemPoints}>Redeem Points</RainbowButton>
+      )}
     </div>
   );
 }
