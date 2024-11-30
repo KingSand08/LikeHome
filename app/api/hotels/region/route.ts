@@ -9,6 +9,8 @@ import {
   API_REGION_SEARCH_URL,
   regionSearchParamsSchema,
 } from "@/lib/rapid-hotel-api/zod/region-search-schemas";
+import prisma from "@/prisma/client";
+import { Region } from "@prisma/client";
 
 function validateSearchParams(
   searchParams: URLSearchParams
@@ -40,6 +42,28 @@ function validateSearchParams(
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
+  if (process.env.NODE_ENV === "development") {
+    const query = searchParams.get("query") ?? "Unknown";
+    const mockRegionDetailsData: Omit<Region, "id">[] = Array(10)
+      .fill(0)
+      .map((_, index) => ({
+        region_id: `${index}`,
+        type: `${query}`,
+        regionNames: {
+          shortName: `${query} Short Name ${index}`,
+          fullName: `${query} Full Name ${index}`,
+          displayName: `${query} ${index}`,
+          primaryDisplayName: `${query} Primary Display Name ${index}`,
+          secondaryDisplayName: `${query} Secondary Display Name ${index}`,
+          lastSearchName: `${query} Last Search Name ${index}`,
+        },
+        coordinates: { latitude: 0, longitude: 0 },
+        country: { name: "USA", domain: "US" },
+      }));
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return NextResponse.json(mockRegionDetailsData, { status: 200 });
+  }
   const { query, endpoint, error } = validateSearchParams(searchParams);
   if (error) {
     return NextResponse.json(
@@ -63,7 +87,7 @@ export async function GET(req: NextRequest) {
     }
 
     const JSON_DATA: APIRegionSearchResponseJSON = await response.json();
-    const PAYLOAD: APIRegion[] =
+    const PAYLOAD: Omit<Region, "id">[] =
       JSON_DATA.data?.map((regionItem) => ({
         region_id: regionItem.gaiaId ?? "",
         type: regionItem.type ?? "Unknown",
@@ -79,8 +103,8 @@ export async function GET(req: NextRequest) {
         },
         coordinates: {
           // Geocode
-          lat: regionItem.coordinates?.lat ?? "0",
-          long: regionItem.coordinates?.long ?? "0",
+          latitude: Number(regionItem.coordinates?.lat) ?? 0,
+          longitude: Number(regionItem.coordinates?.long) ?? 0,
         },
         country: {
           name: regionItem.hierarchyInfo?.country?.name ?? "Unknown",
@@ -88,6 +112,8 @@ export async function GET(req: NextRequest) {
         },
       })) ?? [];
 
+    // update the cached regions before returning the response
+    mongoDBCreateMany(PAYLOAD);
     return NextResponse.json(PAYLOAD, { status: 200 });
   } catch (error) {
     return NextResponse.json(
@@ -99,24 +125,15 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export type APIRegion = {
-  region_id: string;
-  type: string;
-  regionNames: {
-    fullName: string;
-    shortName: string;
-    displayName: string; // Would recommend this as the name
-    primaryDisplayName: string;
-    secondaryDisplayName: string;
-    lastSearchName: string;
-  };
-  coordinates: {
-    // Geocode
-    lat: string;
-    long: string;
-  };
-  country: {
-    name: string;
-    domain: string; // Using isoCode2 as domain.
-  };
-};
+function mongoDBCreateMany(data: Omit<Region, "id">[]) {
+  // remove duplicates by region_id
+  const uniqueData = data.filter(
+    (value, index, self) =>
+      self.findIndex((t) => t.region_id === value.region_id) === index
+  );
+
+  // create many
+  prisma.region.createMany({
+    data: uniqueData,
+  });
+}

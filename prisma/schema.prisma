@@ -58,6 +58,7 @@ type TransactionInfo {
 model CachedHotel {
   id              String                 @id @default(auto()) @map("_id") @db.ObjectId
   hotel_id        String                 @unique
+  name            String
   tagline         String
   location        Location
   images          Image[]
@@ -80,12 +81,14 @@ type Location {
   address     Address
   coordinates Coordinates
 }
+
 type Address {
   addressLine String
   city        String
   province    String
   countryCode String
 }
+
 type Coordinates {
   latitude  Float
   longitude Float
@@ -96,4 +99,28 @@ type Image {
   url         String
   alt         String
   index       Int
+}
+
+// Cached Regions
+model Region {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  region_id   String      @unique
+  type        String
+  regionNames RegionNames
+  coordinates Coordinates
+  country     Country
+}
+
+type RegionNames {
+  fullName             String
+  shortName            String
+  displayName          String
+  primaryDisplayName   String
+  secondaryDisplayName String
+  lastSearchName       String
+}
+
+type Country {
+  name   String
+  domain String
 }
