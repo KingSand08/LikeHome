@@ -124,6 +124,10 @@ export async function cacheHotelRoomOffer(APIHotelRoomOffer: HotelRoomOffer) {
   const { hotel_id, hotel_room_id, description, name, galleryImages } =
     APIHotelRoomOffer;
 
+  if (!hotel_id || hotel_id === "" || hotel_room_id === "" || !hotel_room_id) {
+    return;
+  }
+
   const transformedGalleryImages = galleryImages.map((image) => ({
     description: image.description,
     url: image.url,
