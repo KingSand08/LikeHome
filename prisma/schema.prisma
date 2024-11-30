@@ -52,3 +52,74 @@ type TransactionInfo {
   dateCreated     String
   stripePaymentId String
 }
+
+model Region {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  region_id   String      @unique
+  type        String
+  regionNames RegionNames
+  coordinates Coordinates
+  country     Country
+
+  // hotels      Hotel[]
+}
+
+type RegionNames {
+  fullName             String
+  shortName            String
+  displayName          String
+  primaryDisplayName   String
+  secondaryDisplayName String
+  lastSearchName       String
+}
+
+type Coordinates {
+  lat  String
+  long String
+}
+
+type Country {
+  name   String
+  domain String // Using isoCode2 as domain
+}
+
+// Caching
+model CachedHotel {
+  id              String                 @id @default(auto()) @map("_id") @db.ObjectId
+  hotel_id        String                 @unique
+  tagline         String
+  location        Location
+  images          Image[]
+  hotelRoomOffers CachedHotelRoomOffer[]
+}
+
+model CachedHotelRoomOffer {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  hotel_id      String
+  hotel         CachedHotel @relation(fields: [hotel_id], references: [hotel_id])
+  hotel_room_id String      @unique
+  description   String
+  name          String
+  galleryImages Image[]
+
+  @@index([hotel_id])
+}
+
+type Location {
+  address     Address
+  coordinates Coordinates
+}
+
+type Address {
+  addressLine String
+  city        String
+  province    String
+  countryCode String
+}
+
+type Image {
+  description String
+  url         String
+  alt         String
+  index       Int
+}

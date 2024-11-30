@@ -16,87 +16,27 @@ import {
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import { REGION_SEARCH_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
-import { APIRegion } from "@/app/api/hotels/region/route";
 import { useState, useContext } from "react";
 import { RegionContext } from "../providers/RegionProvider";
 import { CommandEmpty } from "cmdk";
 import { usePathname, useRouter } from "next/navigation";
-
-// TODO: Replace with a DB call to get the cached regions
-const cachedLocations: APIRegion[] = [
-  {
-    region_id: "602703",
-    type: "CITY",
-    regionNames: {
-      fullName: "San Jose, California, United States",
-      shortName: "San Jose",
-      displayName: "San Jose, California, United States",
-      primaryDisplayName: "San Jose",
-      secondaryDisplayName: "California, United States",
-      lastSearchName: "San Jose, California, United States",
-    },
-    coordinates: {
-      lat: "37.3354",
-      long: "-121.891907",
-    },
-    country: {
-      name: "United States",
-      domain: "US",
-    },
-  },
-  {
-    region_id: "4409939",
-    type: "AIRPORT",
-    regionNames: {
-      fullName:
-        "San Jose (SJC - Norman Y. Mineta San Jose Intl.), California, United States",
-      shortName: "SJC",
-      displayName: "San Jose Airport",
-      primaryDisplayName: "Norman Y. Mineta San Jose Intl.",
-      secondaryDisplayName: "San Jose, California, United States",
-      lastSearchName: "San Jose (SJC - Norman Y. Mineta San Jose Intl.)",
-    },
-    coordinates: {
-      lat: "37.369739",
-      long: "-121.929225",
-    },
-    country: {
-      name: "United States",
-      domain: "US",
-    },
-  },
-  {
-    region_id: "3177",
-    type: "CITY",
-    regionNames: {
-      fullName: "San José, San José Province, Costa Rica",
-      shortName: "San José",
-      displayName: "San José, Costa Rica",
-      primaryDisplayName: "San José",
-      secondaryDisplayName: "San José Province, Costa Rica",
-      lastSearchName: "San José, Costa Rica",
-    },
-    coordinates: {
-      lat: "9.93286",
-      long: "-84.079559",
-    },
-    country: {
-      name: "Costa Rica",
-      domain: "CR",
-    },
-  },
-];
+import { Region } from "@prisma/client";
+import { getCachedRegions } from "@/server-actions/region-actions";
 
 export default function LocationCombobox() {
-  const [value, setValue] = useContext(RegionContext);
   const [open, setOpen] = useState(false);
-  const [ops, setOps] = useState(cachedLocations);
-  const [query, setQuery] = useState("");
+  const [ops, setOps] = useState<Omit<Region, "id">[]>([]);
+
+  React.useEffect(() => {
+    getCachedRegions().then((regions) => setOps(regions));
+  }, []);
+
   const pathname = usePathname();
   const router = useRouter();
-  const findRegion = () => {
-    handleFindRegion(query, ops, setOps);
-  };
+
+  const [value, setValue] = useContext(RegionContext);
+  const [query, setQuery] = useState("");
+
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const handleBlur = (e: React.FocusEvent) => {
     // Check if focus is still within the dropdown
@@ -104,7 +44,7 @@ export default function LocationCombobox() {
       setOpen(false);
     }
   };
-  const handleSelection = (currentValue: string, loc: APIRegion) => {
+  const handleSelection = (currentValue: string, loc: Omit<Region, "id">) => {
     const isDeselect = currentValue === value?.name;
     if (isDeselect) {
       setValue(undefined);
@@ -135,7 +75,7 @@ export default function LocationCombobox() {
         placeholder={value?.name ?? "Search locations..."}
         onValueChange={setQuery}
         onKeyDown={(e) => {
-          if (e.key === "Enter") findRegion();
+          if (e.key === "Enter") handleFindRegion(query, setOps);
           else if (e.key === "Escape") setOpen(false);
         }}
       />
@@ -146,9 +86,9 @@ export default function LocationCombobox() {
             Press Enter to search for more locations.
           </CommandEmpty>
           <CommandGroup>
-            {ops.map((loc) => (
+            {ops.map((loc, index) => (
               <CommandItem
-                key={loc.region_id}
+                key={index}
                 value={loc.regionNames.displayName}
                 onSelect={(currentValue) => handleSelection(currentValue, loc)}
               >
@@ -172,8 +112,7 @@ export default function LocationCombobox() {
 
 const handleFindRegion = async (
   query: string,
-  ops: APIRegion[],
-  setOps: React.Dispatch<APIRegion[]>,
+  setOps: React.Dispatch<React.SetStateAction<Omit<Region, "id">[]>>,
   domain?: string,
   locale?: string
 ) => {
@@ -188,6 +127,12 @@ const handleFindRegion = async (
   );
   if (!response.ok) alert(`Failed to fetch regions.`);
 
-  const REGION_DATA: APIRegion[] = await response.json();
-  setOps([...REGION_DATA, ...ops]);
+  const regionData: Omit<Region, "id">[] = await response.json();
+  // remove duplicates by region_id
+  setOps((prev: Omit<Region, "id">[]) =>
+    [...prev, ...regionData].filter(
+      (value, index, self) =>
+        self.findIndex((t) => t.region_id === value.region_id) === index
+    )
+  );
 };
