@@ -2,6 +2,7 @@
 import { Reservation } from "@prisma/client";
 import { redeemRewards, updateUserRewards } from "./user-actions";
 import { isWithinCancellationChargeThreshold } from "@/lib/DateFunctions";
+import { stripe } from "@/lib/stripe";
 
 export type PartialReservation = Omit<
   Reservation,
@@ -126,37 +127,63 @@ export async function updateSpecificReservation(
   }
 }
 
-const DEFAULT_CANCELLATION_PENALITY_CHARGE = 0.8 as const; // 20%
+const DEFAULT_CANCELLATION_PENALITY_CHARGE = 0.8 as const; // 20% penality
 
 export async function cancelReservation(email: string, id: string) {
-  const deletedReservation: Reservation = await prisma.reservation.delete({
-    where: {
-      id,
-    },
-  });
-  console.log("Deleted reservation:", deletedReservation);
-  const updatedRewards = await updateUserRewards(
-    email,
-    -deletedReservation.room_cost
-  );
+  try {
+    const targetReservation: Reservation | null =
+      await prisma.reservation.findUnique({
+        where: { id },
+      });
 
-  let refundedAmount = deletedReservation.room_cost
+    if (!targetReservation) {
+      throw new Error(`Reservation with ID ${id} not found.`);
+    }
 
-  if (isWithinCancellationChargeThreshold(deletedReservation.checkin_date)) {
-    refundedAmount = refundedAmount * DEFAULT_CANCELLATION_PENALITY_CHARGE;
+    let refundedAmount = targetReservation.room_cost;
+
+    if (isWithinCancellationChargeThreshold(targetReservation.checkin_date)) {
+      refundedAmount *= DEFAULT_CANCELLATION_PENALITY_CHARGE;
+    }
+
+    const refundedReservation = await refundSpecificReservation(
+      targetReservation.transaction_info.stripePaymentId,
+      refundedAmount
+    );
+    console.log("Refunded reservation:", refundedReservation);
+
+    const deletedReservation: Reservation = await prisma.reservation.delete({
+      where: { id },
+    });
+    console.log("Deleted reservation:", deletedReservation);
+
+    const updatedRewards = await updateUserRewards(
+      email,
+      -deletedReservation.room_cost
+    );
+    console.log("Updated rewards:", updatedRewards);
+
+    return true;
+  } catch (error) {
+    console.error("Failed to cancel reservation:", error);
   }
-  const applyCancellationCharge = await refundSpecificReservation(
-    deletedReservation.transaction_info.stripePaymentId,
-    refundedAmount
-  );
-  console.log("Updated rewards:", updatedRewards);
-  return true;
 }
-
 
 async function refundSpecificReservation(
   stripePaymentId: string,
-  amount: number,
+  amount: number
 ) {
+  const amountInCents = Math.round(amount * 100);
 
+  try {
+    const refund = await stripe.refunds.create({
+      payment_intent: stripePaymentId,
+      amount: amountInCents,
+    });
+
+    return refund;
+  } catch (error) {
+    console.error("Failed to issue refund:", error);
+    throw error;
+  }
 }

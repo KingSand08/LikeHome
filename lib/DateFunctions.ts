@@ -1,6 +1,7 @@
 import {
   DEFAULT_BOOKING_NUM_DAYS,
   DEFAULT_DAYS_FROM_TODAY_OFFSET,
+  DEFAULT_DAYS_THRESHOLD_FOR_PENALITY_CHARGE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import { parseISO, differenceInDays } from "date-fns";
 
@@ -50,7 +51,7 @@ export const calculateNumDays = (
 
 export function isWithinCancellationChargeThreshold(
   checkinDate: string,
-  daysThreshold = 3
+  daysThreshold = DEFAULT_DAYS_THRESHOLD_FOR_PENALITY_CHARGE
 ): boolean {
   try {
     const parsedCheckinDate = parseISO(checkinDate);
@@ -63,4 +64,14 @@ export function isWithinCancellationChargeThreshold(
     console.error("Error checking date threshold:", checkinDate);
     return false;
   }
+}
+
+export function calculateDaysUntilPenalty(
+  checkinDate: Date | string,
+  daysThreshold = DEFAULT_DAYS_THRESHOLD_FOR_PENALITY_CHARGE
+): number {
+  const today = new Date();
+  const checkin = new Date(checkinDate);
+
+  return differenceInDays(checkin, today) - daysThreshold;
 }

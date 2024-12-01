@@ -4,11 +4,16 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Reservation } from "@prisma/client";
 import { cancelReservation } from "@/server-actions/reservation-actions";
-import { isWithinCancellationChargeThreshold } from "@/lib/DateFunctions";
+import {
+  calculateDaysUntilPenalty,
+  isWithinCancellationChargeThreshold,
+} from "@/lib/DateFunctions";
 
 type DeleteReservationProps = {
   reservation: Reservation;
 };
+
+export const DEFAULT_DAYS_THRESHOLD_FOR_PENALTY_CHARGE: number = 3 as const;
 
 const DeleteReservation: React.FC<DeleteReservationProps> = ({
   reservation,
@@ -34,6 +39,11 @@ const DeleteReservation: React.FC<DeleteReservationProps> = ({
     reservation.checkin_date
   );
 
+  const daysUntilPenalty = calculateDaysUntilPenalty(
+    reservation.checkin_date,
+    DEFAULT_DAYS_THRESHOLD_FOR_PENALTY_CHARGE
+  );
+
   return (
     <div>
       <button className="btn btn-danger" onClick={() => setIsPopupOpen(true)}>
@@ -46,11 +56,23 @@ const DeleteReservation: React.FC<DeleteReservationProps> = ({
             <h2 className="font-bold text-xl mb-4">Confirm Cancellation</h2>
             <p className="mb-4">
               Are you sure you want to cancel this reservation?
-              {penaltyChargeApplies && (
+              {penaltyChargeApplies ? (
                 <span className="text-red-500">
                   {" "}
-                  Canceling this reservation will result in a penalty charge of
-                  ${reservation.room_cost.toFixed(2)}.
+                  Canceling this reservation will result in a 20% penalty
+                  charge.
+                </span>
+              ) : daysUntilPenalty > 0 ? (
+                <span className="text-green-500">
+                  {" "}
+                  You can cancel this reservation without penalty for the next{" "}
+                  {daysUntilPenalty} day
+                  {daysUntilPenalty !== 1 ? "s" : ""}.
+                </span>
+              ) : (
+                <span className="text-green-500">
+                  {" "}
+                  You can cancel this reservation without penalty.
                 </span>
               )}
             </p>
@@ -60,14 +82,14 @@ const DeleteReservation: React.FC<DeleteReservationProps> = ({
                 onClick={() => setIsPopupOpen(false)}
                 disabled={isLoading}
               >
-                Cancel
+                No
               </button>
               <button
                 className="btn btn-primary"
                 onClick={handleDeleteClick}
                 disabled={isLoading}
               >
-                {isLoading ? "Processing..." : "Confirm"}
+                {isLoading ? "Processing..." : "Yes"}
               </button>
             </div>
           </div>
