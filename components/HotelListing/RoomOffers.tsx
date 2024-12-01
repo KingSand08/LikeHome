@@ -9,14 +9,14 @@ const RoomOffers: React.FC<{ hotelRooms: APIHotelRoomOffersJSONFormatted }> = ({
                 <h2 className="text-2xl font-semibold mb-4 text-white">Room Offers</h2>
                 {hotelRooms ? (
                     <div>
-                        <p className="text-slate-200 mb-6">
+                        <p className="text-slate-200 mb-6 font-bold">
                             Base Price Per Night:{" "}
                             <span className="font-semibold">
                                 {hotelRooms.basePricePerNight}
                             </span>
                         </p>
                         <div>
-                            <h3 className="text-xl font-semibold mb-4">Room List</h3>
+                            <h3 className="text-xl text-slate-200 font-semibold mb-4">Room List</h3>
                             <HotelRoomList rooms={hotelRooms.hotelRoomOffers} />
                         </div>
                     </div>

@@ -1,4 +1,5 @@
 "use client";
+
 import { HotelRoomOffer } from "@/app/api/hotels/search/rooms/route";
 import { calculateNumDays } from "@/lib/DateFunctions";
 import { CUSTOM_HOTEL_ROOM_SLUG_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
@@ -41,37 +42,17 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
   ).replace("{roomId}", room.hotel_room_id);
 
   return (
-    <div className="border rounded-lg p-4 shadow-md mb-4">
-      <h2 className="text-xl font-semibold mb-2 text-black">{room.name}</h2>
-
-      {/* Render the HTML description safely */}
-      <div
-        className="text-gray-700 mb-4"
-        dangerouslySetInnerHTML={{ __html: room.description }}
-      ></div>
-
-      {/* Price Per Night Section */}
-      {room.pricePerNight.amount > 0 ? (
-        <div className="text-lg font-medium text-black mb-4">
-          Price per night:{" "}
-          {`${room.pricePerNight.currency.symbol}
-          ${room.pricePerNight.amount} ${room.pricePerNight.currency.code}`}
-        </div>
-      ) : (
-        <div className="text-lg font-medium text-black mb-4">
-          Price per night: Unavailable
-        </div>
-      )}
-
-      {/* Room ID */}
-      <div className="text-sm text-gray-600 mb-4">
-        Room ID: {room.hotel_room_id}
+    <div className="flex flex-col gap-6 bg-base-200 rounded-box p-8 border border-primary shadow">
+      <div className="text-center text-base-content">
+        <h2 className="text-2xl font-semibold">{room.name}</h2>
+        <p className="text-lg text-base-content" dangerouslySetInnerHTML={{ __html: room.description }}>
+        </p>
       </div>
 
-      {/* Gallery Images */}
-      <div className="grid grid-cols-2 gap-2 mb-4">
-        {room.galleryImages.map((image) => (
-          <div key={image.index} className="flex flex-col items-center">
+      {/* Room Images */}
+      <div className="carousel carousel-center bg-neutral rounded-box space-x-4 h-96 p-4">
+      {room.galleryImages.map((image) => (
+          <div key={image.index} className="carousel-item">
             <Image
               src={image.url}
               alt={image.description}
@@ -79,29 +60,39 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
               height={500}
               className="w-full h-auto rounded-lg"
             />
-            <p className="text-sm text-gray-500 mt-1">{image.description}</p>
           </div>
         ))}
       </div>
 
-      {/* Centered Custom Link and Reserve Now Button */}
+
+      {/* Pricing Section */}
+      {room.pricePerNight.amount > 0 ? (
+        <div className="text-center">
+          <p className="text-3xl font-bold text-primary">
+            {`${room.pricePerNight.currency.symbol}${(
+              room.pricePerNight.amount * numDays
+            ).toFixed(2)}`}
+          </p>
+          <p className="text-sm text-gray-400">
+            Total for {numDays} {numDays === 1 ? "night" : "nights"}
+          </p>
+        </div>
+      ) : (
+        <div className="text-center">
+          <p className="text-3xl font-bold text-gray-500">Unavailable</p>
+        </div>
+      )}
+
+      {/* Reserve Button */}
       <div className="text-center">
         {room.pricePerNight.amount > 0 ? (
           <Link href={`${CustomHotelRoomLink}?${urlParams}`}>
-            <div
-              className="inline-block bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-700 transition-colors"
-              aria-label="Reserve Now"
-            >
-              Reserve Now
-            </div>
+            <button className="btn btn-primary">Reserve Now</button>
           </Link>
         ) : (
-          <div
-            className="inline-block bg-gray-600 text-white font-semibold py-2 px-4 rounded transition-colors disabled hover:cursor-not-allowed"
-            aria-label="Unavailable"
-          >
+          <button className="btn btn-secondary" disabled>
             Unavailable
-          </div>
+          </button>
         )}
       </div>
     </div>

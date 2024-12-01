@@ -9,6 +9,7 @@ import {
   retrieveCacheHotelRoomOffer,
 } from "@/server-actions/cache-actions";
 import Link from "next/link";
+import Image from "next/image";
 import HTMLSafeDescription from "@/components/booking/HTMLDescription";
 
 type CachedData = {
@@ -93,12 +94,28 @@ const BookingsPage = () => {
           return (
             <div
               key={reservation.id}
-              className="card bg-base-100 shadow-lg p-6 rounded-lg"
+              className="card bg-base-100 shadow-lg p-6 rounded-lg text-center"
             >
-              <h2 className="text-xl font-semibold mb-2">
+              <h2 className="text-xl font-bold mb-2 text-primary">
                 {hotel?.tagline || "Hotel details not available"}
               </h2>
-              <p className="text-sm text-gray-500 mb-2">
+
+              {/* Room Images */}
+              <div className="carousel carousel-center bg-neutral rounded-box h-52 space-x-4 p-4">
+                {roomOffer?.galleryImages?.slice(0, 4).map((image, index) => (
+                  <div key={index} className="carousel-item">
+                    <Image
+                      src={image.url}
+                      alt={image.description}
+                      width={80}
+                      height={80}
+                      className="w-auto h-auto rounded-lg"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <p className="text-sm  mb-2">
                 {hotel?.location?.address
                   ? `${hotel.location.address.addressLine}, ${hotel.location.address.city}, ${hotel.location.address.province}, ${hotel.location.address.countryCode}`
                   : "Address not available"}
@@ -107,12 +124,14 @@ const BookingsPage = () => {
                 Room: {roomOffer?.name || "Room details not available"}
               </p>
               <HTMLSafeDescription html={roomOffer?.description} />
-              <p className="text-sm mb-2">
+
+              <p className="text-sm font-semibold mt-2">
                 Check-in: {reservation.checkin_date}
               </p>
-              <p className="text-sm mb-2">
+              <p className="text-sm font-semibold mb-4">
                 Check-out: {reservation.checkout_date}
               </p>
+
               <p className="text-sm mb-4">
                 Total Cost:{" "}
                 <span className="font-bold">
