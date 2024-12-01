@@ -2,7 +2,7 @@
 import prisma from "@/prisma/client";
 
 // Rewards
-const DEFAULT_REWARDS_MULTIPLIER: number = 0.1 as const;
+const DEFAULT_REWARDS_MULTIPLIER: number = 10 as const; // As integer
 
 export async function createUser(email: string) {
   const existingUser = await prisma.user.findUnique({
@@ -46,7 +46,7 @@ export async function updateUserRewards(email: string, payment: number) {
     where: { email },
     data: {
       rewardPoints: {
-        increment: Math.floor(payment * DEFAULT_REWARDS_MULTIPLIER),
+        increment: Math.floor(payment * DEFAULT_REWARDS_MULTIPLIER) / 10,
       },
     },
   });
