@@ -6,6 +6,9 @@ export type PartialReservation = Omit<
   Reservation,
   "id" | "userId" | "verified"
 >;
+export type EditableReservationFields = Partial<
+  Pick<Reservation, "checkin_date" | "checkout_date" | "adults_number">
+>;
 
 export async function createReservation(
   data: PartialReservation
@@ -115,5 +118,24 @@ export async function retrieveSpecificReservation(id: string, email: string) {
     return reservation;
   } catch (error: any) {
     console.error("Error retrieving specific reservation:", error.message);
+  }
+}
+
+export async function updateSpecificReservation(
+  id: string,
+  edit: EditableReservationFields
+) {
+  try {
+    const editReservation = await prisma.reservation.update({
+      where: { id },
+      data: edit,
+    });
+
+    return editReservation;
+  } catch (error: any) {
+    console.error(
+      `Error updating reservation ${id} with fields ${JSON.stringify(edit)}:`,
+      error
+    );
   }
 }
