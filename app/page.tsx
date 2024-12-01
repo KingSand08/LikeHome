@@ -84,15 +84,20 @@ const HomeSearchPage: React.FC = () => {
     price_max: DEFAULT_MAX_PRICE,
   };
 
-  const [searchParams, setSearchParams] = useState<searchParamsType | null>(null);
+  const [searchParams, setSearchParams] = useState<searchParamsType | null>(
+    null
+  );
 
   useEffect(() => {
-    const getInitialSearchParams = (): searchParamsType => {
+    const getInitialSearchParams = () => {
       const storedParams = localStorage.getItem("searchParams");
-      return storedParams ? JSON.parse(storedParams) : defaultSearchParams;
+      if (storedParams) {
+        setSearchParams(JSON.parse(storedParams));
+      }
+      setSearchParams(defaultSearchParams);
     };
 
-    setSearchParams(getInitialSearchParams());
+    getInitialSearchParams();
   }, []);
 
   useEffect(() => {
@@ -104,10 +109,6 @@ const HomeSearchPage: React.FC = () => {
   const updateBookingInfoParams = (
     newSearchParams: Partial<searchParamsType>
   ) => setSearchParams((prev) => ({ ...prev!, ...newSearchParams }));
-
-  const updateHotelSearchParams = (newHotelSearch: searchParamsType) => {
-    setSearchParams(newHotelSearch);
-  };
 
   useEffect(() => {
     if (!region) return;
@@ -124,7 +125,7 @@ const HomeSearchPage: React.FC = () => {
   return (
     <DrawerComponent
       hotelSearchInputs={searchParams}
-      setHotelSearchInputs={updateHotelSearchParams}
+      setHotelSearchInputs={(newHotelSearch) => setSearchParams(newHotelSearch)}
     >
       <div>
         <h1 className="text-2xl font-bold mb-4">
