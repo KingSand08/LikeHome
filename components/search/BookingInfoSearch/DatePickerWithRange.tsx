@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { format, isBefore, isEqual, startOfDay } from "date-fns";
+import { format, isBefore, isEqual, parse, startOfDay } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 
@@ -30,12 +30,12 @@ const validatedDateSchema = refinePriceAndDateValidationZod(dateSchema);
 
 type DatePickerWithRangeProps = {
   className?: string;
-  onChange?: (dates: {
+  onChange: (dates: {
     checkinDate: string;
     checkoutDate: string;
     numDays: number;
   }) => void;
-  onValidationChange?: (isValid: boolean) => void;
+  onValidationChange: (isValid: boolean) => void;
   bookingInfo: searchParamsType;
 };
 
@@ -46,8 +46,8 @@ export function DatePickerWithRange({
   onValidationChange,
 }: DatePickerWithRangeProps) {
   const [dateRange, setDateRange] = React.useState<DateRange>({
-    from: new Date(`${bookingInfo.checkinDate}T00:00:00`),
-    to: new Date(`${bookingInfo.checkoutDate}T00:00:00`),
+    from: parse(bookingInfo.checkinDate, "yyyy-MM-dd", new Date()),
+    to: parse(bookingInfo.checkoutDate, "yyyy-MM-dd", new Date()),
   });
   const [error, setError] = React.useState<string | null>(null);
 
@@ -57,7 +57,7 @@ export function DatePickerWithRange({
   ): boolean => {
     if (!from || !to) {
       setError("Please select a valid date range.");
-      onValidationChange?.(false);
+      onValidationChange(false);
       return false;
     }
 
@@ -68,12 +68,12 @@ export function DatePickerWithRange({
 
     if (!validationResult.success) {
       setError(validationResult.error.errors[0].message);
-      onValidationChange?.(false);
+      onValidationChange(false);
       return false;
     }
 
     setError(null);
-    onValidationChange?.(true);
+    onValidationChange(false);
     return true;
   };
 
@@ -81,12 +81,12 @@ export function DatePickerWithRange({
     if (!range?.from || !range.to) {
       setDateRange(range || { from: undefined, to: undefined });
       setError("Please select a valid date range.");
-      onValidationChange?.(false);
+      onValidationChange(false);
       return;
     }
 
     if (!validateDates(range.from, range.to)) {
-      onValidationChange?.(false);
+      onValidationChange(false);
       return;
     }
 
