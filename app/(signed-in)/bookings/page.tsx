@@ -85,9 +85,12 @@ const BookingsPage = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-4xl font-bold mb-6 text-center">Your Bookings</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {reservations.map((reservation) => {
+      <h1 className="text-4xl font-bold mb-6 text-center">Your Reservations</h1>
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start"
+        style={{ gridAutoRows: 'min-content' }}
+      >        
+      {reservations.map((reservation) => {
           const hotel = cachedData.hotels[reservation.hotel_id];
           const roomOffer = cachedData.roomOffers[reservation.room_id];
 
@@ -96,12 +99,12 @@ const BookingsPage = () => {
               key={reservation.id}
               className="card bg-base-100 shadow-lg p-6 rounded-lg text-center"
             >
-              <h2 className="text-xl font-bold mb-2 text-primary">
+              <h2 className="text-xl font-bold mb-4 text-primary">
                 {hotel?.tagline || "Hotel details not available"}
               </h2>
 
               {/* Room Images */}
-              <div className="carousel carousel-center bg-neutral rounded-box h-52 space-x-4 p-4">
+              <div className="carousel carousel-center bg-neutral rounded-box h-52 space-x-4 p-4 mb-5 border-secondary">
                 {roomOffer?.galleryImages?.slice(0, 4).map((image, index) => (
                   <div key={index} className="carousel-item">
                     <Image
@@ -115,26 +118,27 @@ const BookingsPage = () => {
                 ))}
               </div>
 
-              <p className="text-sm  mb-2">
-                {hotel?.location?.address
-                  ? `${hotel.location.address.addressLine}, ${hotel.location.address.city}, ${hotel.location.address.province}, ${hotel.location.address.countryCode}`
-                  : "Address not available"}
-              </p>
               <p className="font-medium mb-2">
                 Room: {roomOffer?.name || "Room details not available"}
               </p>
-              <HTMLSafeDescription html={roomOffer?.description} />
+              {/* <HTMLSafeDescription html={roomOffer?.description} /> */}
 
-              <p className="text-sm font-semibold mt-2">
-                Check-in: {reservation.checkin_date}
+              <p className="text-md font-semibold mt-2 ">
+                Check-in: {" "} 
+                <span className="text-info ">
+                  {reservation.checkin_date}
+                </span>
               </p>
-              <p className="text-sm font-semibold mb-4">
-                Check-out: {reservation.checkout_date}
+              <p className="text-md font-semibold mb-4">
+                Check-out: {" "}
+                <span className="text-info ">
+                  {reservation.checkout_date}
+                </span>
               </p>
 
-              <p className="text-sm mb-4">
+              <p className="text-xl mb-4">
                 Total Cost:{" "}
-                <span className="font-bold">
+                <span className="font-bold text-success">
                   ${reservation.room_cost.toFixed(2)}
                 </span>
               </p>

@@ -11,7 +11,7 @@ const HTMLSafeDescription = ({ html }: HTMLSafeDescriptionProps) => {
 
   return (
     <div
-      className="text-sm mb-2"
+      className="text-md mb-2"
       dangerouslySetInnerHTML={{
         __html: sanitizedDescription,
       }}

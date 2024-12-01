@@ -35,50 +35,48 @@ const HotelListItem: React.FC<HotelListItemProps> = ({
 
   return (
     <Link href={`${CustomHotelLink}?${finalBookingParams.toString()}`}>
-      <div className="p-5 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 mb-6 cursor-pointer border border-gray-200 hover:border-gray-300">
-        <div className="flex items-start">
+      <div className="flex w-full mb-6 shadow-lg rounded-box overflow-hidden cursor-pointer hover:shadow-xl transition-shadow duration-200 border border-secondary">
+        {/* Left Side - Image */}
+        <div className="w-48 h-48">
           <Image
             src={hotel.image.url}
-            alt={hotel.image.alt ?? hotel.image.description ?? ""}
-            width={100}
-            height={100}
-            className="w-24 h-24 rounded-xl mr-6 object-cover"
+            alt={hotel.image.alt ?? hotel.image.description ?? "Hotel Image"}
+            width={200}
+            height={200}
+            className="h-full w-full object-cover rounded-l-box"
           />
-          <div className="flex-1">
-            <strong className="text-xl font-semibold text-gray-900">
-              {hotel.name}
-            </strong>
-            <p className="text-sm text-gray-700 mt-2">
-              <span className="font-medium text-gray-900">Review Score: </span>
-              {hotel.reviews.score}
-              <span className="text-gray-500">
-                {" "}
-                ({hotel.reviews.totalReviews} reviews)
+        </div>
+
+        {/* Right Side - Content */}
+        <div className="flex flex-col gap-4 p-6 bg-base-200 rounded-r-box flex-1">
+          {/* Hotel Name */}
+          <span className="flex justify-between mb-auto">
+            <p className="font-bold text-2xl text-primary ">{hotel.name}</p>
+            {/* Review Section */}
+            <span className="flex items-center space-x-2">
+              <span className="text-base-content text-sm relative top-[6px]">
+                {hotel.reviews.totalReviews} reviews
               </span>
-            </p>
-            <p className="text-sm text-gray-700 mt-2">
-              <span className="font-medium text-gray-900">Starting at </span>
-              {`${hotel.price.currency.symbol}${hotel.price.amount}`} per night
-            </p>
-            <p className="text-sm text-gray-700 mt-2">
-              <span className="font-medium text-gray-900">Currency: </span>
-              {`${hotel.price.currency.code}`}
-            </p>
-            <p className="text-xs text-gray-400 mt-3 italic">
-              <span className="underline text-blue-500">Testing URL:</span>{" "}
-              {CustomHotelLink}
+              <span className="text-info font-bold text-4xl self-start">{hotel.reviews.score}</span>
+            </span>
+          </span>
+
+          {/* Pricing */}
+          <div className="flex justify-between mt-auto text-center">
+            <span className="font-medium text-2xl text-success">
+              Starting at: {hotel.price.currency.symbol}
+              {hotel.price.amount} / night
+            </span>
+            <p className="text-sm text-base-content">
+              Duration: <span className="font-medium">{numDays}</span>{" "}
+              {numDays > 1 ? "nights" : "night"}
             </p>
           </div>
-        </div>
-        <div className="flex justify-end mt-4">
-          <p className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">
-            Duration of stay: <span className="font-medium">{numDays}</span>{" "}
-            {numDays > 1 ? "nights" : "night"}
-          </p>
         </div>
       </div>
     </Link>
   );
 };
+
 
 export default HotelListItem;

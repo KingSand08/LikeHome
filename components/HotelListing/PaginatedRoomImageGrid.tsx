@@ -1,81 +1,162 @@
 "use client";
-import React, { useState } from 'react'
-import Image from "next/image";
-import { APIHotelDetailsJSONFormatted } from '@/app/api/hotels/details/route'
-import ImageModal from '../modal/ImageModal';
 
-const PaginatedRoomImageGrid: React.FC<{ hotelDetails: APIHotelDetailsJSONFormatted }> = ({ hotelDetails }) => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [selectedImage, setSelectedImage] = useState<{ image: string, alt: string } | null>(null);
+import React, { useState, useEffect } from "react";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import Captions from "yet-another-react-lightbox/plugins/captions";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import "yet-another-react-lightbox/plugins/thumbnails.css";
+import PhotoAlbum from "react-photo-album";
+import "react-photo-album/rows.css";
 
-    const ITEMS_PER_PAGE = 8;
+import { APIHotelDetailsJSONFormatted } from "@/app/api/hotels/details/route";
 
-    const nonRoomImages = hotelDetails?.images.filter(
-        (image) => !image.description.toLowerCase().includes("room")
-    );
-    const totalPages = Math.ceil((nonRoomImages?.length || 0) / ITEMS_PER_PAGE);
+const PaginatedRoomImageGrid: React.FC<{ hotelDetails: APIHotelDetailsJSONFormatted }> = ({
+  hotelDetails,
+}) => {
+  const [lightboxIndex, setLightboxIndex] = useState(-1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [photos, setPhotos] = useState<
+    { src: string; width: number; height: number; alt: string; title: string }[]
+  >([]);
 
-    return (
-        <>
-            <div className="select-none">
-                <h4 className="text-xl font-semibold mb-4">Other Images</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {nonRoomImages
-                        ?.slice(
-                            (currentPage - 1) * ITEMS_PER_PAGE,
-                            currentPage * ITEMS_PER_PAGE
-                        )
-                        .map((image, index) => (
-                            <div
-                                key={index}
-                                className="rounded-lg shadow-lg overflow-hidden flex flex-col items-center bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700"
-                            >
-                                <Image
-                                    src={image.url}
-                                    alt={image.alt}
-                                    width={800}
-                                    height={400}
-                                    className="w-full h-48 object-cover"
-                                    onClick={() => setSelectedImage({ image: image.url, alt: image.alt })}
-                                />
-                                <p className="p-4 text-base-content">{image.description}</p>
-                            </div>
-                        ))}
-                </div>
+  const MAX_IMAGES = 5;
 
-                {/* Pagination Controls */}
-                <div className="flex justify-center items-center mt-6 mb-14 space-x-4">
-                    <button
-                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                        className="btn btn-accent"
-                        disabled={currentPage === 1}
-                    >
-                        Previous
-                    </button>
-                    <span className="text-lg font-semibold">
-                        Page {currentPage} of {totalPages}
-                    </span>
-                    <button
-                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                        className="btn btn-accent"
-                        disabled={currentPage === totalPages}
-                    >
-                        Next
-                    </button>
-                </div>
-            </div>
+  useEffect(() => {
+    if (!hotelDetails?.images) return;
 
-            {/* Modal for Selected Image */}
-            {selectedImage && (
-                <ImageModal
-                    image={selectedImage.image}
-                    alt={selectedImage.alt}
-                    onClose={() => setSelectedImage(null)}
-                    className='w-fit dark:bg-gradient-to-r dark:from-slate-700 dark:to-slate-800 bg-gradient-to-r from-slate-200 to-slate-300'
-                />
-            )}
-        </>
-    )
-}
+    // Load images and get their natural dimensions
+    const fetchImageDimensions = async () => {
+      const updatedPhotos = await Promise.all(
+        hotelDetails.images.map(
+          (image) =>
+            new Promise<{ src: string; width: number; height: number; alt: string; title: string }>(
+              (resolve) => {
+                const img = new Image();
+                img.src = image.url;
+                img.onload = () => {
+                  resolve({
+                    src: image.url,
+                    width: img.naturalWidth,
+                    height: img.naturalHeight,
+                    alt: image.alt || image.description || "Image",
+                    title: image.description || "Image",
+                  });
+                };
+                img.onerror = () => {
+                  resolve({
+                    src: image.url,
+                    width: 800, // Fallback width
+                    height: 600, // Fallback height
+                    alt: image.alt || image.description || "Image",
+                    title: image.description || "Image",
+                  });
+                };
+              }
+            )
+        )
+      );
 
-export default PaginatedRoomImageGrid
+      setPhotos(updatedPhotos);
+    };
+
+    fetchImageDimensions();
+  }, [hotelDetails]);
+
+  const limitedPhotos = photos.slice(0, MAX_IMAGES);
+
+  return (
+    <div className="flex flex-col items-center">
+      {/* Carousel */}
+      <div className="carousel carousel-center bg-neutral rounded-box w-full space-x-4 p-4 mb-5">
+        {limitedPhotos.map((photo, index) => (
+          <div className="carousel-item" key={index}>
+            <img
+              src={photo.src}
+              alt={photo.alt}
+              className="rounded-box cursor-pointer w-full h-96"
+              onClick={() => setLightboxIndex(index)}
+            />
+          </div>
+        ))}
+
+        {/* View All Button */}
+        {photos.length > MAX_IMAGES && (
+          <div className="carousel-item flex justify-center items-center">
+            <button
+              className="btn btn-primary"
+              onClick={() => setIsModalOpen(true)}
+            >
+              View All
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* DaisyUI Modal for Photo Album */}
+      <dialog id="photo_album_modal" className={`modal ${isModalOpen ? "modal-open" : ""}`}>
+        <div className="modal-box w-full max-w-5xl p-8">
+          {/* Close Button */}
+          <button
+            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            onClick={() => setIsModalOpen(false)}
+          >
+            ✕
+          </button>
+
+          {/* Photo Album */}
+          <PhotoAlbum
+            photos={photos}
+            layout="rows"
+            targetRowHeight={150}
+            spacing={10}
+            onClick={({ index }) => {
+              setLightboxIndex(index);
+              setIsModalOpen(false); // Close modal when Lightbox opens
+            }}
+          />
+        </div>
+      </dialog>
+
+      {/* Lightbox */}
+      <Lightbox
+        slides={photos}
+        open={lightboxIndex >= 0}
+        index={lightboxIndex}
+        close={() => setLightboxIndex(-1)}
+        plugins={[Fullscreen, Thumbnails, Captions, Zoom]}
+        zoom={{
+          maxZoomPixelRatio: 3,
+          zoomInMultiplier: 1.2,
+          doubleTapDelay: 300,
+          doubleClickDelay: 300,
+          scrollToZoom: true,
+        }}
+        captions={{
+          showToggle: true,
+          descriptionTextAlign: "start",
+        }}
+        styles={{
+          container: { backgroundColor: "rgba(0, 0, 0, 0.8)" },
+          captionsTitle: {
+            position: "absolute",
+            top: "10px",
+            left: "20px",
+            right: "20px",
+            color: "white",
+            fontSize: "18px",
+            fontWeight: "bold",
+            zIndex: 10,
+          },
+          captionsDescription: {
+            display: "none",
+          },
+        }}
+      />
+    </div>
+  );
+};
+
+export default PaginatedRoomImageGrid;
