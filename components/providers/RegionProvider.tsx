@@ -11,16 +11,20 @@ export const RegionContext = createContext<
 >([undefined, () => {}]);
 
 const RegionProvider = ({ children }: { children: ReactNode }) => {
-  const getInitialRegion = (): RegionContextType => {
-    const storedRegion = localStorage.getItem("region");
-    return storedRegion ? JSON.parse(storedRegion) : undefined;
-  };
+  const [region, setRegion] = useState<RegionContextType>();
 
-  const [region, setRegion] = useState<RegionContextType>(getInitialRegion);
+  useEffect(() => {
+    const storedRegion = localStorage.getItem("region");
+    if (storedRegion) {
+      setRegion(JSON.parse(storedRegion));
+    }
+  }, []);
 
   useEffect(() => {
     if (region) {
       localStorage.setItem("region", JSON.stringify(region));
+    } else {
+      localStorage.removeItem("region");
     }
   }, [region]);
 

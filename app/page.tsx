@@ -84,21 +84,26 @@ const HomeSearchPage: React.FC = () => {
     price_max: DEFAULT_MAX_PRICE,
   };
 
-  const getInitialSearchParams = (): searchParamsType => {
-    const storedParams = localStorage.getItem("searchParams");
-    return storedParams ? JSON.parse(storedParams) : defaultSearchParams;
-  };
-  const [searchParams, setSearchParams] = useState<searchParamsType>(
-    getInitialSearchParams
-  );
+  const [searchParams, setSearchParams] = useState<searchParamsType | null>(null);
 
   useEffect(() => {
-    localStorage.setItem("searchParams", JSON.stringify(searchParams));
+    const getInitialSearchParams = (): searchParamsType => {
+      const storedParams = localStorage.getItem("searchParams");
+      return storedParams ? JSON.parse(storedParams) : defaultSearchParams;
+    };
+
+    setSearchParams(getInitialSearchParams());
+  }, []);
+
+  useEffect(() => {
+    if (searchParams) {
+      localStorage.setItem("searchParams", JSON.stringify(searchParams));
+    }
   }, [searchParams]);
 
   const updateBookingInfoParams = (
-    newSearchParams: Partial<typeof searchParams>
-  ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
+    newSearchParams: Partial<searchParamsType>
+  ) => setSearchParams((prev) => ({ ...prev!, ...newSearchParams }));
 
   const updateHotelSearchParams = (newHotelSearch: searchParamsType) => {
     setSearchParams(newHotelSearch);
@@ -107,10 +112,14 @@ const HomeSearchPage: React.FC = () => {
   useEffect(() => {
     if (!region) return;
     setSearchParams((prev) => ({
-      ...prev,
+      ...prev!,
       selectedRegionId: region.region_id,
     }));
   }, [region]);
+
+  if (!searchParams) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <DrawerComponent
