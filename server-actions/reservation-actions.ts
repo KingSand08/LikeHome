@@ -1,6 +1,6 @@
 "use server";
 import { Reservation } from "@prisma/client";
-import { redeemRewards, updateUserCancellationDebt, updateUserRewards } from "./user-actions";
+import { redeemRewards, updateUserRewards } from "./user-actions";
 import { isWithinCancellationChargeThreshold } from "@/lib/DateFunctions";
 
 export type PartialReservation = Omit<
@@ -73,27 +73,6 @@ export async function verifyReservation(
   return true;
 }
 
-export async function cancelReservation(email: string, id: string) {
-  const deletedReservation: Reservation = await prisma.reservation.delete({
-    where: {
-      id,
-    },
-  });
-  console.log("Deleted reservation:", deletedReservation);
-  const updatedRewards = await updateUserRewards(
-    email,
-    -deletedReservation.room_cost
-  );
-  if (isWithinCancellationChargeThreshold(deletedReservation.checkin_date)) {
-    const applyCancellationCharge = await updateUserCancellationDebt(
-      email,
-      deletedReservation.room_cost
-    );
-  }
-  console.log("Updated rewards:", updatedRewards);
-  return true;
-}
-
 export async function retrieveAllReservations(email: string) {
   const reservations = await prisma.reservation.findMany({
     where: {
@@ -145,4 +124,39 @@ export async function updateSpecificReservation(
       error
     );
   }
+}
+
+const DEFAULT_CANCELLATION_PENALITY_CHARGE = 0.8 as const; // 20%
+
+export async function cancelReservation(email: string, id: string) {
+  const deletedReservation: Reservation = await prisma.reservation.delete({
+    where: {
+      id,
+    },
+  });
+  console.log("Deleted reservation:", deletedReservation);
+  const updatedRewards = await updateUserRewards(
+    email,
+    -deletedReservation.room_cost
+  );
+
+  let refundedAmount = deletedReservation.room_cost
+
+  if (isWithinCancellationChargeThreshold(deletedReservation.checkin_date)) {
+    refundedAmount = refundedAmount * DEFAULT_CANCELLATION_PENALITY_CHARGE;
+  }
+  const applyCancellationCharge = await refundSpecificReservation(
+    deletedReservation.transaction_info.stripePaymentId,
+    refundedAmount
+  );
+  console.log("Updated rewards:", updatedRewards);
+  return true;
+}
+
+
+async function refundSpecificReservation(
+  stripePaymentId: string,
+  amount: number,
+) {
+
 }

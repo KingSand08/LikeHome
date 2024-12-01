@@ -83,25 +83,3 @@ export async function redeemRewards(email: string, points: number) {
     },
   });
 }
-
-export async function updateUserCancellationDebt(
-  email: string,
-  payment: number
-) {
-  const DEFAULT_CANCELLATION_CHARGE_MULTIPLIER = 1.2;
-
-  const user = await prisma.user.findUnique({
-    where: { email },
-    select: { cancellationDebt: true },
-  });
-
-  const currentDebt = user?.cancellationDebt ?? 0;
-
-  return prisma.user.update({
-    where: { email },
-    data: {
-      cancellationDebt:
-        currentDebt - payment * DEFAULT_CANCELLATION_CHARGE_MULTIPLIER,
-    },
-  });
-}
