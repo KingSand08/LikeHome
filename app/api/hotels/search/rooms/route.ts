@@ -103,9 +103,12 @@ export async function GET(req: NextRequest) {
                 })
               ) ?? [],
             pricePerNight: {
-              amount:
-                categorizedListing.primarySelections?.[0]?.propertyUnit
-                  ?.ratePlans?.[0]?.priceDetails?.[0].price?.lead?.amount ?? 0,
+              amount: parseFloat(
+                (
+                  categorizedListing.primarySelections?.[0]?.propertyUnit
+                    ?.ratePlans?.[0]?.priceDetails?.[0].price?.lead?.amount ?? 0
+                ).toFixed(2)
+              ),
               currency: {
                 code:
                   categorizedListing.primarySelections?.[0]?.propertyUnit
