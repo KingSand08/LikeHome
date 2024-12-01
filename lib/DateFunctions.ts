@@ -2,6 +2,7 @@ import {
   DEFAULT_BOOKING_NUM_DAYS,
   DEFAULT_DAYS_FROM_TODAY_OFFSET,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
+import { parseISO, differenceInDays } from "date-fns";
 
 // Format to YYYY-MM-DD
 const formatDate = (date: Date): string => {
@@ -46,3 +47,20 @@ export const calculateNumDays = (
     (checkout.getTime() - checkin.getTime()) / (1000 * 60 * 60 * 24)
   );
 };
+
+export function isWithinCancellationChargeThreshold(
+  checkinDate: string,
+  daysThreshold = 3
+): boolean {
+  try {
+    const parsedCheckinDate = parseISO(checkinDate);
+    const today = new Date();
+
+    const daysUntilCheckin = differenceInDays(parsedCheckinDate, today);
+
+    return daysUntilCheckin <= daysThreshold;
+  } catch (error) {
+    console.error("Error checking date threshold:", checkinDate);
+    return false;
+  }
+}

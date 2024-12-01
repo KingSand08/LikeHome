@@ -1,6 +1,7 @@
 "use server";
 import { Reservation } from "@prisma/client";
-import { redeemRewards, updateUserRewards } from "./user-actions";
+import { redeemRewards, updateUserCancellationDebt, updateUserRewards } from "./user-actions";
+import { isWithinCancellationChargeThreshold } from "@/lib/DateFunctions";
 
 export type PartialReservation = Omit<
   Reservation,
@@ -73,7 +74,7 @@ export async function verifyReservation(
 }
 
 export async function cancelReservation(email: string, id: string) {
-  const deletedReservation = await prisma.reservation.delete({
+  const deletedReservation: Reservation = await prisma.reservation.delete({
     where: {
       id,
     },
@@ -83,6 +84,12 @@ export async function cancelReservation(email: string, id: string) {
     email,
     -deletedReservation.room_cost
   );
+  if (isWithinCancellationChargeThreshold(deletedReservation.checkin_date)) {
+    const applyCancellationCharge = await updateUserCancellationDebt(
+      email,
+      deletedReservation.room_cost
+    );
+  }
   console.log("Updated rewards:", updatedRewards);
   return true;
 }
