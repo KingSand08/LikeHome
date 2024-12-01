@@ -1,4 +1,3 @@
-'use clinet'
 import Image from "next/image";
 import React from "react";
 import { auth } from "@/auth";
