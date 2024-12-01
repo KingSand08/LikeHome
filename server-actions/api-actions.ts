@@ -250,7 +250,7 @@ export async function fetchHotelRoomOffer(
       (offer) => offer.hotel_room_id === roomId
     );
 
-    if (process.env.NODE_ENV === "production" && ROOM_DATA) {
+    if (ROOM_DATA) {
       await cacheHotelRoomOffer(ROOM_DATA);
     }
 
