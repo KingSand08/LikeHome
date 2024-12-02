@@ -68,7 +68,7 @@ const HotelIDPage: React.FC = () => {
     return <ErrorPage />;
   }
 
-  const { name, tagline, location, images, reviews } = hotelData;
+  const { name, tagline, reviews } = hotelData;
 
   return (
     <div className="container mx-auto px-4 py-8">
