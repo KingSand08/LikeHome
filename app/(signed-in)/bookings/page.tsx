@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import HTMLSafeDescription from "@/components/booking/HTMLDescription";
+import EditAdultsNumber from "@/components/booking/EditAdultsNumber";
 
 type CachedData = {
   hotels: Record<string, CachedHotel>;
