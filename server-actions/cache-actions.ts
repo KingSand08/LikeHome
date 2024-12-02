@@ -11,7 +11,6 @@ export async function cacheHotelDetails(
   await prisma.cachedHotel.upsert({
     where: { hotel_id: data.hotel_id },
     create: {
-      id: data.hotel_id,
       hotel_id: data.hotel_id,
       name: data.name,
       tagline: data.tagline,
