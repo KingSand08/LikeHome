@@ -46,34 +46,41 @@ const AdultsNumberInput: React.FC<AdultsNumberInputProps> = ({
         onChange={handleInputChange}
         required={true}
       />
-      {selectedNumber != value &&
-        value >= DEFAULT_MIN_ADULTS_NUMBER &&
-        value <= DEFAULT_MAX_ADULTS_NUMBER && (
-          <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogTrigger asChild>
-              <Button>Save</Button>
-            </DialogTrigger>
-            <DialogContent>
-              {value > selectedNumber ? (
-                <p>
-                  A charge of ${(value - selectedNumber) * pricePerNight} will
-                  be charged to the card on file.
-                </p>
-              ) : (
-                <p>
-                  A reimbursement of ${(selectedNumber - value) * pricePerNight}{" "}
-                  will be credited to the card on file
-                </p>
-              )}
-              <DialogFooter>
-                <Button type="submit" onClick={() => onOpenChange(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit">Save</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        )}
+      {selectedNumber != value && (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+          <DialogTrigger asChild>
+            <Button
+              className={
+                value >= DEFAULT_MIN_ADULTS_NUMBER &&
+                value <= DEFAULT_MAX_ADULTS_NUMBER
+                  ? ""
+                  : "btn-disabled cursor-not-allowed"
+              }
+            >
+              Save
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            {value > selectedNumber ? (
+              <p>
+                A charge of ${(value - selectedNumber) * pricePerNight} will be
+                charged to the card on file.
+              </p>
+            ) : (
+              <p>
+                A reimbursement of ${(selectedNumber - value) * pricePerNight}{" "}
+                will be credited to the card on file
+              </p>
+            )}
+            <DialogFooter>
+              <Button type="submit" onClick={() => onOpenChange(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">Save</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };
