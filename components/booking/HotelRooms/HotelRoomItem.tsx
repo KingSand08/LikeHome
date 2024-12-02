@@ -8,11 +8,12 @@ import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
-import Image from "next/image";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { ImageSlider } from "@/components/ui/ImageSlider";
-
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { toast } from "sonner";
+import { retrieveAllReservations } from "@/server-actions/reservation-actions";
+import { useSession } from "next-auth/react";
+import { getOverlappingDaysInIntervals, toDate } from "date-fns";
 type HotelRoomItemProps = {
   room: HotelRoomOffer;
 };
@@ -42,12 +43,66 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
     room.hotel_id
   ).replace("{roomId}", room.hotel_room_id);
 
+  const router = useRouter();
+  const path = usePathname();
+  const { data: session } = useSession();
+
+  const handleReserveClick = async () => {
+    if (!session || !session.user.email) {
+      toast(
+        "You must be logged in to make a reservation. Try waiting a few seconds.",
+        {
+          action: {
+            label: "Sign In",
+            onClick: () =>
+              router.push(
+                "/signin?callbackUrl=" +
+                encodeURIComponent(path + "?" + searchParams)
+              ),
+          },
+        }
+      );
+      return;
+    }
+    // check if the user has any reservations on that date
+    const reservations = await retrieveAllReservations(session.user.email);
+
+    if (
+      reservations.some(
+        (reservation: { checkin_date: any; checkout_date: any; hotel_id: string; }) =>
+          // check if date range overlaps
+          getOverlappingDaysInIntervals(
+            {
+              start: toDate(finalBookingParamsJSON.checkin_date),
+              end: toDate(finalBookingParamsJSON.checkout_date),
+            },
+            {
+              start: toDate(reservation.checkin_date),
+              end: toDate(reservation.checkout_date),
+            }
+          ) > 0 && reservation.hotel_id !== room.hotel_id
+      )
+    ) {
+      toast("You already have a reservation in a different hotel", {
+        action: {
+          label: "View Reservation",
+          onClick: () => router.push("/bookings/" + reservations[0].id),
+        },
+      });
+      return;
+    }
+
+    router.push(`${CustomHotelRoomLink}?${urlParams}`);
+  };
+
   return (
     <div className="flex flex-col gap-6 bg-slate-200 dark:bg-slate-800 rounded-box p-8 border-[2px] border-primary border-opacity-30 shadow">
       <div className="text-center text-base-content">
         <h2 className="text-2xl font-semibold">{room.name}</h2>
-        <p className="text-lg text-base-content" dangerouslySetInnerHTML={{ __html: room.description }}>
-        </p>
+        <p
+          className="text-lg text-base-content"
+          dangerouslySetInnerHTML={{ __html: room.description }}
+        ></p>
       </div>
 
       {/* Room Images */}
@@ -74,9 +129,9 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
       {/* Reserve Button */}
       <div className="text-center">
         {room.pricePerNight.amount > 0 ? (
-          <Link href={`${CustomHotelRoomLink}?${urlParams}`}>
-            <button className="btn btn-primary">Reserve Now</button>
-          </Link>
+          <button className="btn btn-primary" onClick={handleReserveClick}>
+            Reserve Now
+          </button>
         ) : (
           <button className="btn btn-secondary" disabled>
             Unavailable

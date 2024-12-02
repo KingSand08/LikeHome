@@ -109,7 +109,6 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
               iconSelf={true}
             />
           </div>
-
         ) : hotelsData && hotelsData.properties.length > 0 ? (
           <HotelList hotelsData={hotelsData} bookingParams={bookingParams} />
         ) : (

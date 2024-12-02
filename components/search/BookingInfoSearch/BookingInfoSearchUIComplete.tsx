@@ -1,8 +1,10 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import AdultsNumberInput from "./SearchComponents/AdultsNumberInput";
 import { DatePickerWithRange } from "./DatePickerWithRange";
 import { searchParamsType } from "@/app/page";
+import { cn } from "@/lib/utils";
 
 type BookingInfoUISearchCompleteProps = {
   bookingInfo: searchParamsType;
@@ -39,59 +41,52 @@ const BookingInfoUISearchComplete: React.FC<
     }
   };
 
-  const handleRevertChanges = () => {
-    const confirmRevert = window.confirm(
-      "Are you sure you want to revert your booking changes?"
-    );
-    if (confirmRevert) {
-      setTempBookingInfo(bookingInfo);
-      setBookingInfo(tempBookingInfo);
-    }
-  };
 
   return (
     <div>
-      <h2 className="max-[800px]:text-lg text-2xl font-bold">Booking Information</h2>
-      <div className="gap-5 join">
-        <div className="join-item">
-          <h3 className="text-primary font-semibold text-base max-[800px]:text-sm">Booking Dates</h3>
+      <h2 className="max-[900px]:text-lg text-2xl font-bold mb-5">
+        Booking Information
+      </h2>
+      <div className="flex flex-wrap gap-5 items-stretch">
+        {/* Booking Dates */}
+        <div className="flex-1 flex flex-col">
+          <h3 className="text-primary font-semibold text-base max-[900px]:text-sm mb-2">
+            Booking Dates
+          </h3>
           <DatePickerWithRange
             bookingInfo={bookingInfo}
             onChange={handleDateChange}
             onValidationChange={setIsDateValid}
           />
         </div>
-        <div className="join-item">
+        {/* Number of Adults */}
+        <div className="flex-1 flex flex-col">
+          <h3 className="text-primary font-semibold text-base max-[900px]:text-sm mb-2">
+            Number of Adults
+          </h3>
           <AdultsNumberInput
             selectedNumber={tempBookingInfo.adultsNumber}
             onChange={handleAdultsNumberChange}
           />
           {!isValid && (
-            <p className="text-red-500 text-sm">
+            <p className="text-red-500 text-sm mt-1">
               Adults number is invalid. Please enter a valid number.
             </p>
           )}
         </div>
       </div>
-      {(bookingInfo.checkinDate !== tempBookingInfo.checkinDate ||
-        bookingInfo.checkoutDate !== tempBookingInfo.checkoutDate ||
-        bookingInfo.adultsNumber !== tempBookingInfo.adultsNumber) && (
-          <div className="join-item flex gap-4">
-            <button
-              onClick={handleRevertChanges}
-              className="btn btn-secondary w-1/2"
-            >
-              Revert changes
-            </button>
-            <button
-              onClick={handleApplyFilters}
-              className="btn btn-primary w-1/2"
-              disabled={!isValid || !isDateValid}
-            >
-              Apply new booking info
-            </button>
-          </div>
-        )}
+      {/* Search Button */}
+      <div className="my-5">
+        <button
+          onClick={handleApplyFilters}
+          className={cn(
+            "btn btn-primary w-full",
+            (!isValid || !isDateValid) && "btn-disabled"
+          )}
+        >
+          Search
+        </button>
+      </div>
     </div>
   );
 };

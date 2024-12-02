@@ -127,8 +127,8 @@ const HomeSearchPage: React.FC = () => {
       hotelSearchInputs={searchParams}
       setHotelSearchInputs={(newHotelSearch) => setSearchParams(newHotelSearch)}
     >
-      <div className="flex flex-col w-full px-[7.75em] max-[800px]:px-[30px]">
-        <h1 className="max-[800px]:text-xl text-3xl font-bold mb-4">
+      <div className="flex flex-col w-full px-[10em] max-[900px]:px-[30px]">
+        <h1 className="max-[900px]:text-xl text-3xl font-bold mb-4">
           <br className="border-4 border-white" />
           <p>
             {region

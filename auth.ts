@@ -22,6 +22,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/signin",
   },
+  callbacks: {
+    redirect: async ({ url, baseUrl }) => url || baseUrl,
+  },
   events: {
     async signIn(user) {
       console.log("User signed in", user);
