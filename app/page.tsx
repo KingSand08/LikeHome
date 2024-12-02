@@ -34,6 +34,8 @@ import BookingInfoUISearchComplete from "@/components/search/BookingInfoSearch/B
 import HotelSelect from "@/components/search/HotelResults/HotelSelect";
 import { RegionContext } from "@/components/providers/RegionProvider";
 import DrawerComponent from "@/components/search/HotelSearch/DrawerComponent";
+import { motion } from "framer-motion";
+
 
 export type searchParamsType = {
   query: string;
@@ -127,16 +129,18 @@ const HomeSearchPage: React.FC = () => {
       hotelSearchInputs={searchParams}
       setHotelSearchInputs={(newHotelSearch) => setSearchParams(newHotelSearch)}
     >
-      <div>
+      <div className="w-fit text-center">
         <h1 className="text-2xl font-bold mb-4">
           {region
             ? `Browsing Hotels in ${region.name} 🏨`
-            : "Select a location to start!"}
+            : "⬆️ Find a location to get started!"}
         </h1>
         <BookingInfoUISearchComplete
           bookingInfo={searchParams}
           setBookingInfo={(newParams) => updateBookingInfoParams(newParams)}
         />
+      </div>
+      <div className="w-8/12">
         <hr />
         <HotelSelect
           bookingParams={{

@@ -6,9 +6,12 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 import {
   API_HOTEL_DETAILS_URL,
+
   hotelDetailsParamsSchema,
 } from "@/lib/rapid-hotel-api/zod/hotel-details-schemas";
 import { APIHotelDetailsResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotels-details-doc";
+import { ApiHotelSearchResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotels-search-doc";
+import {  API_HOTEL_SEARCH_URL } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas"
 
 function validateSearchParams(
   searchParams: URLSearchParams
@@ -30,12 +33,37 @@ function validateSearchParams(
     };
   }
 
-  // Create endpoint
   const combinedSearchParams = buildURLSearchParams(parseResult.data);
   return {
     query: searchParams.toString(),
     endpoint: `${API_HOTEL_DETAILS_URL}?${combinedSearchParams.toString()}`,
   };
+}
+
+async function fetchReviews(hotelId: string, searchParams: URLSearchParams) {
+  const params = new URLSearchParams(searchParams);
+  params.set("region_id", hotelId);
+  params.set("sort_order", "REVIEW");
+  const url = `${API_HOTEL_SEARCH_URL}?${params.toString()}`;
+
+  try {
+    const response = await fetch(url, API_OPTIONS);
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch reviews: ${response.statusText} (${response.status})`
+      );
+    }
+
+    const data: ApiHotelSearchResponseJSON = await response.json();
+    const hotelReviews = data.properties?.find(
+      (property) => property.hotel_id === hotelId
+    )?.reviews;
+
+    return hotelReviews || { score: 0, totalReviews: 0, starRating: 0 };
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+    return { score: 0, totalReviews: 0, starRating: 0 };
+  }
 }
 
 export async function GET(req: NextRequest) {
@@ -55,12 +83,17 @@ export async function GET(req: NextRequest) {
 
     if (!response.ok) {
       throw new Error(
-        `Failed to fetch data from API: ${response.statusText} & Status code: ${response.status} & Endpoint: ${endpoint}`
+        `Failed to fetch data from API: ${response.statusText} & Status code: ${response.status}`
       );
     }
 
     const JSON_DATA: APIHotelDetailsResponseJSON = await response.json();
-    const PAYLOAD: APIHotelDetailsJSONFormatted = {
+    const hotelId = JSON_DATA.summary?.id ?? "";
+
+    // Fetch reviews separately
+    const reviews = await fetchReviews(hotelId, searchParams);
+
+    const PAYLOAD = {
       hotel_id: JSON_DATA.summary?.id ?? "",
       name: JSON_DATA.summary?.name ?? "",
       tagline: JSON_DATA.summary?.tagline ?? "",
@@ -73,7 +106,7 @@ export async function GET(req: NextRequest) {
         },
         coordinates: {
           latitude: JSON_DATA.summary?.location?.coordinates?.latitude ?? 0,
-          longitude: JSON_DATA.summary?.location?.coordinates?.latitude ?? 0,
+          longitude: JSON_DATA.summary?.location?.coordinates?.longitude ?? 0,
         },
       },
       images:
@@ -81,8 +114,9 @@ export async function GET(req: NextRequest) {
           alt: image.accessibilityText ?? "",
           description: image.image?.description ?? "",
           url: image.image?.url ?? "",
-          index: index,
+          index,
         })) ?? [],
+      reviews, // Include reviews
     };
 
     return NextResponse.json(PAYLOAD, { status: 200 });
@@ -102,6 +136,11 @@ export type APIHotelDetailsJSONFormatted = {
   tagline: string;
   location: Location;
   images: Image[];
+  reviews: {
+    score: number;
+    totalReviews: number;
+    starRating: number;
+  };
 };
 
 type Image = {
