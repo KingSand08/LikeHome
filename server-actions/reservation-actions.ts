@@ -10,6 +10,7 @@ import {
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import { fetchHotelRoomOffer } from "./api-actions";
 import { createReadonlyURLSearchParams } from "@/lib/utils";
+import prisma from "@/prisma/client";
 
 export type PartialReservation = Omit<
   Reservation,
@@ -103,13 +104,6 @@ export async function retrieveSpecificReservation(id: string, email: string) {
         id,
       },
     });
-
-    // Throw forbidden error if no reservation is found or email doesn't match
-    if (reservation.userEmail !== email) {
-      throw new Error(
-        "Forbidden: You are not authorized to view this reservation."
-      );
-    }
 
     return reservation;
   } catch (error: any) {
