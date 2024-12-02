@@ -24,7 +24,7 @@ export default function HamburgerMenu() {
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        className="inline-block h-8 w-8 stroke-white dark:stroke-black" //change stroke-white to stroke-current to auto adapt based on theme setting once custom theme is in place
+                        className="inline-block h-8 w-8 stroke-black dark:stroke-white" //change stroke-white to stroke-current to auto adapt based on theme setting once custom theme is in place
                     >
                         <path
                             strokeLinecap="round"

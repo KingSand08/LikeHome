@@ -13,7 +13,6 @@ import ErrorPage from "@/components/ui/ErrorPage";
 import HotelLocation from "@/components/HotelListing/HotelLocation";
 import PaginatedRoomImageGrid from "@/components/HotelListing/PaginatedRoomImageGrid";
 import RoomOffers from "@/components/HotelListing/RoomOffers";
-import HTMLSafeDescription from "@/components/booking/HTMLDescription";
 
 
 const HotelIDPage: React.FC = () => {
