@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { format, isBefore, isEqual, startOfDay } from "date-fns";
+import { format, isBefore, isEqual, parse, startOfDay } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 
@@ -18,10 +18,8 @@ import {
   dateRegex,
   refinePriceAndDateValidationZod,
 } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
-import {
-  generateDefaultDates,
-  calculateNumDays,
-} from "../../../lib/DateFunctions";
+import { calculateNumDays } from "../../../lib/DateFunctions";
+import { searchParamsType } from "@/app/page";
 
 // Zod validation schema for dates
 const dateSchema = z.object({
@@ -32,28 +30,25 @@ const validatedDateSchema = refinePriceAndDateValidationZod(dateSchema);
 
 type DatePickerWithRangeProps = {
   className?: string;
-  onChange?: (dates: {
+  onChange: (dates: {
     checkinDate: string;
     checkoutDate: string;
     numDays: number;
   }) => void;
-  defaultNumDays?: number;
+  onValidationChange: (isValid: boolean) => void;
+  bookingInfo: searchParamsType;
 };
 
 export function DatePickerWithRange({
+  bookingInfo,
   className,
   onChange,
-  defaultNumDays = 7,
+  onValidationChange,
 }: DatePickerWithRangeProps) {
-  // Generate default check-in and check-out dates
-  const { DEFAULT_CHECKIN_BOOKING_DATE, DEFAULT_CHECKOUT_BOOKING_DATE } =
-    generateDefaultDates(defaultNumDays);
-
   const [dateRange, setDateRange] = React.useState<DateRange>({
-    from: new Date(DEFAULT_CHECKIN_BOOKING_DATE),
-    to: new Date(DEFAULT_CHECKOUT_BOOKING_DATE),
+    from: parse(bookingInfo.checkinDate, "yyyy-MM-dd", new Date()),
+    to: parse(bookingInfo.checkoutDate, "yyyy-MM-dd", new Date()),
   });
-
   const [error, setError] = React.useState<string | null>(null);
 
   const validateDates = (
@@ -62,6 +57,7 @@ export function DatePickerWithRange({
   ): boolean => {
     if (!from || !to) {
       setError("Please select a valid date range.");
+      onValidationChange(false);
       return false;
     }
 
@@ -72,10 +68,12 @@ export function DatePickerWithRange({
 
     if (!validationResult.success) {
       setError(validationResult.error.errors[0].message);
+      onValidationChange(false);
       return false;
     }
 
     setError(null);
+    onValidationChange(false);
     return true;
   };
 
@@ -83,10 +81,12 @@ export function DatePickerWithRange({
     if (!range?.from || !range.to) {
       setDateRange(range || { from: undefined, to: undefined });
       setError("Please select a valid date range.");
+      onValidationChange(false);
       return;
     }
 
     if (!validateDates(range.from, range.to)) {
+      onValidationChange(false);
       return;
     }
 
@@ -100,9 +100,9 @@ export function DatePickerWithRange({
       numDays,
     };
 
-    setError(null); // Clear any errors
+    setError(null);
     if (onChange) {
-      onChange(formattedRange); // Notify parent component
+      onChange(formattedRange);
     }
   };
 
@@ -114,7 +114,7 @@ export function DatePickerWithRange({
             id="outline"
             variant={"default"}
             className={cn(
-              "btn btn-wide justify-start text-left font-normal text-base-content ",
+              "btn btn-wide justify-start text-left font-normal text-base-content",
               !dateRange && "text-muted-foreground"
             )}
           >
@@ -147,7 +147,6 @@ export function DatePickerWithRange({
                 ? startOfDay(dateRange.from)
                 : null;
 
-              // Disable dates before today and the same as 'from' if 'to' is not selected
               return (
                 isBefore(startOfDay(date), today) ||
                 (fromDay !== null &&

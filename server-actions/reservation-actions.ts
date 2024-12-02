@@ -1,10 +1,15 @@
 "use server";
 import { Reservation } from "@prisma/client";
 import { redeemRewards, updateUserRewards } from "./user-actions";
+import { isWithinCancellationChargeThreshold } from "@/lib/DateFunctions";
+import { stripe } from "@/lib/stripe";
 
 export type PartialReservation = Omit<
   Reservation,
   "id" | "userId" | "verified"
+>;
+export type EditableReservationFields = Partial<
+  Pick<Reservation, "checkin_date" | "checkout_date" | "adults_number">
 >;
 
 export async function createReservation(
@@ -69,21 +74,6 @@ export async function verifyReservation(
   return true;
 }
 
-export async function cancelReservation(email: string, id: string) {
-  const deletedReservation = await prisma.reservation.delete({
-    where: {
-      id,
-    },
-  });
-  console.log("Deleted reservation:", deletedReservation);
-  const updatedRewards = await updateUserRewards(
-    email,
-    -deletedReservation.room_cost
-  );
-  console.log("Updated rewards:", updatedRewards);
-  return true;
-}
-
 export async function retrieveAllReservations(email: string) {
   const reservations = await prisma.reservation.findMany({
     where: {
@@ -115,5 +105,85 @@ export async function retrieveSpecificReservation(id: string, email: string) {
     return reservation;
   } catch (error: any) {
     console.error("Error retrieving specific reservation:", error.message);
+  }
+}
+
+export async function updateSpecificReservation(
+  id: string,
+  edit: EditableReservationFields
+) {
+  try {
+    const editReservation = await prisma.reservation.update({
+      where: { id },
+      data: edit,
+    });
+
+    return editReservation;
+  } catch (error: any) {
+    console.error(
+      `Error updating reservation ${id} with fields ${JSON.stringify(edit)}:`,
+      error
+    );
+  }
+}
+
+const DEFAULT_CANCELLATION_PENALITY_CHARGE = 0.8 as const; // 20% penality
+
+export async function cancelReservation(email: string, id: string) {
+  try {
+    const targetReservation: Reservation | null =
+      await prisma.reservation.findUnique({
+        where: { id },
+      });
+
+    if (!targetReservation) {
+      throw new Error(`Reservation with ID ${id} not found.`);
+    }
+
+    let refundedAmount = targetReservation.room_cost;
+
+    if (isWithinCancellationChargeThreshold(targetReservation.checkin_date)) {
+      refundedAmount *= DEFAULT_CANCELLATION_PENALITY_CHARGE;
+    }
+
+    const refundedReservation = await refundSpecificReservation(
+      targetReservation.transaction_info.stripePaymentId,
+      refundedAmount
+    );
+    console.log("Refunded reservation:", refundedReservation);
+
+    const deletedReservation: Reservation = await prisma.reservation.delete({
+      where: { id },
+    });
+    console.log("Deleted reservation:", deletedReservation);
+
+    const updatedRewards = await updateUserRewards(
+      email,
+      -deletedReservation.room_cost
+    );
+    console.log("Updated rewards:", updatedRewards);
+
+    return true;
+  } catch (error) {
+    console.error("Failed to cancel reservation:", error);
+  }
+}
+
+async function refundSpecificReservation(
+  stripePaymentId: string,
+  amount: number
+) {
+  const amountInCents = Math.round(amount * 100);
+
+  try {
+    const refund = await stripe.refunds.create({
+      payment_intent: stripePaymentId,
+      amount: amountInCents,
+    });
+
+    return refund;
+  } catch (error) {
+    console.error("Failed to issue refund:", error);
+    throw error;
   }
 }

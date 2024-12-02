@@ -4,8 +4,6 @@ import { APIHotelSearchJSONFormatted } from "@/app/api/hotels/search/route";
 import HotelList from "./HotelList/HotelList";
 import { z } from "zod";
 import { hotelSearchParamsRefinedSchema } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
-import { HOTEL_SEARCH_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
-import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import { RegionContext } from "@/components/providers/RegionProvider";
 import {
   DEFAULT_MAX_PRICE,
@@ -66,7 +64,7 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
   useEffect(() => {
     if (!isValid) return;
     handleFindHotels();
-  }, [region]);
+  }, [bookingParams]);
 
   return (
     <div className="container mx-auto p-4">
