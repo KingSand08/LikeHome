@@ -94,6 +94,8 @@ export default function CheckoutInfo({
         stripePaymentId: "free stay",
       },
       room_cost: pretax,
+      cost_difference: 0,
+      is_cancelled: false
     };
 
     const res = await redeemFreeStay(session?.user.email, PrismaReservationDB);

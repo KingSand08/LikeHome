@@ -87,6 +87,8 @@ const CheckoutConfirmation = ({
         stripePaymentId: "", // Placeholder for actual Stripe payment ID
       },
       room_cost: totalAmount,
+      cost_difference: 0,
+      is_cancelled: false,
     };
 
     try {
