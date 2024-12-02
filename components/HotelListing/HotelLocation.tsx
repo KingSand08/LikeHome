@@ -1,11 +1,11 @@
 import React from "react";
 import { APIHotelDetailsJSONFormatted } from "@/app/api/hotels/details/route";
 
-const HotelLocation: React.FC<{ hotelDetails: APIHotelDetailsJSONFormatted }> = ({
-  hotelDetails,
-}) => {
+const HotelLocation: React.FC<{
+  hotelDetails: APIHotelDetailsJSONFormatted;
+}> = ({ hotelDetails }) => {
   return (
-    <div className="flex items-center text-sm text-gray-600">
+    <div className="flex items-center text-sm text-base-content-100">
       {/* Location Icon */}
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -18,8 +18,10 @@ const HotelLocation: React.FC<{ hotelDetails: APIHotelDetailsJSONFormatted }> = 
 
       {/* Address */}
       <div>
-        {hotelDetails.location.address.addressLine}, {hotelDetails.location.address.city},{" "}
-        {hotelDetails.location.address.province}, {hotelDetails.location.address.countryCode}
+        {hotelDetails.location.address.addressLine},{" "}
+        {hotelDetails.location.address.city},{" "}
+        {hotelDetails.location.address.province},{" "}
+        {hotelDetails.location.address.countryCode}
       </div>
     </div>
   );

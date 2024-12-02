@@ -143,9 +143,8 @@ const mockHotelDetailsData: APIHotelDetailsJSONFormatted = {
       index,
     })),
   reviews: {
-    score: 4.5,
-    totalReviews: 120,
-    starRating: 5,
+    score: "4.5 / 5 very good",
+    totalReviews: "See over 9999 reviews",
   },
 };
 export async function fetchHotelDetails(

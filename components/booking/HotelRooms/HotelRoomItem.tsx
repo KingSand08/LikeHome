@@ -8,10 +8,12 @@ import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import React, { useState } from "react";
-
+import Image from "next/image";
+import { useSearchParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { retrieveAllReservations } from "@/server-actions/reservation-actions";
+import { useSession } from "next-auth/react";
+import { getOverlappingDaysInIntervals, isAfter, toDate } from "date-fns";
 type HotelRoomItemProps = {
   room: HotelRoomOffer;
 };
@@ -22,15 +24,13 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
     searchParams.get("checkin_date") ?? "",
     searchParams.get("checkout_date") ?? ""
   );
-  const [currentIndex, setCurrentIndex] = useState(0); // State to track the current slide
-
   // Construct final booking parameters JSON object
   const finalBookingParamsJSON = {
     checkin_date: searchParams.get("checkin_date") || "",
     checkout_date: searchParams.get("checkout_date") || "",
     adults_number: searchParams.get("adults_number") || "",
     numDays: numDays.toString(),
-    locale: searchParams.get("locale") || DEFAULT_LOCALE,
+    locale: searchParams.get("locale") || DEFAULT_LOCALE, // Provide default if necessary
     domain: searchParams.get("domain") || DEFAULT_DOMAIN,
     region_id: searchParams.get("region_id") || "",
     hotel_id: room.hotel_id,
@@ -43,15 +43,45 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
     room.hotel_id
   ).replace("{roomId}", room.hotel_room_id);
 
-  // Navigation functions
-  const goToPreviousSlide = () => {
-    setCurrentIndex(
-      currentIndex === 0 ? room.galleryImages.length - 1 : currentIndex - 1
-    );
-  };
+  const router = useRouter();
+  const { data: session } = useSession();
 
-  const goToNextSlide = () => {
-    setCurrentIndex((currentIndex + 1) % room.galleryImages.length);
+  const handleReserveClick = async () => {
+    if (!session || !session.user.email) {
+      toast(
+        "You must be logged in to make a reservation. Try waiting a few seconds."
+      );
+      return;
+    }
+    // check if the user has any reservations on that date
+    const reservations = await retrieveAllReservations(session.user.email);
+
+    if (
+      reservations.some(
+        (reservation) =>
+          // check if date range overlaps
+          getOverlappingDaysInIntervals(
+            {
+              start: toDate(finalBookingParamsJSON.checkin_date),
+              end: toDate(finalBookingParamsJSON.checkout_date),
+            },
+            {
+              start: toDate(reservation.checkin_date),
+              end: toDate(reservation.checkout_date),
+            }
+          ) > 0 && reservation.hotel_id !== room.hotel_id
+      )
+    ) {
+      toast("You already have a reservation in a different hotel", {
+        action: {
+          label: "View Reservation",
+          onClick: () => router.push("/bookings/" + reservations[0].id),
+        },
+      });
+      return;
+    }
+
+    router.push(`${CustomHotelRoomLink}?${urlParams}`);
   };
 
   return (
@@ -65,31 +95,18 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
       </div>
 
       {/* Room Images */}
-      <div className="carousel w-full rounded-box relative">
-        <div className="relative w-full">
-          <img
-            src={room.galleryImages[currentIndex].url}
-            alt={
-              room.galleryImages[currentIndex].description ||
-              `Slide ${currentIndex + 1}`
-            }
-            className="w-full rounded-lg"
-          />
-          <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-            <button
-              onClick={goToPreviousSlide}
-              className="btn btn-circle"
-            >
-              ❮
-            </button>
-            <button
-              onClick={goToNextSlide}
-              className="btn btn-circle"
-            >
-              ❯
-            </button>
+      <div className="carousel carousel-center bg-neutral rounded-box space-x-4 h-96 p-4">
+        {room.galleryImages.map((image) => (
+          <div key={image.index} className="carousel-item">
+            <Image
+              src={image.url}
+              alt={image.description}
+              width={500}
+              height={500}
+              className="w-full h-auto rounded-lg"
+            />
           </div>
-        </div>
+        ))}
       </div>
 
       {/* Pricing Section */}
@@ -113,9 +130,9 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
       {/* Reserve Button */}
       <div className="text-center">
         {room.pricePerNight.amount > 0 ? (
-          <Link href={`${CustomHotelRoomLink}?${urlParams}`}>
-            <button className="btn btn-primary">Reserve Now</button>
-          </Link>
+          <button className="btn btn-primary" onClick={handleReserveClick}>
+            Reserve Now
+          </button>
         ) : (
           <button className="btn btn-secondary" disabled>
             Unavailable
