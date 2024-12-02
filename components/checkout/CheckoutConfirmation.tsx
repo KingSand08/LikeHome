@@ -141,7 +141,7 @@ const CheckoutConfirmation = ({
         className="text-white w-full p-5 bg-black mt-2 rounded-md 
         font-bold disabled:opacity-50 disabled:animate-pulse"
       >
-        {!loading ? `Pay $${totalAmount}` : "Processing..."}
+        {!loading ? `Pay $${totalAmount.toFixed(2)}` : "Processing..."}
       </button>
     </form>
   );
