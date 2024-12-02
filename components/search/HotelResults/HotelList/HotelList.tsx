@@ -16,7 +16,12 @@ const HotelList: React.FC<HotelListProps> = ({ hotelsData, bookingParams }) => {
   
   return (
     <div>
-      <div className="list-disc list-inside text-black">
+      <p className="text-white mb-2 italic">
+        Found {hotelsData.summary.matchedPropertiesSize} properties within price
+        range: ${hotelsData.priceRange.minPrice} - $
+        {hotelsData.priceRange.maxPrice}
+      </p>
+      <div className="list-disc list-inside text-black pt-4">
         {hotelsData.properties.map((hotel) => (
           <HotelListItem
             key={hotel.hotel_id}

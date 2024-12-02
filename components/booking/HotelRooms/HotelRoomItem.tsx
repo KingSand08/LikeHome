@@ -8,12 +8,12 @@ import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
-import Image from "next/image";
-import { useSearchParams, useRouter } from "next/navigation";
+import { ImageSlider } from "@/components/ui/ImageSlider";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { retrieveAllReservations } from "@/server-actions/reservation-actions";
 import { useSession } from "next-auth/react";
-import { getOverlappingDaysInIntervals, isAfter, toDate } from "date-fns";
+import { getOverlappingDaysInIntervals, toDate } from "date-fns";
 type HotelRoomItemProps = {
   room: HotelRoomOffer;
 };
@@ -44,12 +44,23 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
   ).replace("{roomId}", room.hotel_room_id);
 
   const router = useRouter();
+  const path = usePathname();
   const { data: session } = useSession();
 
   const handleReserveClick = async () => {
     if (!session || !session.user.email) {
       toast(
-        "You must be logged in to make a reservation. Try waiting a few seconds."
+        "You must be logged in to make a reservation. Try waiting a few seconds.",
+        {
+          action: {
+            label: "Sign In",
+            onClick: () =>
+              router.push(
+                "/signin?callbackUrl=" +
+                encodeURIComponent(path + "?" + searchParams)
+              ),
+          },
+        }
       );
       return;
     }
@@ -58,7 +69,7 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
 
     if (
       reservations.some(
-        (reservation) =>
+        (reservation: { checkin_date: any; checkout_date: any; hotel_id: string; }) =>
           // check if date range overlaps
           getOverlappingDaysInIntervals(
             {
@@ -85,7 +96,7 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
   };
 
   return (
-    <div className="flex flex-col gap-6 bg-base-200 rounded-box p-8 border border-primary shadow">
+    <div className="flex flex-col gap-6 bg-slate-200 dark:bg-slate-800 rounded-box p-8 border-[2px] border-primary border-opacity-30 shadow">
       <div className="text-center text-base-content">
         <h2 className="text-2xl font-semibold">{room.name}</h2>
         <p
@@ -95,19 +106,7 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
       </div>
 
       {/* Room Images */}
-      <div className="carousel carousel-center bg-neutral rounded-box space-x-4 h-96 p-4">
-        {room.galleryImages.map((image) => (
-          <div key={image.index} className="carousel-item">
-            <Image
-              src={image.url}
-              alt={image.description}
-              width={500}
-              height={500}
-              className="w-full h-auto rounded-lg"
-            />
-          </div>
-        ))}
-      </div>
+      <ImageSlider images={room.galleryImages || []} />
 
       {/* Pricing Section */}
       {room.pricePerNight.amount > 0 ? (
