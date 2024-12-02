@@ -59,6 +59,7 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
     if (
       reservations.some(
         (reservation) =>
+          !reservation.is_cancelled &&
           // check if date range overlaps
           getOverlappingDaysInIntervals(
             {

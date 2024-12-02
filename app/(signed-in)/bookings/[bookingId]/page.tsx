@@ -12,10 +12,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import HTMLSafeDescription from "@/components/booking/HTMLDescription";
-import EditAdultsNumber from "@/components/booking/EditAdultsNumber";
-import DeleteReservation from "@/components/booking/EditCancelReservation";
 import EditReservationSection from "@/components/booking/EditReservationSection";
-import TestReservationDetailsDisplay from "@/components/booking/test/TestReservationDetailsDisplay";
 
 const BookingIDPage = () => {
   const { bookingId: bookingIdSlug } = useParams();
@@ -153,6 +150,11 @@ const BookingIDPage = () => {
                   </span>
                 </p>
               )}
+              {reservation.is_cancelled && (
+                <p className="text-md mt-2 text-error">
+                  THIS RESERVATION WAS CANCELLED
+                </p>
+              )}
               <p className="text-md mt-2 text-gray-600">
                 Booking ID: {reservation.id}
               </p>
@@ -189,7 +191,9 @@ const BookingIDPage = () => {
         </Link>
       </div>
 
-      <EditReservationSection reservation={reservation} />
+      {!reservation.is_cancelled && (
+        <EditReservationSection reservation={reservation} />
+      )}
     </div>
   );
 };

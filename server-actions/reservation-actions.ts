@@ -221,14 +221,22 @@ export async function cancelReservation(email: string, id: string) {
     );
     console.log("Refunded reservation:", refundedReservation);
 
-    const deletedReservation: Reservation = await prisma.reservation.delete({
+    // Mark as cancelled instead of deleting it.
+    const cancelledReservation: Reservation = await prisma.reservation.update({
       where: { id },
+      data: {
+        is_cancelled: true,
+      },
     });
-    console.log("Deleted reservation:", deletedReservation);
+
+    // const deletedReservation: Reservation = await prisma.reservation.delete({
+    //   where: { id },
+    // });
+    // console.log("Deleted reservation:", deletedReservation);
 
     const updatedRewards = await updateUserRewards(
       email,
-      -deletedReservation.room_cost
+      -cancelledReservation.room_cost
     );
     console.log("Updated rewards:", updatedRewards);
 

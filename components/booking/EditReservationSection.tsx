@@ -94,7 +94,7 @@ const EditReservationSection: React.FC<EditSectionProps> = ({
         )}
       </div>
       <div className="edit-section__delete-reservation mt-6">
-        <DeleteReservation reservation={tempReservation} />
+        <DeleteReservation reservation={reservation} />
       </div>
       {
 

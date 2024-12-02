@@ -37,6 +37,7 @@ model Reservation {
   verified         Boolean         @default(false)
   room_cost        Float
   cost_difference  Float           @default(0)
+  is_cancelled      Boolean         @default(false)
 }
 
 type PaymentInfo {
