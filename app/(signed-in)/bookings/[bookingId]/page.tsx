@@ -170,7 +170,7 @@ const BookingIDPage = () => {
                       start: toDate(reservation.checkin_date),
                       end: toDate(reservation.checkout_date),
                     };
-                    return isWithinInterval(date, interval);
+                    return !isWithinInterval(date, interval);
                   }}
                 />
               </div>
