@@ -147,7 +147,15 @@ export function refinePriceAndDateValidationZod<T extends ZodRawShape>(
         if (checkin < today) {
           return false; // Check-in date is in the past
         }
-
+        if (checkout < checkin) {
+          return false; // Check-out date is before check-in date
+        }
+        if (isEqual(checkin, checkout)) {
+          return false;
+        }
+        if (isEqual(checkin, checkout)) {
+          return false;
+        }
         return true;
       },
       {
