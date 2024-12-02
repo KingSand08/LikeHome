@@ -50,7 +50,7 @@ const TemplateInput: React.FC<TemplateInputProps> = ({
         value={value}
         onChange={handleChange}
         onBlur={handleBlur}
-        className={`input input-bordered w-full p-3 rounded-md shadow-sm`}
+        className={`input input-bordered input-secondary w-full p-3 rounded-md shadow-sm`}
         required={required}
       />
       {error && <p className="mt-2 text-sm text-error">{error}</p>}

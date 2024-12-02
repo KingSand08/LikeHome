@@ -142,14 +142,6 @@ const BookingsPage = () => {
                   ${reservation.room_cost.toFixed(2)}
                 </span>
               </p>
-              <p className="text-sm mb-2">Booking ID: {reservation.id}</p>
-              {hotel?.images?.[0]?.url && (
-                <img
-                  src={hotel.images[0].url}
-                  alt={hotel.tagline}
-                  className="rounded-lg mb-4"
-                />
-              )}
               <Link
                 href={`/bookings/${reservation.id}`}
                 className="btn btn-primary w-full"
