@@ -29,6 +29,7 @@ export async function cacheHotelDetails(
           longitude: data.location.coordinates.longitude,
         },
       },
+      reviews: data.reviews,
     },
   });
 
