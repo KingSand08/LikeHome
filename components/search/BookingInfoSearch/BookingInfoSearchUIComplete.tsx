@@ -18,12 +18,6 @@ const BookingInfoUISearchComplete: React.FC<
   const [isDateValid, setIsDateValid] = useState(true);
   const [isValid, setIsValid] = useState(true);
 
-  useEffect(() => {
-    return () => {
-      setBookingInfo(tempBookingInfo);
-    };
-  }, []);
-
   const handleDateChange = (dates: {
     checkinDate: string;
     checkoutDate: string;
