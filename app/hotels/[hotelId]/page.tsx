@@ -15,12 +15,13 @@ import PaginatedRoomImageGrid from "@/components/HotelListing/PaginatedRoomImage
 import RoomOffers from "@/components/HotelListing/RoomOffers";
 import HTMLSafeDescription from "@/components/booking/HTMLDescription";
 
-
 const HotelIDPage: React.FC = () => {
   const { hotelId: hotelIdSlug } = useParams();
   const searchParams = useSearchParams();
-  const [hotelData, setHotelData] = useState<APIHotelDetailsJSONFormatted | null>(null);
-  const [roomOffers, setRoomOffers] = useState<APIHotelRoomOffersJSONFormatted | null>(null);
+  const [hotelData, setHotelData] =
+    useState<APIHotelDetailsJSONFormatted | null>(null);
+  const [roomOffers, setRoomOffers] =
+    useState<APIHotelRoomOffersJSONFormatted | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
 
@@ -31,12 +32,18 @@ const HotelIDPage: React.FC = () => {
       setRoomOffers(null);
 
       try {
-        const HOTEL_DETAILS_DATA = await fetchHotelDetails(hotelIdSlug, searchParams);
+        const HOTEL_DETAILS_DATA = await fetchHotelDetails(
+          hotelIdSlug,
+          searchParams
+        );
         if (!HOTEL_DETAILS_DATA) {
           throw new Error("Hotel details not found");
         }
 
-        const HOTEL_ROOM_OFFERS_DATA = await fetchAllHotelRoomOffers(hotelIdSlug, searchParams);
+        const HOTEL_ROOM_OFFERS_DATA = await fetchAllHotelRoomOffers(
+          hotelIdSlug,
+          searchParams
+        );
         if (!HOTEL_ROOM_OFFERS_DATA) {
           throw new Error("Hotel room offers not found");
         }
@@ -66,18 +73,20 @@ const HotelIDPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Header Section */}
-      <div className="flex justify-between items-start mb-8">
+      <div className="flex justify-between items-start mb-8 text-base-content-100">
         <div>
           <h1 className="text-4xl font-bold mb-2">{name}</h1>
           <HotelLocation hotelDetails={hotelData} />
-          <p className="text-xl text-gray-600">{tagline}</p>
+          <p className="text-xl">{tagline}</p>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-bold text-info">{reviews.score.toFixed(1)}</p>
-          <p className="text-gray-500">{reviews.totalReviews} reviews</p>
+          <p className="text-2xl font-bold text-info">
+            {reviews.score.toFixed(1)}
+          </p>
+          <p>{reviews.totalReviews} reviews</p>
+          <p>Base Price Per Night: {roomOffers?.basePricePerNight}</p>
         </div>
       </div>
-
 
       {/* Hotel Images */}
       <div className="mb-8">
