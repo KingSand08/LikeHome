@@ -13,6 +13,7 @@ import ErrorPage from "@/components/ui/ErrorPage";
 import HotelLocation from "@/components/HotelListing/HotelLocation";
 import PaginatedRoomImageGrid from "@/components/HotelListing/PaginatedRoomImageGrid";
 import RoomOffers from "@/components/HotelListing/RoomOffers";
+import { number } from "zod";
 
 const HotelIDPage: React.FC = () => {
   const { hotelId: hotelIdSlug } = useParams();
@@ -72,15 +73,16 @@ const HotelIDPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Header Section */}
-      <div className="flex justify-between items-start mb-8">
+      <div className="flex justify-between items-start mb-8 text-base-content-100">
         <div>
           <h1 className="text-4xl font-bold mb-2">{name}</h1>
           <HotelLocation hotelDetails={hotelData} />
-          <p className="text-xl text-gray-600">{tagline}</p>
+          <p className="text-xl">{tagline}</p>
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold text-info">{reviews.score}</p>
-          <p className="text-gray-500">{reviews.totalReviews}</p>
+          <p>{reviews.totalReviews} reviews</p>
+          <p>Base Price Per Night: {roomOffers?.basePricePerNight}</p>
         </div>
       </div>
 

@@ -9,9 +9,11 @@ import {
   DEFAULT_LOCALE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import Image from "next/image";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-
+import { useSearchParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { retrieveAllReservations } from "@/server-actions/reservation-actions";
+import { useSession } from "next-auth/react";
+import { getOverlappingDaysInIntervals, isAfter, toDate } from "date-fns";
 type HotelRoomItemProps = {
   room: HotelRoomOffer;
 };
@@ -41,17 +43,60 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
     room.hotel_id
   ).replace("{roomId}", room.hotel_room_id);
 
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  const handleReserveClick = async () => {
+    if (!session || !session.user.email) {
+      toast(
+        "You must be logged in to make a reservation. Try waiting a few seconds."
+      );
+      return;
+    }
+    // check if the user has any reservations on that date
+    const reservations = await retrieveAllReservations(session.user.email);
+
+    if (
+      reservations.some(
+        (reservation) =>
+          // check if date range overlaps
+          getOverlappingDaysInIntervals(
+            {
+              start: toDate(finalBookingParamsJSON.checkin_date),
+              end: toDate(finalBookingParamsJSON.checkout_date),
+            },
+            {
+              start: toDate(reservation.checkin_date),
+              end: toDate(reservation.checkout_date),
+            }
+          ) > 0 && reservation.hotel_id !== room.hotel_id
+      )
+    ) {
+      toast("You already have a reservation in a different hotel", {
+        action: {
+          label: "View Reservation",
+          onClick: () => router.push("/bookings/" + reservations[0].id),
+        },
+      });
+      return;
+    }
+
+    router.push(`${CustomHotelRoomLink}?${urlParams}`);
+  };
+
   return (
     <div className="flex flex-col gap-6 bg-base-200 rounded-box p-8 border border-primary shadow">
       <div className="text-center text-base-content">
         <h2 className="text-2xl font-semibold">{room.name}</h2>
-        <p className="text-lg text-base-content" dangerouslySetInnerHTML={{ __html: room.description }}>
-        </p>
+        <p
+          className="text-lg text-base-content"
+          dangerouslySetInnerHTML={{ __html: room.description }}
+        ></p>
       </div>
 
       {/* Room Images */}
       <div className="carousel carousel-center bg-neutral rounded-box space-x-4 h-96 p-4">
-      {room.galleryImages.map((image) => (
+        {room.galleryImages.map((image) => (
           <div key={image.index} className="carousel-item">
             <Image
               src={image.url}
@@ -63,7 +108,6 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
           </div>
         ))}
       </div>
-
 
       {/* Pricing Section */}
       {room.pricePerNight.amount > 0 ? (
@@ -86,9 +130,9 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
       {/* Reserve Button */}
       <div className="text-center">
         {room.pricePerNight.amount > 0 ? (
-          <Link href={`${CustomHotelRoomLink}?${urlParams}`}>
-            <button className="btn btn-primary">Reserve Now</button>
-          </Link>
+          <button className="btn btn-primary" onClick={handleReserveClick}>
+            Reserve Now
+          </button>
         ) : (
           <button className="btn btn-secondary" disabled>
             Unavailable
