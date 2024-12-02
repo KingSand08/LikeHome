@@ -98,6 +98,10 @@ export function DatePickerWithRange({
 
     const numDays = calculateNumDays(range.from, range.to);
 
+    if (numDays == 0) {
+      setDateRange({from: undefined, to: undefined});
+      return;
+    }
     setDateRange(range);
 
     const formattedRange = {
@@ -111,48 +115,51 @@ export function DatePickerWithRange({
   };
 
   return (
-    <div className={cn("grid gap-2", className)}>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            id="outline"
-            variant={"default"}
-            className={cn(
-              "btn btn-wide justify-start text-left font-normal text-base-content",
-              !dateRange && "text-muted-foreground"
-            )}
-          >
-            <CalendarIcon />
-            {dateRange?.from ? (
-              dateRange.to ? (
-                <>
-                  {format(dateRange.from, "LLL dd, y")} -{" "}
-                  {format(dateRange.to, "LLL dd, y")}
-                </>
+    <>
+      <div className={cn("grid gap-2", className)}>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              id="outline"
+              variant={"default"}
+              className={cn(
+                "btn btn-wide justify-start text-left font-normal text-base-content",
+                !dateRange && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon />
+              {dateRange?.from ? (
+                dateRange.to ? (
+                  <>
+                    {format(dateRange.from, "LLL dd, y")} -{" "}
+                    {format(dateRange.to, "LLL dd, y")}
+                  </>
+                ) : (
+                  format(dateRange.from, "LLL dd, y")
+                )
               ) : (
-                format(dateRange.from, "LLL dd, y")
-              )
-            ) : (
-              <span>Pick a date</span>
-            )}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <Calendar
-            initialFocus
-            mode="range"
-            defaultMonth={dateRange?.from}
-            selected={dateRange}
-            onSelect={handleDateRangeChange}
-            numberOfMonths={2}
-            disabled={(date) => {
-              const today = startOfDay(new Date());
-              return isBefore(startOfDay(date), today);
-            }}
-          />
-        </PopoverContent>
-      </Popover>
+                <span>Pick a date</span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              initialFocus
+              mode="range"
+              defaultMonth={dateRange?.from}
+              selected={dateRange}
+              onSelect={handleDateRangeChange}
+              numberOfMonths={2}
+              disabled={(date) => {
+                const today = startOfDay(new Date());
+                return isBefore(startOfDay(date), today);
+              }}
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+
       {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
-    </div>
+    </>
   );
 }
