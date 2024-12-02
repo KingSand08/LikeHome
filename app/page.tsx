@@ -139,7 +139,7 @@ const HomeSearchPage: React.FC = () => {
           backgroundImage: "url(https://img.daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.webp)",
         }}
       >
-        <div className="hero-overlay bg-opacity-60"></div>
+        <div className="hero-overlay bg-opacity-80"></div>
           <div className="hero-content text-neutral-content text-center">
             <div className="flex flex-col w-full px-[10em] max-[900px]:px-[30px] pt-0 max-[900px]:pt-10">
                 <h1 className="max-[900px]:text-xl text-3xl font-bold mb-4">

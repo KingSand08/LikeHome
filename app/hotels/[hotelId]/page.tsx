@@ -80,7 +80,7 @@ const HotelIDPage: React.FC = () => {
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold text-primary">{reviews.score}</p>
-          <p className="text-gray-500 dark:text-gray-200">{reviews.totalReviews} reviews</p>
+          <p className="text-gray-500 dark:text-gray-200">{reviews.totalReviews}</p>
           <p className="text-gray-500 dark:text-gray-200">Base Price Per Night: {roomOffers?.basePricePerNight}</p>
         </div>
       </div>

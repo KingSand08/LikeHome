@@ -46,8 +46,8 @@ const ProfilePage = ({ user }: { user: User }) => {
 
         {/* Navigation */}
         <div className="w-full px-6 pb-8">
-          <h2 className="text-xl font-semibold text-base-content mb-4">
-            Profile Navigation
+          <h2 className="text-3xl font-bold text-base-content mb-4 text-center">
+            Profile
           </h2>
           <div className="w-full">
 

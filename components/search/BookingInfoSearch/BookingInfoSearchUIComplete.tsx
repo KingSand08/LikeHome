@@ -5,6 +5,7 @@ import AdultsNumberInput from "./SearchComponents/AdultsNumberInput";
 import { DatePickerWithRange } from "./DatePickerWithRange";
 import { searchParamsType } from "@/app/page";
 import { cn } from "@/lib/utils";
+import LocationCombobox from "@/components/ui/location-combobox";
 
 type BookingInfoUISearchCompleteProps = {
   bookingInfo: searchParamsType;
@@ -43,48 +44,55 @@ const BookingInfoUISearchComplete: React.FC<
 
 
   return (
-    <div>
-      <div className="flex flex-wrap gap-5 items-stretch">
-        {/* Booking Dates */}
-        <div className="flex-1 flex flex-col">
-          <h3 className="text-primary font-semibold text-base max-[900px]:text-sm mb-2">
-            Booking Dates
-          </h3>
-          <DatePickerWithRange
-            bookingInfo={bookingInfo}
-            onChange={handleDateChange}
-            onValidationChange={setIsDateValid}
-          />
-        </div>
-        {/* Number of Adults */}
-        <div className="flex-1 flex flex-col">
-          <h3 className="text-primary font-semibold text-base max-[900px]:text-sm mb-2">
-            Number of Adults
-          </h3>
-          <AdultsNumberInput
-            selectedNumber={tempBookingInfo.adultsNumber}
-            onChange={handleAdultsNumberChange}
-          />
-          {!isValid && (
-            <p className="text-red-500 text-sm mt-1">
-              Adults number is invalid. Please enter a valid number.
-            </p>
-          )}
-        </div>
+    <div className="w-full">
+    {/* Container for the filters */}
+    <div className="flex flex-wrap gap-5 justify-between items-center">
+      {/* Region */}
+      <div className="flex-1 min-w-[200px]">
+        <h3 className="text-primary font-semibold text-base max-[900px]:text-sm mb-2">
+          Region
+        </h3>
+        <LocationCombobox />
       </div>
-      {/* Search Button */}
-      <div className="my-5">
-        <button
-          onClick={handleApplyFilters}
-          className={cn(
-            "btn btn-primary w-full",
-            (!isValid || !isDateValid) && "btn-disabled"
-          )}
-        >
-          Search
-        </button>
+  
+      {/* Booking Dates */}
+      <div className="flex-1 min-w-[250px]">
+        <h3 className="text-primary font-semibold text-base max-[900px]:text-sm mb-2">
+          Booking Dates
+        </h3>
+        <DatePickerWithRange
+          bookingInfo={bookingInfo}
+          onChange={handleDateChange}
+          onValidationChange={setIsDateValid}
+        />
+      </div>
+  
+      {/* Number of Adults */}
+      <div className="flex-1 min-w-[150px]">
+        <h3 className="text-primary font-semibold text-base max-[900px]:text-sm mb-2">
+          Number of Adults
+        </h3>
+        <AdultsNumberInput
+          selectedNumber={tempBookingInfo.adultsNumber}
+          onChange={handleAdultsNumberChange}
+        />
       </div>
     </div>
+  
+    {/* Search Button */}
+    <div className="my-5 flex justify-center">
+      <button
+        onClick={handleApplyFilters}
+        className={cn(
+          "btn btn-primary w-full md:w-1/2 lg:w-1/3",
+          (!isValid || !isDateValid) && "btn-disabled"
+        )}
+      >
+        Search
+      </button>
+    </div>
+  </div>
+  
   );
 };
 

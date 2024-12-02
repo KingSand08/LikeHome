@@ -6,7 +6,6 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
-import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 
 type ImageSliderProps = {
     images: {
@@ -92,7 +91,7 @@ export function ImageSlider({ images }: ImageSliderProps) {
                 open={lightboxIndex >= 0}
                 index={lightboxIndex}
                 close={() => setLightboxIndex(-1)}
-                plugins={[Fullscreen, Zoom, Thumbnails]}
+                plugins={[Fullscreen, Zoom]}
                 zoom={{
                     maxZoomPixelRatio: 3,
                     zoomInMultiplier: 1.2,

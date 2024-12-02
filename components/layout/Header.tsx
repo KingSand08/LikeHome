@@ -55,13 +55,6 @@ export default async function Header() {
               <SigninButton className="text-base-300-content" />
             ) : (
               <>
-                <Link
-                  className="btn w-fit px-4 py-2 btn-primary text-secondary-content rounded"
-                  href="/profile"
-                >
-                  Profile
-                </Link>
-                <SignOutButton className="text-base-300-content" />
                 <HamburgerMenu />
               </>
             )}

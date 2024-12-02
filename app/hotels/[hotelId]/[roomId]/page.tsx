@@ -117,51 +117,38 @@ const HotelRoomIDPage: React.FC = () => {
 
 
       {/* Hotel Room Information */}
-      <div className="w-full p-8 bg-gradient-to-br from-slate-100 to-slate-300 dark:from-slate-800 dark:to-slate-900 text-gray-800 dark:text-gray-100 rounded-xl shadow-lg mb-8">
-        <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-4 text-center">
-          Room Information
-        </h2>
-        <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
-          <span className="font-semibold">Hotel ID:</span> {hotelIdSlug} |{" "}
-          <span className="font-semibold">Room ID:</span> {roomIdSlug}
-        </p>
+      <div className="w-full mt-12 p-8 bg-gradient-to-br from-slate-100 to-slate-300 dark:from-slate-800 dark:to-slate-900 text-gray-800 dark:text-gray-100 rounded-xl shadow-lg flex flex-col md:flex-row gap-10 mb-8">
+        {/* Left Column - Room Details */}
+        <div className="md:w-1/2">
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-6">
+            Room Information
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <span className="font-semibold">Hotel ID:</span> {hotelIdSlug} |{" "}
+            <span className="font-semibold">Room ID:</span> {roomIdSlug}
+          </p>
 
-        <div className="text-center">
-          {/* Room Name */}
-          <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
             {hotelRoomData.name}
           </h3>
-          {/* Room Description */}
           <p
-            className="text-gray-700 dark:text-gray-300 mb-4 px-6 leading-relaxed"
+            className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed"
             dangerouslySetInnerHTML={{ __html: hotelRoomData.description }}
           ></p>
 
-          {/* Price Information */}
           <div
-            className={`text-xl font-semibold mb-6 ${hotelRoomData.pricePerNight.amount > 0
-              ? "text-green-600"
-              : "text-red-500"
-              }`}
+            className={`text-xl font-semibold mb-6 ${
+              hotelRoomData.pricePerNight.amount > 0
+                ? "text-green-600"
+                : "text-red-500"
+            }`}
           >
-            {hotelRoomData.pricePerNight.amount > 0 ? (
-              <>
-                Price per night:{" "}
-                <span className="font-bold">
-                  {hotelRoomData.pricePerNight.currency.symbol}
-                  {hotelRoomData.pricePerNight.amount}
-                </span>{" "}
-                ({hotelRoomData.pricePerNight.currency.code})
-              </>
-            ) : (
-              "Unavailable for booking"
-            )}
           </div>
+        </div>
 
-          {/* Image Slider */}
-          <div className="mb-6">
-            <ImageSlider images={hotelRoomData.galleryImages} />
-          </div>
+        {/* Right Column - Image Slider */}
+        <div className="md:w-1/2">
+          <ImageSlider images={hotelRoomData.galleryImages} />
         </div>
       </div>
 

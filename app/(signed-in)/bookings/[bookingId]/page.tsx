@@ -15,6 +15,10 @@ import HTMLSafeDescription from "@/components/booking/HTMLDescription";
 import EditAdultsNumber from "@/components/booking/EditAdultsNumber";
 import DeleteReservation from "@/components/booking/EditCancelReservation";
 import LoadingPage from "@/components/ui/Loading/LoadingPage";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
 
 const BookingIDPage = () => {
   const { bookingId: bookingIdSlug } = useParams();
@@ -23,6 +27,7 @@ const BookingIDPage = () => {
   const [reservation, setReservation] = useState<Reservation | null>(null);
   const [hotel, setHotel] = useState<CachedHotel | null>(null);
   const [roomOffer, setRoomOffer] = useState<CachedHotelRoomOffer | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState(-1);
 
   useEffect(() => {
     const fetchReservationAndDetails = async () => {
@@ -55,7 +60,12 @@ const BookingIDPage = () => {
   }, [bookingIdSlug, session?.user?.email]);
 
   if (status === "loading") {
-    return <LoadingPage className="min-h-screen" size_style={{ width: '400px', height: '400px' }} />
+    return (
+      <LoadingPage
+        className="min-h-screen"
+        size_style={{ width: "400px", height: "400px" }}
+      />
+    );
   }
 
   if (!session || !session.user?.email) {
@@ -142,8 +152,9 @@ const BookingIDPage = () => {
               <p className="text-lg mt-2">
                 Verified:{" "}
                 <span
-                  className={`${reservation.verified ? "text-success" : "text-error"
-                    } font-bold`}
+                  className={`${
+                    reservation.verified ? "text-success" : "text-error"
+                  } font-bold`}
                 >
                   {reservation.verified ? "Yes" : "No"}
                 </span>
@@ -174,7 +185,11 @@ const BookingIDPage = () => {
             </h2>
             <div className="grid grid-cols-2 gap-4 mb-6">
               {roomOffer.galleryImages.map((image, index) => (
-                <div key={index} className="flex justify-center">
+                <div
+                  key={index}
+                  className="flex justify-center cursor-pointer"
+                  onClick={() => setLightboxIndex(index)}
+                >
                   <Image
                     src={image.url}
                     alt={image.description || "Room Image"}
@@ -189,6 +204,20 @@ const BookingIDPage = () => {
           </div>
         )}
       </div>
+
+      {/* Lightbox */}
+      {roomOffer?.galleryImages && roomOffer.galleryImages.length > 0 && (
+        <Lightbox
+          slides={roomOffer.galleryImages.map((image) => ({
+            src: image.url,
+            title: image.description,
+          }))}
+          open={lightboxIndex >= 0}
+          index={lightboxIndex}
+          close={() => setLightboxIndex(-1)}
+          plugins={[Fullscreen, Zoom]}
+        />
+      )}
     </div>
   );
 };
