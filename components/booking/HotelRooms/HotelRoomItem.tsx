@@ -10,6 +10,7 @@ import {
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import React, { useState } from "react";
 
 type HotelRoomItemProps = {
   room: HotelRoomOffer;
@@ -21,13 +22,15 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
     searchParams.get("checkin_date") ?? "",
     searchParams.get("checkout_date") ?? ""
   );
+  const [currentIndex, setCurrentIndex] = useState(0); // State to track the current slide
+
   // Construct final booking parameters JSON object
   const finalBookingParamsJSON = {
     checkin_date: searchParams.get("checkin_date") || "",
     checkout_date: searchParams.get("checkout_date") || "",
     adults_number: searchParams.get("adults_number") || "",
     numDays: numDays.toString(),
-    locale: searchParams.get("locale") || DEFAULT_LOCALE, // Provide default if necessary
+    locale: searchParams.get("locale") || DEFAULT_LOCALE,
     domain: searchParams.get("domain") || DEFAULT_DOMAIN,
     region_id: searchParams.get("region_id") || "",
     hotel_id: room.hotel_id,
@@ -40,46 +43,54 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
     room.hotel_id
   ).replace("{roomId}", room.hotel_room_id);
 
+  // Navigation functions
+  const goToPreviousSlide = () => {
+    setCurrentIndex(
+      currentIndex === 0 ? room.galleryImages.length - 1 : currentIndex - 1
+    );
+  };
+
+  const goToNextSlide = () => {
+    setCurrentIndex((currentIndex + 1) % room.galleryImages.length);
+  };
+
   return (
     <div className="flex flex-col gap-6 bg-base-200 rounded-box p-8 border border-primary shadow">
       <div className="text-center text-base-content">
         <h2 className="text-2xl font-semibold">{room.name}</h2>
-        <p className="text-lg text-base-content" dangerouslySetInnerHTML={{ __html: room.description }}>
-        </p>
+        <p
+          className="text-lg text-base-content"
+          dangerouslySetInnerHTML={{ __html: room.description }}
+        ></p>
       </div>
 
       {/* Room Images */}
-      <div className="carousel w-full rounded-box">
-        {room.galleryImages.map((image, index) => (
-        <div
-            id={`slide${index + 1}`}
-            key={index}
-            className="carousel-item relative w-full"
-          >
+      <div className="carousel w-full rounded-box relative">
+        <div className="relative w-full">
           <img
-            src={image.url}
-            alt={image.description || `Slide ${index + 1}`}
-            className="w-full"
+            src={room.galleryImages[currentIndex].url}
+            alt={
+              room.galleryImages[currentIndex].description ||
+              `Slide ${currentIndex + 1}`
+            }
+            className="w-full rounded-lg"
           />
           <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-            <a
-              href={`#slide${index === 0 ? room.galleryImages.length : index}`}
+            <button
+              onClick={goToPreviousSlide}
               className="btn btn-circle"
             >
               ❮
-            </a>
-            <a
-              href={`#slide${(index + 1) % room.galleryImages.length + 1}`}
+            </button>
+            <button
+              onClick={goToNextSlide}
               className="btn btn-circle"
             >
               ❯
-            </a>
+            </button>
           </div>
         </div>
-        ))}
       </div>
-
-
 
       {/* Pricing Section */}
       {room.pricePerNight.amount > 0 ? (
