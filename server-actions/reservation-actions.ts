@@ -264,3 +264,15 @@ async function refundSpecificReservation(
     throw error;
   }
 }
+
+export async function resetReservation(
+  id: string
+) {
+  const paidReservation = await prisma.reservation.update({
+    where: { id },
+    data: {
+      cost_difference: 0,
+      verified: true,
+    },
+  });
+}
