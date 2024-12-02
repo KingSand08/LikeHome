@@ -38,7 +38,7 @@ const EditAdultsNumber: React.FC<EditAdultsNumberProps> = ({
       <h3 className="font-bold text-lg mb-2">Edit Number of Adults</h3>
       <AdultsNumberInput
         selectedNumber={reservation.adults_number}
-        onChange={handleAdultsNumberChange}
+        pricePerNight={reservation.room_cost}
       />
       {loading && <p className="text-sm text-gray-500 mt-2">Updating...</p>}
     </div>

@@ -5,46 +5,76 @@ import {
   DEFAULT_MAX_ADULTS_NUMBER,
   DEFAULT_MIN_ADULTS_NUMBER,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
+import { Dialog } from "@radix-ui/react-dialog";
+import {
+  DialogContent,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 type AdultsNumberInputProps = {
   selectedNumber: number;
-  onChange: (number: number | null) => void;
+  pricePerNight: number;
 };
 
 const numberRegex = /^\d*$/;
 
 const AdultsNumberInput: React.FC<AdultsNumberInputProps> = ({
   selectedNumber,
-  onChange,
+  pricePerNight,
 }) => {
-  const [value, setValue] = useState<string>(selectedNumber.toString());
+  const [value, setValue] = useState(selectedNumber);
+  const [open, onOpenChange] = useState(false);
 
   const handleInputChange = (inputValue: string) => {
-    setValue(inputValue);
-    if (numberRegex.test(inputValue)) {
-      const intValue = parseInt(inputValue, 10);
-      if (
-        intValue >= DEFAULT_MIN_ADULTS_NUMBER &&
-        intValue <= DEFAULT_MAX_ADULTS_NUMBER
-      ) {
-        onChange(intValue);
-      } else {
-        onChange(null);
-      }
-    } else {
-      onChange(null);
+    if (inputValue === "") {
+      setValue(0);
+    } else if (numberRegex.test(inputValue)) {
+      const intValue = parseInt(inputValue);
+      setValue(intValue);
     }
   };
 
   return (
-    <TemplateInput
-      title="Number of Adults"
-      placeholder={`Enter number of adults (${DEFAULT_MIN_ADULTS_NUMBER}-${DEFAULT_MAX_ADULTS_NUMBER})`}
-      regex={numberRegex}
-      value={value}
-      onChange={handleInputChange}
-      required={true}
-    />
+    <div className="flex flex-row items-center">
+      <TemplateInput
+        title="Number of Adults"
+        placeholder={`Enter number of adults (${DEFAULT_MIN_ADULTS_NUMBER}-${DEFAULT_MAX_ADULTS_NUMBER})`}
+        regex={numberRegex}
+        value={value.toString()}
+        onChange={handleInputChange}
+        required={true}
+      />
+      {selectedNumber != value &&
+        value >= DEFAULT_MIN_ADULTS_NUMBER &&
+        value <= DEFAULT_MAX_ADULTS_NUMBER && (
+          <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogTrigger asChild>
+              <Button>Save</Button>
+            </DialogTrigger>
+            <DialogContent>
+              {value > selectedNumber ? (
+                <p>
+                  A charge of ${(value - selectedNumber) * pricePerNight} will
+                  be charged to the card on file.
+                </p>
+              ) : (
+                <p>
+                  A reimbursement of ${(selectedNumber - value) * pricePerNight}{" "}
+                  will be credited to the card on file
+                </p>
+              )}
+              <DialogFooter>
+                <Button type="submit" onClick={() => onOpenChange(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Save</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
+    </div>
   );
 };
 

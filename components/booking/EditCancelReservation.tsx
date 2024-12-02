@@ -61,9 +61,12 @@ const DeleteReservation: React.FC<DeleteReservationProps> = ({
           {penaltyChargeApplies ? (
             <p className="text-red-500">
               {" "}
-              Canceling this reservation will result in a{" "}
-              {reservation.room_cost * 0.2}(20%) penalty charge, charged to the
-              card on file.
+              Canceling this reservation will result in a $
+              {reservation.room_cost * 0.2 > 5
+                ? reservation.room_cost * 0.2
+                : 5}{" "}
+              penalty charge (20% of booking or $5), charged to the card on
+              file.
             </p>
           ) : daysUntilPenalty > 0 ? (
             <p className="text-green-500">
