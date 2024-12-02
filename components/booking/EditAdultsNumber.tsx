@@ -16,9 +16,9 @@ const EditAdultsNumber: React.FC<EditAdultsNumberProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
 
-  const handleAdultsNumberChange = async (newNumber: number) => {
-    if (reservation.adults_number === newNumber) return;
-  
+  const handleAdultsNumberChange = async (newNumber: number | null) => {
+    if (newNumber === null || reservation.adults_number === newNumber) return;
+
     setLoading(true);
     try {
       const updatedReservation = await updateSpecificReservation(

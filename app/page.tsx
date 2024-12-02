@@ -34,21 +34,18 @@ import BookingInfoUISearchComplete from "@/components/search/BookingInfoSearch/B
 import HotelSelect from "@/components/search/HotelResults/HotelSelect";
 import { RegionContext } from "@/components/providers/RegionProvider";
 import DrawerComponent from "@/components/search/HotelSearch/DrawerComponent";
+import { motion } from "framer-motion";
+
 
 export type searchParamsType = {
-  // RegionSearch inputs
   query: string;
   domain: RegionSearchDomainType;
   locale: RegionSearchLocaleType;
   selectedRegionId: string | null;
-
-  // BookingInfo inputs
   checkinDate: string;
   checkoutDate: string;
   adultsNumber: number;
   numDays: number;
-
-  // HotelSearch inputs
   accessibilityOptions: HotelsSearchAccessibilityOptionsType[];
   amenitiesOptions: HotelsSearchAmenitiesOptionsType[];
   mealPlanOptions: HotelsSearchMealPlanOptionsType[];
@@ -61,26 +58,23 @@ export type searchParamsType = {
 };
 
 const HomeSearchPage: React.FC = () => {
-  // Combined state to track inputs from all components
   const [region] = useContext(RegionContext);
   const regionContextID = region?.region_id || "";
-  const { DEFAULT_CHECKIN_BOOKING_DATE, DEFAULT_CHECKOUT_BOOKING_DATE } =
-    generateDefaultDates(DEFAULT_BOOKING_NUM_DAYS);
+  const {
+    DEFAULT_CHECKIN_BOOKING_DATE,
+    DEFAULT_CHECKOUT_BOOKING_DATE,
+    DEFAULT_NUM_DAYS,
+  } = generateDefaultDates(DEFAULT_BOOKING_NUM_DAYS);
 
-  const [searchParams, setSearchParams] = useState<searchParamsType>({
-    // RegionSearch default inputs
+  const defaultSearchParams: searchParamsType = {
     query: DEFAULT_QUERY,
     domain: DEFAULT_DOMAIN,
     locale: DEFAULT_LOCALE,
     selectedRegionId: regionContextID,
-
-    // BookingInfo default inputs
     checkinDate: DEFAULT_CHECKIN_BOOKING_DATE,
     checkoutDate: DEFAULT_CHECKOUT_BOOKING_DATE,
     adultsNumber: DEFAULT_ADULTS_NUMBER,
-    numDays: DEFAULT_BOOKING_NUM_DAYS,
-
-    // HotelSearch default inputs
+    numDays: DEFAULT_NUM_DAYS,
     accessibilityOptions: DEFAULT_ACCESSIBILITY_OPTIONS,
     amenitiesOptions: DEFAULT_AMENITIES_OPTIONS,
     mealPlanOptions: DEFAULT_MEAL_PLAN_OPTIONS,
@@ -90,41 +84,63 @@ const HomeSearchPage: React.FC = () => {
     availableOnly: DEFAULT_AVAILABILITY_FILTER_OPTIONS,
     price_min: DEFAULT_MIN_PRICE,
     price_max: DEFAULT_MAX_PRICE,
-  });
+  };
 
-  // Handlers to update specific sections of searchParams
+  const [searchParams, setSearchParams] = useState<searchParamsType | null>(
+    null
+  );
+
+  useEffect(() => {
+    const getInitialSearchParams = () => {
+      const storedParams = localStorage.getItem("searchParams");
+      if (storedParams) {
+        setSearchParams(JSON.parse(storedParams));
+      }
+      setSearchParams(defaultSearchParams);
+    };
+
+    getInitialSearchParams();
+  }, []);
+
+  useEffect(() => {
+    if (searchParams) {
+      localStorage.setItem("searchParams", JSON.stringify(searchParams));
+    }
+  }, [searchParams]);
+
   const updateBookingInfoParams = (
-    newSearchParams: Partial<typeof searchParams>
-  ) => setSearchParams((prev) => ({ ...prev, ...newSearchParams }));
+    newSearchParams: Partial<searchParamsType>
+  ) => setSearchParams((prev) => ({ ...prev!, ...newSearchParams }));
 
   useEffect(() => {
     if (!region) return;
     setSearchParams((prev) => ({
-      ...prev,
+      ...prev!,
       selectedRegionId: region.region_id,
     }));
-  }, [region, setSearchParams]);
+  }, [region]);
+
+  if (!searchParams) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <DrawerComponent
       hotelSearchInputs={searchParams}
-      setHotelSearchInputs={setSearchParams}
+      setHotelSearchInputs={(newHotelSearch) => setSearchParams(newHotelSearch)}
     >
       <div className="w-screen px-[10em] mt-[3em]">
         <h1 className="text-2xl font-bold mb-4">
           {region
             ? `Browsing Hotels in ${region.name} 🏨`
-            : "Select a location to start!"}
+            : "⬆️ Find a location to get started!"}
         </h1>
         <BookingInfoUISearchComplete
-          bookingInfo={{
-            checkinDate: searchParams.checkinDate,
-            checkoutDate: searchParams.checkoutDate,
-            adultsNumber: searchParams.adultsNumber,
-            numDays: searchParams.numDays,
-          }}
+          bookingInfo={searchParams}
           setBookingInfo={(newParams) => updateBookingInfoParams(newParams)}
         />
+      </div>
+      <div className="w-8/12">
         <hr />
         <HotelSelect
           bookingParams={{
@@ -149,4 +165,5 @@ const HomeSearchPage: React.FC = () => {
     </DrawerComponent>
   );
 };
+
 export default HomeSearchPage;

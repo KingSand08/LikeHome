@@ -134,16 +134,20 @@ const mockHotelDetailsData: APIHotelDetailsJSONFormatted = {
     },
     coordinates: { latitude: 0, longitude: 0 },
   },
-  images: Array(5)
+  images: Array(20)
     .fill(0)
     .map((_, index) => ({
       alt: `Image ${index}`,
       description: `Image ${index}`,
-      url: `https://picsum.photos/200/300`,
+      url: `https://picsum.photos/600/800?random=${index}`,
       index,
     })),
+  reviews: {
+    score: 4.5,
+    totalReviews: 120,
+    starRating: 5,
+  },
 };
-
 export async function fetchHotelDetails(
   hotelId: string | string[],
   searchParams: ReadonlyURLSearchParams

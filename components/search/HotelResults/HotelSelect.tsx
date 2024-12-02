@@ -64,7 +64,7 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
   useEffect(() => {
     if (!isValid) return;
     handleFindHotels();
-  }, [region]);
+  }, [bookingParams]);
 
   return (
     <div className="container mx-auto p-4">

@@ -2,7 +2,6 @@
 
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { CompleteHotelInfo } from "@/types/rapid-hotels-api/CompleteHotelInformation";
 import { APIHotelDetailsJSONFormatted } from "@/app/api/hotels/details/route";
 import { APIHotelRoomOffersJSONFormatted } from "@/app/api/hotels/search/rooms/route";
 import {
@@ -12,15 +11,16 @@ import {
 import LoadingPage from "@/components/ui/Loading/LoadingPage";
 import ErrorPage from "@/components/ui/ErrorPage";
 import HotelLocation from "@/components/HotelListing/HotelLocation";
-import RoomImageCarousel from "@/components/HotelListing/RoomImageCarousel";
 import PaginatedRoomImageGrid from "@/components/HotelListing/PaginatedRoomImageGrid";
 import RoomOffers from "@/components/HotelListing/RoomOffers";
+import HTMLSafeDescription from "@/components/booking/HTMLDescription";
 
 
 const HotelIDPage: React.FC = () => {
   const { hotelId: hotelIdSlug } = useParams();
   const searchParams = useSearchParams();
-  const [hotelData, setHotelData] = useState<CompleteHotelInfo>(null);
+  const [hotelData, setHotelData] = useState<APIHotelDetailsJSONFormatted | null>(null);
+  const [roomOffers, setRoomOffers] = useState<APIHotelRoomOffersJSONFormatted | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
 
@@ -28,28 +28,21 @@ const HotelIDPage: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       setHotelData(null);
+      setRoomOffers(null);
 
       try {
-        const HOTEL_DETAILS_DATA = await fetchHotelDetails(
-          hotelIdSlug,
-          searchParams
-        );
+        const HOTEL_DETAILS_DATA = await fetchHotelDetails(hotelIdSlug, searchParams);
         if (!HOTEL_DETAILS_DATA) {
           throw new Error("Hotel details not found");
         }
 
-        const HOTEL_ROOM_OFFERS_DATA = await fetchAllHotelRoomOffers(
-          hotelIdSlug,
-          searchParams
-        );
+        const HOTEL_ROOM_OFFERS_DATA = await fetchAllHotelRoomOffers(hotelIdSlug, searchParams);
         if (!HOTEL_ROOM_OFFERS_DATA) {
           throw new Error("Hotel room offers not found");
         }
 
-        setHotelData({
-          hotelDetails: HOTEL_DETAILS_DATA,
-          hotelRooms: HOTEL_ROOM_OFFERS_DATA,
-        });
+        setHotelData(HOTEL_DETAILS_DATA);
+        setRoomOffers(HOTEL_ROOM_OFFERS_DATA);
       } catch (error) {
         setError(true);
       } finally {
@@ -67,37 +60,40 @@ const HotelIDPage: React.FC = () => {
   }
 
   if (error || !hotelData) {
-    return (
-      <ErrorPage />
-    );
+    return <ErrorPage />;
   }
 
-  const { hotelDetails, hotelRooms } = hotelData;
+  const { name, tagline, location, images, reviews } = hotelData;
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Hotel Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-2">{hotelDetails?.name}</h1>
-        <h2 className="text-xl text-base-content">{hotelDetails?.tagline}</h2>
+      {/* Header Section */}
+      <div className="flex justify-between items-start mb-8">
+        <div>
+          <h1 className="text-4xl font-bold mb-2">{name}</h1>
+          <HotelLocation hotelDetails={hotelData} />
+          <p className="text-xl text-gray-600">{tagline}</p>
+        </div>
+        <div className="text-right">
+          <p className="text-2xl font-bold text-info">{reviews.score.toFixed(1)}</p>
+          <p className="text-gray-500">{reviews.totalReviews} reviews</p>
+        </div>
       </div>
 
-      {/* Hotel Location */}
-      <HotelLocation hotelDetails={hotelDetails as APIHotelDetailsJSONFormatted} />
 
       {/* Hotel Images */}
       <div className="mb-8">
         <h3 className="text-2xl font-semibold mb-4">Hotel Images</h3>
-
-        {/* Room Images Carousel */}
-        <RoomImageCarousel hotelDetails={hotelDetails as APIHotelDetailsJSONFormatted} />
-
-        {/* Paginated Non-Room Images */}
-        <PaginatedRoomImageGrid hotelDetails={hotelDetails as APIHotelDetailsJSONFormatted} />
-
-        {/* Room Offers */}
-        <RoomOffers hotelRooms={hotelRooms as APIHotelRoomOffersJSONFormatted} />
+        <PaginatedRoomImageGrid hotelDetails={hotelData} />
       </div>
+
+      {/* Room Offers */}
+      {roomOffers && (
+        <div className="mb-8">
+          <h3 className="text-2xl font-semibold mb-4">Available Rooms</h3>
+          <RoomOffers hotelRooms={roomOffers} />
+        </div>
+      )}
     </div>
   );
 };
