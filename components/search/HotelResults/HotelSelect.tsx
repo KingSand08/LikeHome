@@ -16,35 +16,18 @@ export type bookingParamsType = z.infer<typeof hotelSearchParamsRefinedSchema>;
 
 type HotelSelectUICompleteProps = {
   bookingParams: bookingParamsType;
-  validRegionId: boolean;
+  onFindHotels?: (findHotels: () => Promise<void>) => void;
 };
 
 const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
   bookingParams,
+  onFindHotels,
 }) => {
   const [hotelsData, setHotelsData] =
     useState<APIHotelSearchJSONFormatted | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [region] = useContext(RegionContext);
 
-  const isValid: boolean =
-    hotelSearchParamsRefinedSchema.safeParse(bookingParams).success &&
-    !!region &&
-    region.region_id !== "" &&
-    !loading;
-
-  const [lastPriceRange, setLastPriceRange] = useState<{
-    max: number;
-    min: number;
-  }>({
-    max: DEFAULT_MAX_PRICE,
-    min: DEFAULT_MIN_PRICE,
-  });
   const handleFindHotels = async () => {
-    setLastPriceRange({
-      max: hotelsData?.priceRange?.maxPrice!,
-      min: hotelsData?.priceRange?.minPrice!,
-    });
     setLoading(true);
     try {
       const HOTEL_DATA = await hotelsFromRegion(bookingParams);
@@ -57,14 +40,12 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
     }
   };
 
-  // Only re-renders on initial load and region change.
-  // We don't want to call the API after clicking one checkbox.
-  // So, in the future we could have an "apply new filters button" if filters change.
-  // Also, store filters in searchParams or localStorage...
+  // Expose handleFindHotels via the onFindHotels prop
   useEffect(() => {
-    if (!isValid) return;
-    handleFindHotels();
-  }, [bookingParams]);
+    if (onFindHotels) {
+      onFindHotels(handleFindHotels);
+    }
+  }, [onFindHotels]);
 
   return (
     <div className="container mx-auto p-4">

@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import AdultsNumberInput from "./SearchComponents/AdultsNumberInput";
 import { DatePickerWithRange } from "./DatePickerWithRange";
 import { searchParamsType } from "@/app/page";
-import { cn } from "@/lib/utils";
 
 type BookingInfoUISearchCompleteProps = {
   bookingInfo: searchParamsType;
@@ -14,7 +13,6 @@ type BookingInfoUISearchCompleteProps = {
 const BookingInfoUISearchComplete: React.FC<
   BookingInfoUISearchCompleteProps
 > = ({ bookingInfo, setBookingInfo }) => {
-  const [tempBookingInfo, setTempBookingInfo] = useState(bookingInfo);
   const [isDateValid, setIsDateValid] = useState(true);
   const [isValid, setIsValid] = useState(true);
 
@@ -23,21 +21,30 @@ const BookingInfoUISearchComplete: React.FC<
     checkoutDate: string;
     numDays: number;
   }) => {
-    setTempBookingInfo((prev) => ({ ...prev, ...dates }));
-  };
-
-  const handleAdultsNumberChange = (adults: number | null) => {
-    if (adults !== null) {
-      setIsValid(true);
-      setTempBookingInfo((prev) => ({ ...prev, adultsNumber: adults }));
+    const { checkinDate, checkoutDate, numDays } = dates;
+    if (isDateValid) {
+      setIsDateValid(true);
+      setBookingInfo({
+        ...bookingInfo,
+        checkinDate,
+        checkoutDate,
+        numDays,
+      });
     } else {
-      setIsValid(false);
+      setIsDateValid(false);
     }
   };
 
-  const handleApplyFilters = () => {
-    if (isValid) {
-      setBookingInfo(tempBookingInfo);
+  const handleAdultsNumberChange = (adults: number | null) => {
+    if (adults !== null && adults >= 1) {
+      // Ensure `adultsNumber` is always valid (e.g., minimum 1 adult)
+      setIsValid(true);
+      setBookingInfo({
+        ...bookingInfo,
+        adultsNumber: adults,
+      });
+    } else {
+      setIsValid(false);
     }
   };
 
@@ -65,7 +72,7 @@ const BookingInfoUISearchComplete: React.FC<
             Number of Adults
           </h3>
           <AdultsNumberInput
-            selectedNumber={tempBookingInfo.adultsNumber}
+            selectedNumber={bookingInfo.adultsNumber}
             onChange={handleAdultsNumberChange}
           />
           {!isValid && (
@@ -74,18 +81,6 @@ const BookingInfoUISearchComplete: React.FC<
             </p>
           )}
         </div>
-      </div>
-      {/* Search Button */}
-      <div className="my-5">
-        <button
-          onClick={handleApplyFilters}
-          className={cn(
-            "btn btn-primary w-full",
-            (!isValid || !isDateValid) && "btn-disabled"
-          )}
-        >
-          Search
-        </button>
       </div>
     </div>
   );

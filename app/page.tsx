@@ -32,7 +32,10 @@ import {
 import { generateDefaultDates } from "@/lib/DateFunctions";
 import BookingInfoUISearchComplete from "@/components/search/BookingInfoSearch/BookingInfoSearchUIComplete";
 import HotelSelect from "@/components/search/HotelResults/HotelSelect";
-import { RegionContext } from "@/components/providers/RegionProvider";
+import {
+  RegionContext,
+  RegionContextType,
+} from "@/components/providers/RegionProvider";
 import DrawerComponent from "@/components/search/HotelSearch/DrawerComponent";
 import LoadingPage from "@/components/ui/Loading/LoadingPage";
 
@@ -58,6 +61,7 @@ export type searchParamsType = {
 
 const HomeSearchPage: React.FC = () => {
   const [region] = useContext(RegionContext);
+  const regionContextName = region?.name || "";
   const regionContextID = region?.region_id || "";
   const {
     DEFAULT_CHECKIN_BOOKING_DATE,
@@ -66,7 +70,7 @@ const HomeSearchPage: React.FC = () => {
   } = generateDefaultDates(DEFAULT_BOOKING_NUM_DAYS);
 
   const defaultSearchParams: searchParamsType = {
-    query: DEFAULT_QUERY,
+    query: regionContextName,
     domain: DEFAULT_DOMAIN,
     locale: DEFAULT_LOCALE,
     selectedRegionId: regionContextID,
@@ -89,13 +93,46 @@ const HomeSearchPage: React.FC = () => {
     null
   );
 
+  let findHotels: (() => Promise<void>) | null = null;
+  const setFindHotels = (handleFindHotels: () => Promise<void>) => {
+    findHotels = handleFindHotels;
+  };
+  const handleSearchClick = async () => {
+    if (findHotels) {
+      await findHotels(); // Call the function to trigger the search
+    } else {
+      console.error("Hotel search function is not available!");
+    }
+  };
+
   useEffect(() => {
     const getInitialSearchParams = () => {
       const storedParams = localStorage.getItem("searchParams");
+      const regionParams = localStorage.getItem("region");
+
+      let combinedParams = { ...defaultSearchParams };
+
       if (storedParams) {
-        setSearchParams(JSON.parse(storedParams));
+        combinedParams = { ...combinedParams, ...JSON.parse(storedParams) };
       }
-      setSearchParams(defaultSearchParams);
+
+      if (regionParams) {
+        try {
+          const parsedRegion = JSON.parse(regionParams) as RegionContextType;
+
+          if (parsedRegion && parsedRegion.region_id && parsedRegion.name) {
+            combinedParams = {
+              ...combinedParams,
+              selectedRegionId: parsedRegion.region_id,
+              query: parsedRegion.name,
+            };
+          }
+        } catch (error) {
+          console.error("Error parsing regionParams:", error);
+        }
+      }
+
+      setSearchParams(combinedParams);
     };
 
     getInitialSearchParams();
@@ -115,12 +152,18 @@ const HomeSearchPage: React.FC = () => {
     if (!region) return;
     setSearchParams((prev) => ({
       ...prev!,
+      query: region.name,
       selectedRegionId: region.region_id,
     }));
   }, [region]);
 
   if (!searchParams) {
-    return <LoadingPage className="min-h-screen" size_style={{ width: '400px', height: '400px' }} />
+    return (
+      <LoadingPage
+        className="min-h-screen"
+        size_style={{ width: "400px", height: "400px" }}
+      />
+    );
   }
 
   return (
@@ -137,10 +180,21 @@ const HomeSearchPage: React.FC = () => {
               : "⬆️ Find a location to get started!"}
           </p>
         </h1>
-        <BookingInfoUISearchComplete
-          bookingInfo={searchParams}
-          setBookingInfo={(newParams) => updateBookingInfoParams(newParams)}
-        />
+
+        <div className="flex flex-col gap-4 my-4">
+          <BookingInfoUISearchComplete
+            bookingInfo={searchParams}
+            setBookingInfo={(newParams) => updateBookingInfoParams(newParams)}
+          />
+          {region && (
+            <button
+              onClick={handleSearchClick}
+              className="btn btn-primary self-stretch"
+            >
+              Find Hotels
+            </button>
+          )}
+        </div>
       </div>
       <div className="max-[1200px]:w-full w-5/6">
         <hr />
@@ -161,7 +215,7 @@ const HomeSearchPage: React.FC = () => {
             meal_plan: searchParams.mealPlanOptions,
             available_filter: searchParams.availableOnly,
           }}
-          validRegionId={!!searchParams.selectedRegionId}
+          onFindHotels={setFindHotels}
         />
       </div>
     </DrawerComponent>
