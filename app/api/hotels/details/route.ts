@@ -76,11 +76,14 @@ export async function GET(req: NextRequest) {
           longitude: JSON_DATA.summary?.location?.coordinates?.longitude ?? 0,
         },
       },
+
       images:
         JSON_DATA.propertyGallery?.images?.map((image, index) => ({
           alt: image.accessibilityText ?? "",
           description: image.image?.description ?? "",
           url: image.image?.url ?? "",
+          width: 800,
+          height: 600,
           index,
         })) ?? [],
       reviews: {
