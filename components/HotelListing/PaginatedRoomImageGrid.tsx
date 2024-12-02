@@ -145,6 +145,19 @@ const PaginatedRoomImageGrid: React.FC<{ hotelDetails: APIHotelDetailsJSONFormat
         }}
         styles={{
           container: { backgroundColor: "rgba(0, 0, 0, 0.8)" },
+          captionsTitle: {
+            position: "absolute",
+            top: "10px",
+            left: "20px",
+            right: "20px",
+            color: "white",
+            fontSize: "18px",
+            fontWeight: "bold",
+            zIndex: 10,
+          },
+          captionsDescription: {
+            display: "none",
+          },
         }}
       />
     </div>
