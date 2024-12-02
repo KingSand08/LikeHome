@@ -47,7 +47,7 @@ const Footer = () => {
               About Us
             </Link>
             <Link
-              href={"/bookings"}
+              href={"/profile"}
               className="p-4 text-sm md:text-base font-medium hover:text-blue-600 dark:hover:text-blue-400 transition"
             >
               Bookings
