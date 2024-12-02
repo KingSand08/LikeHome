@@ -127,8 +127,8 @@ const HomeSearchPage: React.FC = () => {
       hotelSearchInputs={searchParams}
       setHotelSearchInputs={(newHotelSearch) => setSearchParams(newHotelSearch)}
     >
-      <div className="flex flex-col w-full px-[7.75em] max-[660px]:px-[30px] mt-[3em] max-[660px]:mt-[10px]">
-        <h1 className="max-[660px]:text-xl text-3xl font-bold mb-4">
+      <div className="flex flex-col w-full px-[7.75em] max-[800px]:px-[30px] mt-[3em] max-[800px]:mt-[10px]">
+        <h1 className="max-[800px]:text-xl text-3xl font-bold mb-4">
           <br className="border-4 border-white" />
           <p>
             {region
@@ -141,7 +141,7 @@ const HomeSearchPage: React.FC = () => {
           setBookingInfo={(newParams) => updateBookingInfoParams(newParams)}
         />
       </div>
-      <div className="max-[660px]:w-full w-5/6">
+      <div className="max-[800px]:w-full w-5/6">
         <hr />
         <HotelSelect
           bookingParams={{

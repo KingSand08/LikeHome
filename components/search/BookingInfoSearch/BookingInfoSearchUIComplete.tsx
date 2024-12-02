@@ -51,10 +51,10 @@ const BookingInfoUISearchComplete: React.FC<
 
   return (
     <div>
-      <h2 className="max-[660px]:text-lg text-2xl font-bold">Booking Information</h2>
+      <h2 className="max-[800px]:text-lg text-2xl font-bold">Booking Information</h2>
       <div className="gap-5 join">
         <div className="join-item">
-          <h3 className="text-primary font-semibold text-base max-[660px]:text-sm">Booking Dates</h3>
+          <h3 className="text-primary font-semibold text-base max-[800px]:text-sm">Booking Dates</h3>
           <DatePickerWithRange
             bookingInfo={bookingInfo}
             onChange={handleDateChange}
