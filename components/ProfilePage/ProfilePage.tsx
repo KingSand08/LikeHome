@@ -1,15 +1,26 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AccountInformation from "@/components/ProfilePage/AccountInformation";
 import Rewards from "@/components/ProfilePage/Rewards";
 import Avatar from "@/components/auth/Avatar";
 import User from "@/types/User";
 import DropDownBtn from "@/public/drop-down-btn";
 import Bookings from "./BookingsPage";
+import { useSearchParams } from "next/navigation";
 
 const ProfilePage = ({ user }: { user: User }) => {
   const [activeSection, setActiveSection] = useState<string>("account");
   const [showContent, setShowContent] = useState<boolean>(true);
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    // Check if a query parameter exists to pre-select a section
+    const section = searchParams.get("section");
+    if (section) {
+      setActiveSection(section);
+    }
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen flex flex-col min-[1300px]:flex-row dark:text-gray-100 text-gray-900 select-none">

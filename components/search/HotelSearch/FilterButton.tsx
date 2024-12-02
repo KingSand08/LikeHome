@@ -47,9 +47,7 @@ const FilterButton: React.FC = () => {
   return (
     <label
       htmlFor="my-drawer"
-      className={`btn btn-outline btn-primary fixed left-4 z-20 transition-transform duration-300 
-  ${isMobile ? "top-[180px] btn-md" : ""}
-  ${isSticky ? "top-4 left-4" : ""}`}
+      className={`btn btn-outline btn-primary fixed left-4 z-20 transition-transform duration-300 ${isMobile ? "top-[180px] btn-md" : ""}`}
       style={{
         top: !isMobile && !isSticky ? `${buttonOffset + 50}px` : undefined,
       }}

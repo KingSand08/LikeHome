@@ -60,9 +60,7 @@ const HotelIDPage: React.FC = () => {
   }, [hotelIdSlug, searchParams]);
 
   if (loading) {
-    return (
-      <LoadingPage className="min-h-screen" size_style={{ width: '400px', height: '400px' }} />
-    );
+    return <LoadingPage className="min-h-screen" size_style={{ width: '400px', height: '400px' }} />
   }
 
   if (error || !hotelData) {
