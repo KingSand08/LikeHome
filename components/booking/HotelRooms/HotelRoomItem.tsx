@@ -87,7 +87,7 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
       toast("You already have a reservation in a different hotel", {
         action: {
           label: "View Reservation",
-          onClick: () => router.push("/bookings/" + reservations[0].id),
+          onClick: () => router.push("/profile"),
         },
       });
       return;
