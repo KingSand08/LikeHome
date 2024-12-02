@@ -9,8 +9,6 @@ import {
   hotelDetailsParamsSchema,
 } from "@/lib/rapid-hotel-api/zod/hotel-details-schemas";
 import { APIHotelDetailsResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotels-details-doc";
-import { ApiHotelSearchResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotels-search-doc";
-import { API_HOTEL_SEARCH_URL } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
 
 function validateSearchParams(
   searchParams: URLSearchParams
@@ -42,10 +40,11 @@ function validateSearchParams(
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const { query, endpoint, error } = validateSearchParams(searchParams);
+
   if (error) {
     return NextResponse.json(
       {
-        error,
+        error: "Invalid search parameters. Please check your query and try again.",
       },
       { status: 400 }
     );
@@ -56,50 +55,49 @@ export async function GET(req: NextRequest) {
 
     if (!response.ok) {
       throw new Error(
-        `Failed to fetch data from API: ${response.statusText} & Status code: ${response.status}`
+        `Failed to fetch data from API: ${response.statusText} (Status code: ${response.status}).`
       );
     }
 
     const JSON_DATA: APIHotelDetailsResponseJSON = await response.json();
 
     const PAYLOAD: APIHotelDetailsJSONFormatted = {
-      hotel_id: JSON_DATA.summary?.id ?? "",
-      name: JSON_DATA.summary?.name ?? "",
-      tagline: JSON_DATA.summary?.tagline ?? "",
+      hotel_id: JSON_DATA.summary?.id || "unknown",
+      name: JSON_DATA.summary?.name || "Unknown Hotel",
+      tagline: JSON_DATA.summary?.tagline || "No tagline available",
       location: {
         address: {
-          addressLine: JSON_DATA.summary?.location?.address?.addressLine ?? "",
-          city: JSON_DATA.summary?.location?.address?.city ?? "",
-          province: JSON_DATA.summary?.location?.address?.province ?? "",
-          countryCode: JSON_DATA.summary?.location?.address?.countryCode ?? "",
+          addressLine: JSON_DATA.summary?.location?.address?.addressLine || "",
+          city: JSON_DATA.summary?.location?.address?.city || "",
+          province: JSON_DATA.summary?.location?.address?.province || "",
+          countryCode: JSON_DATA.summary?.location?.address?.countryCode || "",
         },
         coordinates: {
-          latitude: JSON_DATA.summary?.location?.coordinates?.latitude ?? 0,
-          longitude: JSON_DATA.summary?.location?.coordinates?.longitude ?? 0,
+          latitude: JSON_DATA.summary?.location?.coordinates?.latitude || 0,
+          longitude: JSON_DATA.summary?.location?.coordinates?.longitude || 0,
         },
       },
       images:
         JSON_DATA.propertyGallery?.images?.map((image, index) => ({
-          alt: image.accessibilityText ?? "",
-          description: image.image?.description ?? "",
-          url: image.image?.url ?? "",
+          alt: image.accessibilityText || "No description",
+          description: image.image?.description || "No description",
+          url: image.image?.url || "/default-image.jpg", // Fallback image URL
+          width: 800,
+          height: 600,
           index,
-        })) ?? [],
+        })) || [],
       reviews: {
-        score:
-          JSON_DATA.reviewInfo?.summary?.overallScoreWithDescriptionA11y
-            ?.value ?? "",
-        totalReviews:
-          JSON_DATA.reviewInfo?.summary?.propertyReviewCountDetails
-            ?.shortDescription ?? "",
+        score: JSON_DATA.reviewInfo?.summary?.overallScoreWithDescriptionA11y?.value || "N/A",
+        totalReviews: JSON_DATA.reviewInfo?.summary?.propertyReviewCountDetails?.shortDescription || "0",
       },
     };
 
     return NextResponse.json(PAYLOAD, { status: 200 });
   } catch (error) {
+    console.error("Error in hotel-details API:", error);
     return NextResponse.json(
       {
-        error: `An error occurred while fetching data | query: ${query} | endpoint: ${endpoint} | Custom error message: ${error}`,
+        error: `Failed to fetch hotel details. Please try again later.`,
       },
       { status: 500 }
     );
@@ -119,6 +117,8 @@ export type APIHotelDetailsJSONFormatted = {
 };
 
 type Image = {
+  width: number;
+  height: number;
   alt: string;
   description: string;
   url: string;

@@ -17,7 +17,7 @@ import { ReadonlyURLSearchParams } from "next/navigation";
 import { cacheHotelDetails, cacheHotelRoomOffer } from "./cache-actions";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-const IS_MOCK = process.env.NODE_ENV === "development";
+const IS_MOCK = process.env.NODE_ENV !== "development";
 const MOCK_DELAY = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
 async function hotelsFromRegionImpl(
@@ -141,6 +141,8 @@ const mockHotelDetailsData: APIHotelDetailsJSONFormatted = {
       description: `Image ${index}`,
       url: `https://picsum.photos/600/800?random=${index}`,
       index,
+      width: 800,
+      height: 800,
     })),
   reviews: {
     score: "4.5 / 5 very good",

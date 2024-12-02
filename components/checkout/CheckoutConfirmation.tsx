@@ -120,7 +120,7 @@ const CheckoutConfirmation = ({
 
   if (!clientSecret || !stripe || !elements) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="w-full flex items-center justify-center h-full">
         <div className="flex space-x-2">
           <div className="h-4 w-4 bg-white rounded-full animate-bounce"></div>
           <div className="h-4 w-4 bg-white rounded-full animate-bounce"></div>
@@ -131,7 +131,7 @@ const CheckoutConfirmation = ({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-2 rounded-md">
+    <form onSubmit={handleSubmit} className="w-full">
       {clientSecret && <PaymentElement />}
 
       {errorMessage && <div>{errorMessage}</div>}
@@ -141,7 +141,7 @@ const CheckoutConfirmation = ({
         className="text-white w-full p-5 bg-black mt-2 rounded-md 
         font-bold disabled:opacity-50 disabled:animate-pulse"
       >
-        {!loading ? `Pay $${totalAmount}` : "Processing..."}
+        {!loading ? `Pay $${totalAmount.toFixed(2)}` : "Processing..."}
       </button>
     </form>
   );

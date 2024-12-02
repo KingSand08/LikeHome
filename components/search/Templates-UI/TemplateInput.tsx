@@ -40,7 +40,7 @@ const TemplateInput: React.FC<TemplateInputProps> = ({
   };
 
   return (
-    <div className="mb-6">
+    <div className="">
       <label className="font-semibold text-primary">
         {title}
       </label>

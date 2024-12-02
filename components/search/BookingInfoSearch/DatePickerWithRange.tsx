@@ -35,7 +35,8 @@ type DatePickerWithRangeProps = {
     numDays: number;
   }) => void;
   onValidationChange: (isValid: boolean) => void;
-  bookingInfo: searchParamsType;
+  bookingInfo: { checkinDate: string; checkoutDate: string };
+  disable?: (date: Date) => boolean;
 };
 
 export function DatePickerWithRange({
@@ -43,6 +44,7 @@ export function DatePickerWithRange({
   className,
   onChange,
   onValidationChange,
+  disable,
 }: DatePickerWithRangeProps) {
   const [dateRange, setDateRange] = React.useState<DateRange>({
     from: parse(bookingInfo.checkinDate, "yyyy-MM-dd", new Date()),
@@ -99,7 +101,7 @@ export function DatePickerWithRange({
     const numDays = calculateNumDays(range.from, range.to);
 
     if (numDays == 0) {
-      setDateRange({from: undefined, to: undefined});
+      setDateRange({ from: undefined, to: undefined });
       return;
     }
     setDateRange(range);
@@ -150,10 +152,13 @@ export function DatePickerWithRange({
               selected={dateRange}
               onSelect={handleDateRangeChange}
               numberOfMonths={2}
-              disabled={(date) => {
-                const today = startOfDay(new Date());
-                return isBefore(startOfDay(date), today);
-              }}
+              disabled={
+                disable ??
+                ((date) => {
+                  const today = startOfDay(new Date());
+                  return isBefore(startOfDay(date), today);
+                })
+              }
             />
           </PopoverContent>
         </Popover>

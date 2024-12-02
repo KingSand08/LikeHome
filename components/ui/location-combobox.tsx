@@ -69,7 +69,7 @@ export default function LocationCombobox() {
       onBlur={handleBlur}
       className={`relative ${
         open ? "rounded-lg rounded-b-none" : "rounded-lg"
-      } text-neutral dark:text-gray-100 dark:bg-gray-800 border-2 border-primary focus:outline-none focus:ring-2 focus:ring-blue-500`}
+      } text-neutral dark:text-gray-100 dark:bg-gray-800 border-2 border-secondary focus:outline-none focus:ring-2 focus:ring-blue-500`}
     >
       <CommandInput
         placeholder={value?.name ?? "Search locations..."}
@@ -81,7 +81,7 @@ export default function LocationCombobox() {
       />
       {open && <hr />}
       {open && (
-        <CommandList className="z-50 absolute top-full left-0 w-full bg-white dark:bg-gray-800 max-h-60 overflow-auto rounded-lg rounded-t-none border-2 border-t-0 border-primary">
+        <CommandList className="z-50 absolute top-full left-0 w-full bg-white dark:bg-gray-800 max-h-60 overflow-auto rounded-lg rounded-t-none border-2 border-t-0 border-secondary">
           <CommandEmpty className="py-3 text-center text-sm w-full">
             Press Enter to search for more locations.
           </CommandEmpty>

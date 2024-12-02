@@ -1,5 +1,7 @@
 "use client";
-import { useContext, useEffect, useState } from "react";
+
+import { useContext, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,
@@ -21,6 +23,7 @@ import {
   RegionSearchLocaleType,
 } from "@/lib/rapid-hotel-api/zod/region-search-schemas";
 import {
+  hotelSearchParamsRefinedSchema,
   HotelSearchSortOrderOptionsType,
   HotelsSearchAccessibilityOptionsType,
   HotelsSearchAmenitiesOptionsType,
@@ -31,11 +34,13 @@ import {
 } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
 import { generateDefaultDates } from "@/lib/DateFunctions";
 import BookingInfoUISearchComplete from "@/components/search/BookingInfoSearch/BookingInfoSearchUIComplete";
-import HotelSelect from "@/components/search/HotelResults/HotelSelect";
 import { RegionContext } from "@/components/providers/RegionProvider";
 import DrawerComponent from "@/components/search/HotelSearch/DrawerComponent";
-import { motion } from "framer-motion";
+import { APIHotelSearchJSONFormatted } from "./api/hotels/search/route";
+import { hotelsFromRegion } from "@/server-actions/api-actions";
 
+const LoadingPage = dynamic(() => import("@/components/ui/Loading/LoadingPage"), { ssr: false });
+const HotelSelect = dynamic(() => import("@/components/search/HotelResults/HotelSelect"), { ssr: false });
 
 export type searchParamsType = {
   query: string;
@@ -59,7 +64,7 @@ export type searchParamsType = {
 
 const HomeSearchPage: React.FC = () => {
   const [region] = useContext(RegionContext);
-  const regionContextID = region?.region_id || "";
+  const searchResultsRef = useRef<HTMLDivElement | null>(null); // Reference for scrolling to the results section
   const {
     DEFAULT_CHECKIN_BOOKING_DATE,
     DEFAULT_CHECKOUT_BOOKING_DATE,
@@ -70,7 +75,7 @@ const HomeSearchPage: React.FC = () => {
     query: DEFAULT_QUERY,
     domain: DEFAULT_DOMAIN,
     locale: DEFAULT_LOCALE,
-    selectedRegionId: regionContextID,
+    selectedRegionId: region?.region_id || "",
     checkinDate: DEFAULT_CHECKIN_BOOKING_DATE,
     checkoutDate: DEFAULT_CHECKOUT_BOOKING_DATE,
     adultsNumber: DEFAULT_ADULTS_NUMBER,
@@ -89,14 +94,17 @@ const HomeSearchPage: React.FC = () => {
   const [searchParams, setSearchParams] = useState<searchParamsType | null>(
     null
   );
+  const [hotelsData, setHotelsData] = useState<APIHotelSearchJSONFormatted | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const getInitialSearchParams = () => {
       const storedParams = localStorage.getItem("searchParams");
       if (storedParams) {
         setSearchParams(JSON.parse(storedParams));
+      } else {
+        setSearchParams(defaultSearchParams);
       }
-      setSearchParams(defaultSearchParams);
     };
 
     getInitialSearchParams();
@@ -120,8 +128,67 @@ const HomeSearchPage: React.FC = () => {
     }));
   }, [region]);
 
+  const isValid: boolean =
+    !!searchParams &&
+    hotelSearchParamsRefinedSchema.safeParse({
+      checkin_date: searchParams.checkinDate,
+      checkout_date: searchParams.checkoutDate,
+      adults_number: searchParams.adultsNumber,
+      region_id: region?.region_id || "",
+      sort_order: searchParams.sortOrder,
+      locale: searchParams.locale,
+      domain: searchParams.domain,
+      price_min: searchParams.price_min,
+      price_max: searchParams.price_max,
+      accessibility: searchParams.accessibilityOptions,
+      amenities: searchParams.amenitiesOptions,
+      lodging_type: searchParams.lodgingOptions,
+      meal_plan: searchParams.mealPlanOptions,
+      available_filter: searchParams.availableOnly,
+    }).success &&
+    !!region &&
+    region.region_id !== "" &&
+    !loading;
+
+  const handleFindHotels = async () => {
+    if (!isValid) return;
+
+    const bookingParams = {
+      checkin_date: searchParams!.checkinDate,
+      checkout_date: searchParams!.checkoutDate,
+      adults_number: searchParams!.adultsNumber,
+      region_id: region?.region_id || "",
+      sort_order: searchParams!.sortOrder,
+      locale: searchParams!.locale,
+      domain: searchParams!.domain,
+      price_min: searchParams!.price_min,
+      price_max: searchParams!.price_max,
+      accessibility: searchParams!.accessibilityOptions,
+      amenities: searchParams!.amenitiesOptions,
+      lodging_type: searchParams!.lodgingOptions,
+      meal_plan: searchParams!.mealPlanOptions,
+      available_filter: searchParams!.availableOnly,
+    };
+
+    setLoading(true);
+    try {
+      const HOTEL_DATA = await hotelsFromRegion(bookingParams);
+      setHotelsData(HOTEL_DATA);
+
+      // Smooth scroll to results after search
+      if (searchResultsRef.current) {
+        searchResultsRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    } catch (error) {
+      console.error("Error fetching hotels:", error);
+      setHotelsData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!searchParams) {
-    return <div>Loading...</div>;
+    return <LoadingPage className="min-h-screen" size_style={{ width: "400px", height: "400px" }} />;
   }
 
   return (
@@ -129,25 +196,47 @@ const HomeSearchPage: React.FC = () => {
       hotelSearchInputs={searchParams}
       setHotelSearchInputs={(newHotelSearch) => setSearchParams(newHotelSearch)}
     >
-      <div className="w-fit text-center">
-        <h1 className="text-2xl font-bold mb-4">
-          {region
-            ? `Browsing Hotels in ${region.name} 🏨`
-            : "⬆️ Find a location to get started!"}
-        </h1>
-        <BookingInfoUISearchComplete
-          bookingInfo={searchParams}
-          setBookingInfo={(newParams) => updateBookingInfoParams(newParams)}
-        />
+      <div
+        className="hero min-[50vh]"
+        style={{
+          backgroundImage: "url(https://img.daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.webp)",
+        }}
+      >
+        <div className="hero-overlay bg-opacity-80"></div>
+          <div className="hero-content text-neutral-content text-center">
+            <div className="flex flex-col w-full px-[10em] max-[900px]:px-[30px] pt-0 max-[900px]:pt-10">
+                <h1 className="max-[900px]:text-xl text-3xl font-bold mb-4">
+                  <br className="border-4 border-white" />
+                  <p>
+                    {region
+                      ? `Browsing Hotels in ${region.name} 🏨`
+                      : "⬆️ Find a location to get started!"}
+                  </p>
+                </h1>
+                
+                <div className="self-center max-w-md">
+                  <BookingInfoUISearchComplete
+                    bookingInfo={searchParams}
+                    setBookingInfo={(newParams) => updateBookingInfoParams(newParams)}
+                    handleFindhotels={handleFindHotels}
+                  />
+                </div>
+            </div>
+          </div>
       </div>
-      <div className="w-8/12">
+
+      {/* Search Results Section */}
+      <div ref={searchResultsRef} className="max-[1200px]:w-full w-5/6 mt-8">
         <hr />
         <HotelSelect
+          loading={loading}
+          hotelsData={hotelsData}
+          lastPriceRange={{ max: DEFAULT_MAX_PRICE, min: DEFAULT_MIN_PRICE }}
           bookingParams={{
             checkin_date: searchParams.checkinDate,
             checkout_date: searchParams.checkoutDate,
             adults_number: searchParams.adultsNumber,
-            region_id: regionContextID,
+            region_id: region?.region_id || "",
             sort_order: searchParams.sortOrder,
             locale: searchParams.locale,
             domain: searchParams.domain,
@@ -159,7 +248,6 @@ const HomeSearchPage: React.FC = () => {
             meal_plan: searchParams.mealPlanOptions,
             available_filter: searchParams.availableOnly,
           }}
-          validRegionId={!!searchParams.selectedRegionId}
         />
       </div>
     </DrawerComponent>

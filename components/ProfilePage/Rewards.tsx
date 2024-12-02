@@ -75,7 +75,7 @@ const Rewards = ({ user }: { user: User }) => {
 
   return (
     <div className="h-full p-6 text-gray-900 dark:text-gray-100 rounded-lg">
-      <h2 className="text-3xl font-bold mb-6">My Rewards</h2>
+      <h2 className="text-2xl font-bold mb-6">My Rewards</h2>
 
       {/* Reward Points Section */}
       <div className="grid gap-6 md:grid-cols-2">
@@ -108,7 +108,7 @@ const Rewards = ({ user }: { user: User }) => {
       </div>
 
       {/* Levels Section */}
-      <h2 className="text-3xl font-bold mt-8 mb-6">My Levels</h2>
+      <h2 className="text-2xl font-bold mt-8 mb-6">My Levels</h2>
       <div className="rounded-lg shadow-md p-6 bg-white dark:bg-gray-800">
         <h3 className="text-xl font-semibold mb-4">Current Level</h3>
         <div className="flex items-center justify-center mb-4">

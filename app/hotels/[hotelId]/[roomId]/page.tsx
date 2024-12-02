@@ -5,8 +5,10 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CheckoutInfo from "@/components/checkout/CheckoutInfo";
 import { calculateNumDays } from "@/lib/DateFunctions";
-import Image from "next/image";
 import { fetchHotelRoomOffer } from "@/server-actions/api-actions";
+import LoadingPage from "@/components/ui/Loading/LoadingPage";
+import { ImageSlider } from "@/components/ui/ImageSlider";
+import ErrorPage from "@/components/ui/ErrorPage";
 
 export type BookingDetailsType = {
   checkin_date: string;
@@ -71,106 +73,87 @@ const HotelRoomIDPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div>
-        <p className="text-center text-lg font-medium text-gray-600">
-          Loading...
-        </p>
-      </div>
+      <LoadingPage className="min-h-screen" size_style={{ width: '400px', height: '400px' }} />
     );
   }
 
   if (error || !hotelRoomData) {
-    return (
-      <div>
-        <p className="text-center text-lg font-medium text-red-500">
-          Error loading hotel room data (Error: {error})
-        </p>
-      </div>
-    );
+    return <ErrorPage />;
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center text-blue-700 mb-8">
+    <div className="container mx-auto px-4 py-8 flex flex-col space-y-5 justify-between items-start w-full">
+      <h1 className="text-3xl font-bold text-center text-primary mb-8">
         Finalize Your Booking Details
       </h1>
 
-      {/* Hotel Room Information */}
-      <div className="p-6 bg-gray-100 rounded-lg shadow-lg mb-8">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
-          Room Information
+      {/* Booking Details about the Hotel Section */}
+      <div className="w-full mt-12 p-8 bg-gradient-to-br from-slate-100 to-slate-300 dark:from-slate-800 dark:to-slate-900 text-gray-800 dark:text-gray-100 rounded-xl shadow-lg">
+        <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-6 text-center">
+          Booking Details
         </h2>
-        <p className="text-gray-500 text-center mb-6">
-          Hotel ID: <span className="font-semibold">{hotelIdSlug}</span> | Room
-          ID: <span className="font-semibold">{roomIdSlug}</span>
-        </p>
+        <ul className="space-y-4 text-gray-700 dark:text-gray-300">
+          {Object.entries(bookingDetails).map(([key, value]) => (
+            <li
+              key={key}
+              className="flex justify-between items-center border-b border-gray-300 dark:border-gray-600 pb-3"
+            >
+              <span className="font-medium capitalize text-gray-800 dark:text-gray-100">
+                {key.replace("_", " ")}:
+              </span>
+              <span
+                className={`text-lg font-semibold ml-2 ${value ? "text-primary" : "text-error"
+                  }`}
+              >
+                {value || "N/A"}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-        <div className="text-center">
-          <h3 className="text-xl font-semibold text-gray-800 mb-2">
+
+      {/* Hotel Room Information */}
+      <div className="w-full mt-12 p-8 bg-gradient-to-br from-slate-100 to-slate-300 dark:from-slate-800 dark:to-slate-900 text-gray-800 dark:text-gray-100 rounded-xl shadow-lg flex flex-col md:flex-row gap-10 mb-8">
+        {/* Left Column - Room Details */}
+        <div className="md:w-1/2">
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-6">
+            Room Information
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <span className="font-semibold">Hotel ID:</span> {hotelIdSlug} |{" "}
+            <span className="font-semibold">Room ID:</span> {roomIdSlug}
+          </p>
+
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
             {hotelRoomData.name}
           </h3>
           <p
-            className="text-gray-700 mb-4 px-4"
+            className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed"
             dangerouslySetInnerHTML={{ __html: hotelRoomData.description }}
           ></p>
 
           <div
-            className={`text-lg font-medium mb-6 ${
+            className={`text-xl font-semibold mb-6 ${
               hotelRoomData.pricePerNight.amount > 0
-                ? "text-blue-700"
+                ? "text-green-600"
                 : "text-red-500"
             }`}
           >
-            {hotelRoomData.pricePerNight.amount > 0 ? (
-              <>
-                Price per night: {hotelRoomData.pricePerNight.currency.symbol}
-                {hotelRoomData.pricePerNight.amount}{" "}
-                {hotelRoomData.pricePerNight.currency.code}
-              </>
-            ) : (
-              "Unavailable for booking"
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            {hotelRoomData.galleryImages.map((image) => (
-              <div key={image.index} className="flex flex-col items-center">
-                <Image
-                  src={image.url}
-                  alt={image.alt}
-                  className="w-full h-48 object-cover rounded-lg shadow-md"
-                  width={500}
-                  height={500}
-                />
-                <p className="text-sm text-gray-500 mt-2 text-center">
-                  {image.description}
-                </p>
-              </div>
-            ))}
           </div>
         </div>
 
-        {/* Booking Details about the Hotel Section */}
-        <div className="mt-8 p-6 bg-white rounded-lg shadow-lg">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
-            Booking Details (about hotel)
-          </h2>
-          <ul className="space-y-3 text-center">
-            {Object.entries(bookingDetails).map(([key, value]) => (
-              <li key={key} className="text-md text-gray-700">
-                <strong className="text-gray-900">
-                  {key.replace("_", " ")}
-                </strong>
-                :<span className="text-blue-700 ml-2">{value ?? "N/A"}</span>
-              </li>
-            ))}
-          </ul>
+        {/* Right Column - Image Slider */}
+        <div className="md:w-1/2">
+          <ImageSlider images={hotelRoomData.galleryImages} />
         </div>
+      </div>
 
+      <div className="w-full p-8 bg-gradient-to-br from-slate-100 to-slate-300 dark:from-slate-800 dark:to-slate-900 text-gray-800 dark:text-gray-100 rounded-xl shadow-lg mb-8">
         {/* Booking Info and Checkout Section */}
         {hotelRoomData &&
-        bookingDetails &&
-        hotelRoomData.pricePerNight.amount > 0 ? (
+          bookingDetails &&
+          hotelRoomData.pricePerNight.amount > 0 ? (
           <CheckoutInfo
             pricePerDay={hotelRoomData.pricePerNight.amount}
             numberOfDays={calculateNumDays(
