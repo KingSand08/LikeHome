@@ -11,25 +11,46 @@ export async function cacheHotelDetails(
   await prisma.cachedHotel.upsert({
     where: { hotel_id: data.hotel_id },
     create: {
-      ...data,
-      location: {
-        ...data.location,
-        coordinates: {
-          latitude: data.location.coordinates.latitude,
-          longitude: data.location.coordinates.longitude,
-        },
-      },
-    },
-    update: {
+      id: data.hotel_id,
+      hotel_id: data.hotel_id,
+      name: data.name,
       tagline: data.tagline,
       location: {
-        ...data.location,
+        address: {
+          addressLine: data.location.address.addressLine,
+          city: data.location.address.city,
+          province: data.location.address.province,
+          countryCode: data.location.address.countryCode,
+        },
         coordinates: {
           latitude: data.location.coordinates.latitude,
           longitude: data.location.coordinates.longitude,
         },
       },
-      reviews: data.reviews,
+      reviews: {
+        score: data.reviews.score,
+        totalReviews: data.reviews.totalReviews,
+      }
+    },
+    update: {
+      name: data.name,
+      tagline: data.tagline,
+      location: {
+        address: {
+          addressLine: data.location.address.addressLine,
+          city: data.location.address.city,
+          province: data.location.address.province,
+          countryCode: data.location.address.countryCode,
+        },
+        coordinates: {
+          latitude: data.location.coordinates.latitude,
+          longitude: data.location.coordinates.longitude,
+        },
+      },
+      reviews: {
+        score: data.reviews.score,
+        totalReviews: data.reviews.totalReviews,
+      }
     },
   });
 

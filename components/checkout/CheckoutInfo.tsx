@@ -53,7 +53,7 @@ export default function CheckoutInfo({
   // Calculate total amount
   const pretax = pricePerDay * numberOfDays;
   const totalAmount = pretax * 1.1;
-  const roundedTotalAmount = parseFloat(totalAmount.toFixed(2));
+  const roundedTotalAmount = Math.round(totalAmount * 100) / 100;
 
   // Redeem points
   const [rewardPoints, setRewardPoints] = useState(0);
@@ -135,7 +135,7 @@ export default function CheckoutInfo({
           Total Amount (including 10% tax):{" "}
           <span className="font-bold text-blue-700 dark:text-blue-400">
             {currencySymbol}
-            {totalAmount}
+            {roundedTotalAmount}
           </span>
         </h2>
       </div>
@@ -170,12 +170,12 @@ export default function CheckoutInfo({
           stripe={stripePromise}
           options={{
             mode: "payment",
-            amount: convertToSubcurrency(totalAmount),
+            amount: convertToSubcurrency(roundedTotalAmount),
             currency: currencyCode.toLowerCase(),
           }}
         >
           <CheckoutConfirmation
-            totalAmount={totalAmount}
+            totalAmount={roundedTotalAmount}
             hotelRoomOffer={hotelRoomOffer}
             bookingDetails={bookingDetails}
             paymentInfo={userInfo}
