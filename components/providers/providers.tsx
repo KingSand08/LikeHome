@@ -5,10 +5,12 @@ import RegionProvider from "./RegionProvider";
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
-    <SessionProvider>
-      <ThemeProvider attribute="class">
-        <RegionProvider>{children}</RegionProvider>
-      </ThemeProvider>
-    </SessionProvider>
+    
+      <SessionProvider>
+        <ThemeProvider attribute="class">
+          <RegionProvider>{children}</RegionProvider>
+        </ThemeProvider>
+      </SessionProvider>
+
   );
 };

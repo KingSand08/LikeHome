@@ -8,7 +8,6 @@ import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
-import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -50,19 +49,36 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
       </div>
 
       {/* Room Images */}
-      <div className="carousel carousel-center bg-neutral rounded-box space-x-4 h-96 p-4">
-      {room.galleryImages.map((image) => (
-          <div key={image.index} className="carousel-item">
-            <Image
-              src={image.url}
-              alt={image.description}
-              width={500}
-              height={500}
-              className="w-full h-auto rounded-lg"
-            />
+      <div className="carousel w-full rounded-box">
+        {room.galleryImages.map((image, index) => (
+        <div
+            id={`slide${index + 1}`}
+            key={index}
+            className="carousel-item relative w-full"
+          >
+          <img
+            src={image.url}
+            alt={image.description || `Slide ${index + 1}`}
+            className="w-full"
+          />
+          <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+            <a
+              href={`#slide${index === 0 ? room.galleryImages.length : index}`}
+              className="btn btn-circle"
+            >
+              ❮
+            </a>
+            <a
+              href={`#slide${(index + 1) % room.galleryImages.length + 1}`}
+              className="btn btn-circle"
+            >
+              ❯
+            </a>
           </div>
+        </div>
         ))}
       </div>
+
 
 
       {/* Pricing Section */}
