@@ -10,6 +10,7 @@ import {
   DEFAULT_LOCALE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import { ImageSlider } from "@/components/ui/ImageSlider";
+import Image from "next/image";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { retrieveAllReservations } from "@/server-actions/reservation-actions";
