@@ -63,7 +63,7 @@ const EditReservationSection: React.FC<EditSectionProps> = ({
       setSuccessMessage("Reservation updated successfully.");
     } catch (error) {
       console.error("Error updating reservation:", error);
-      setErrorMessage("Failed to update the reservation. Try lowering the number of adults.");
+      setErrorMessage(`Failed to update the reservation. Not available for ${tempReservation.adults_number} adults.`);
     } finally {
       setLoading(false);
     }

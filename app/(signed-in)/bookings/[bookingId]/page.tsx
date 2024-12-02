@@ -145,6 +145,14 @@ const BookingIDPage = () => {
                   {reservation.verified ? "Yes" : "No"}
                 </span>
               </p>
+              {!reservation.verified && !reservation.cost_difference && (
+                <p className="text-md mt-2">
+                  To keep reservation, must pay the difference of{" "}
+                  <span className={`text-error`}>
+                    {`$ ${reservation.cost_difference}`}
+                  </span>
+                </p>
+              )}
               <p className="text-md mt-2 text-gray-600">
                 Booking ID: {reservation.id}
               </p>
@@ -181,9 +189,7 @@ const BookingIDPage = () => {
         </Link>
       </div>
 
-      <EditReservationSection
-        reservation={reservation}
-      />
+      <EditReservationSection reservation={reservation} />
     </div>
   );
 };

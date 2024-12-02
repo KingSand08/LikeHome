@@ -36,6 +36,7 @@ model Reservation {
   transaction_info TransactionInfo
   verified         Boolean         @default(false)
   room_cost        Float
+  cost_difference  Float           @default(0)
 }
 
 type PaymentInfo {

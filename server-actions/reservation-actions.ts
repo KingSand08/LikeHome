@@ -156,17 +156,22 @@ export async function updateSpecificReservation(
     }
 
     // Compare prices
-    const originalPrice = targetReservation.room_cost
+    const originalPrice = targetReservation.room_cost;
     const updatedPrice = hotelRoom.pricePerNight.amount;
-    let setVerified = (originalPrice === updatedPrice) ? true: false;
+    let setVerified = originalPrice === updatedPrice ? true : false;
+    let costDifference = 0;
 
     // Decide on what to do if prices are different
     if (originalPrice > updatedPrice) {
-      const refundDifference = updatedPrice - originalPrice;
-      refundSpecificReservation(targetReservation.transaction_info.stripePaymentId, refundDifference)
+      costDifference = updatedPrice - originalPrice; // Keep track if refund fails
+      const refundReservation = await refundSpecificReservation(
+        targetReservation.transaction_info.stripePaymentId,
+        costDifference
+      );
+      costDifference = 0;
       setVerified = true;
     } else if (originalPrice < updatedPrice) {
-      const costDifference = originalPrice - updatedPrice;
+      costDifference = originalPrice - updatedPrice;
       setVerified = false;
     }
 
@@ -178,6 +183,7 @@ export async function updateSpecificReservation(
         checkout_date: edit.checkout_date || targetReservation.checkout_date,
         adults_number: edit.adults_number || targetReservation.adults_number,
         room_cost: updatedPrice,
+        cost_difference: costDifference,
         verified: setVerified,
       },
     });
@@ -231,8 +237,6 @@ export async function cancelReservation(email: string, id: string) {
     console.error("Failed to cancel reservation:", error);
   }
 }
-
-
 
 async function refundSpecificReservation(
   stripePaymentId: string,
