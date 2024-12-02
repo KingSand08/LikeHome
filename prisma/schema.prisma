@@ -17,9 +17,9 @@ model User {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
   email String @unique
 
-  rewardPoints     Int           @default(0)
-  redeemedPoints   Int           @default(0)
-  reservations     Reservation[]
+  rewardPoints   Int           @default(0)
+  redeemedPoints Int           @default(0)
+  reservations   Reservation[]
 }
 
 model Reservation {
@@ -92,6 +92,12 @@ model CachedHotel {
   location        Location
   images          Image[]
   hotelRoomOffers CachedHotelRoomOffer[]
+  reviews         Review
+}
+
+type Review {
+  score        String
+  totalReviews String
 }
 
 model CachedHotelRoomOffer {
