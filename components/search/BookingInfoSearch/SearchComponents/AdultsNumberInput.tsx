@@ -8,7 +8,7 @@ import {
 
 type AdultsNumberInputProps = {
   selectedNumber: number;
-  onChange: (number: number) => void;
+  onChange: (number: number | null) => void;
 };
 
 const numberRegex = /^\d*$/;
@@ -20,18 +20,19 @@ const AdultsNumberInput: React.FC<AdultsNumberInputProps> = ({
   const [value, setValue] = useState<string>(selectedNumber.toString());
 
   const handleInputChange = (inputValue: string) => {
+    setValue(inputValue);
     if (numberRegex.test(inputValue)) {
       const intValue = parseInt(inputValue, 10);
       if (
         intValue >= DEFAULT_MIN_ADULTS_NUMBER &&
         intValue <= DEFAULT_MAX_ADULTS_NUMBER
       ) {
-        setValue(inputValue);
         onChange(intValue);
-      } else if (inputValue === "") {
-        setValue(inputValue);
-        onChange(DEFAULT_MIN_ADULTS_NUMBER);
+      } else {
+        onChange(null);
       }
+    } else {
+      onChange(null);
     }
   };
 
@@ -42,7 +43,7 @@ const AdultsNumberInput: React.FC<AdultsNumberInputProps> = ({
       regex={numberRegex}
       value={value}
       onChange={handleInputChange}
-      required
+      required={true}
     />
   );
 };
