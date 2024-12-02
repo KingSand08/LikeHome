@@ -34,6 +34,7 @@ import BookingInfoUISearchComplete from "@/components/search/BookingInfoSearch/B
 import HotelSelect from "@/components/search/HotelResults/HotelSelect";
 import { RegionContext } from "@/components/providers/RegionProvider";
 import DrawerComponent from "@/components/search/HotelSearch/DrawerComponent";
+import LoadingPage from "@/components/ui/Loading/LoadingPage";
 
 export type searchParamsType = {
   query: string;
@@ -119,7 +120,7 @@ const HomeSearchPage: React.FC = () => {
   }, [region]);
 
   if (!searchParams) {
-    return <div>Loading...</div>;
+    return <LoadingPage className="min-h-screen" size_style={{ width: '400px', height: '400px' }} />
   }
 
   return (

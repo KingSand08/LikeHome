@@ -11,7 +11,7 @@ const FilterButton: React.FC = () => {
   useEffect(() => {
     // Function to detect screen size
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 900);
+      setIsMobile(window.innerWidth < 1200);
     };
 
     handleResize();
