@@ -22,12 +22,12 @@ const PaginatedRoomImageGrid: React.FC<{ hotelDetails: APIHotelDetailsJSONFormat
     { src: string; width: number; height: number; alt: string; title: string }[]
   >([]);
 
-  const MAX_IMAGES = 5;
+  const MAX_IMAGES = 6;
 
   useEffect(() => {
     if (!hotelDetails?.images) return;
 
-    // Load images and get their natural dimensions
+    // Dynamically fetch image dimensions
     const fetchImageDimensions = async () => {
       const updatedPhotos = await Promise.all(
         hotelDetails.images.map(
@@ -69,36 +69,45 @@ const PaginatedRoomImageGrid: React.FC<{ hotelDetails: APIHotelDetailsJSONFormat
 
   return (
     <div className="flex flex-col items-center">
-      {/* Carousel */}
-      <div className="carousel carousel-center bg-neutral rounded-box w-full space-x-4 p-4 mb-5">
+      {/* Visible Images */}
+      <div className="flex gap-2 w-full overflow-x-auto">
+        {/* Display limited photos */}
         {limitedPhotos.map((photo, index) => (
-          <div className="carousel-item" key={index}>
+          <div
+            key={index}
+            className="relative w-1/6 h-48 rounded-lg overflow-hidden cursor-pointer"
+            onClick={() => setLightboxIndex(index)}
+          >
             <img
               src={photo.src}
               alt={photo.alt}
-              className="rounded-box cursor-pointer w-full h-96"
-              onClick={() => setLightboxIndex(index)}
+              className="object-cover w-full h-full"
             />
           </div>
         ))}
 
-        {/* View All Button */}
-        {photos.length > MAX_IMAGES && (
-          <div className="carousel-item flex justify-center items-center">
-            <button
-              className="btn btn-primary"
-              onClick={() => setIsModalOpen(true)}
-            >
-              View All
-            </button>
+        {/* "View All" Button */}
+        {photos.length > MAX_IMAGES - 1 && (
+          <div
+            className="relative w-1/6 h-48 rounded-lg overflow-hidden cursor-pointer bg-gray-800 flex items-center justify-center text-white"
+            onClick={() => setIsModalOpen(true)} // Open modal
+          >
+            <img
+              src={photos[MAX_IMAGES - 1].src}
+              alt="View All"
+              className="object-cover w-full h-full opacity-50"
+            />
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+              <span className="text-lg font-semibold">+{photos.length - (MAX_IMAGES - 1)} photos</span>
+            </div>
           </div>
         )}
       </div>
 
-      {/* DaisyUI Modal for Photo Album */}
+
+      {/* Photo Album Modal */}
       <dialog id="photo_album_modal" className={`modal ${isModalOpen ? "modal-open" : ""}`}>
-        <div className="modal-box w-full max-w-5xl p-8">
-          {/* Close Button */}
+        <div className="modal-box w-full max-w-5xl p-8 overflow-auto">
           <button
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
             onClick={() => setIsModalOpen(false)}
@@ -106,16 +115,12 @@ const PaginatedRoomImageGrid: React.FC<{ hotelDetails: APIHotelDetailsJSONFormat
             ✕
           </button>
 
-          {/* Photo Album */}
           <PhotoAlbum
             photos={photos}
             layout="rows"
-            targetRowHeight={150}
-            spacing={10}
-            onClick={({ index }) => {
-              setLightboxIndex(index);
-              setIsModalOpen(false); // Close modal when Lightbox opens
-            }}
+            targetRowHeight={200} // Maintain consistent row height in the modal
+            spacing={10} // Adjust spacing between images
+            onClick={({ index }) => setLightboxIndex(index)} // Open Lightbox
           />
         </div>
       </dialog>

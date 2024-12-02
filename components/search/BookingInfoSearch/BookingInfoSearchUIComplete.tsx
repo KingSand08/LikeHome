@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import AdultsNumberInput from "./SearchComponents/AdultsNumberInput";
 import { DatePickerWithRange } from "./DatePickerWithRange";
 import { searchParamsType } from "@/app/page";
+import { cn } from "@/lib/utils";
 
 type BookingInfoUISearchCompleteProps = {
   bookingInfo: searchParamsType;

@@ -51,7 +51,7 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
           <span className="rounded bg-primary text-primary-content flex flex-row justify-center align-middle text-center gap-1 p-4">
             <Loader size={32} className="animate-spin" />
             <p className="h-full text-middle text-center text-2xl">
-              Loading Hotels that fit your needs!
+              Searching for Hotels 
             </p>
           </span>
         ) : hotelsData && hotelsData.properties.length > 0 ? (

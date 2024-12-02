@@ -23,25 +23,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/signin",
   },
   callbacks: {
-    async redirect({ url, baseUrl }) {
-      try {
-        // Check if the URL contains a callbackUrl parameter
-        const callbackUrl = url;
-
-        console.log(`Original URL: ${url} Callback URL: ${callbackUrl} Base URL: ${baseUrl}`)
-
-        if (callbackUrl) {
-          return callbackUrl;
-        }
-
-        // Default behavior: Return the URL if it starts with the baseUrl
-        return baseUrl
-      } catch (error) {
-        // Handle any errors (e.g., invalid URL parsing)
-        console.error("Redirect callback error:", error);
-        return baseUrl;
-      }
-    },
+    redirect: async ({ url, baseUrl }) => url || baseUrl,
   },
   events: {
     async signIn(user) {
