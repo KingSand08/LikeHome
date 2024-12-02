@@ -12,6 +12,8 @@ import {
 import { hotelsFromRegion } from "@/server-actions/api-actions";
 import LoadingIcon from "@/components/ui/Loading/LoadingIcon";
 
+
+
 export type bookingParamsType = z.infer<typeof hotelSearchParamsRefinedSchema>;
 
 type HotelSelectUICompleteProps = {
@@ -40,27 +42,24 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
     max: DEFAULT_MAX_PRICE,
     min: DEFAULT_MIN_PRICE,
   });
+
   const handleFindHotels = async () => {
     setLastPriceRange({
-      max: hotelsData?.priceRange?.maxPrice!,
-      min: hotelsData?.priceRange?.minPrice!,
+      max: hotelsData?.priceRange?.maxPrice || DEFAULT_MAX_PRICE,
+      min: hotelsData?.priceRange?.minPrice || DEFAULT_MIN_PRICE,
     });
     setLoading(true);
     try {
       const HOTEL_DATA = await hotelsFromRegion(bookingParams);
       setHotelsData(HOTEL_DATA);
     } catch (error) {
-      alert("An unexpected error occurred. Please try again.");
+      console.error("Error fetching hotels:", error);
       setHotelsData(null);
     } finally {
       setLoading(false);
     }
   };
 
-  // Only re-renders on initial load and region change.
-  // We don't want to call the API after clicking one checkbox.
-  // So, in the future we could have an "apply new filters button" if filters change.
-  // Also, store filters in searchParams or localStorage...
   useEffect(() => {
     if (!isValid) return;
     handleFindHotels();
@@ -71,9 +70,9 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
       <h2 className="text-lg font-semibold mb-4">Available Hotels</h2>
 
       {hotelsData &&
-        lastPriceRange &&
-        lastPriceRange.min > hotelsData?.priceRange?.minPrice &&
-        lastPriceRange.max < hotelsData?.priceRange?.maxPrice ? (
+      lastPriceRange &&
+      lastPriceRange.min > hotelsData?.priceRange?.minPrice &&
+      lastPriceRange.max < hotelsData?.priceRange?.maxPrice ? (
         <div className="italic text-red text-2xl">
           Sorry, there are no hotels with the price range between{" "}
           <span className="italic">
@@ -99,13 +98,12 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
         </div>
       ) : null}
 
-      {/* Hotel List Display */}
       <div className="mt-6">
         {loading ? (
           <div className="flex items-center justify-center h-96">
             <LoadingIcon
               className="h-fit pt-20 pb-48"
-              size_style={{ width: '500px', height: '500px' }}
+              size_style={{ width: "500px", height: "500px" }}
               iconSelf={true}
             />
           </div>

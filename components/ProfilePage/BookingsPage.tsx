@@ -85,7 +85,7 @@ const Bookings = ({ user }: { user: User }) => {
                             return (
                                 <div
                                     key={reservation.id}
-                                    className="w-full max-w-sm max-[1300px]:max-w-full flex-shrink-0 bg-white dark:bg-slate-800 shadow-xl rounded-lg overflow-hidden border-[3px] border-gray-200 dark:border-[#313f57]"
+                                    className="w-full max-w-sm max-[1300px]:max-w-full flex-shrink-0 bg-white dark:bg-slate-800 shadow-xl rounded-lg overflow-hidden border-[3px] border-gray-200 dark:border-[#313f57] h-full"
                                 >
                                     {/* Hotel Tagline */}
                                     <div className="text-center bg-gradient-to-r from-blue-800 to-indigo-600 text-white p-4">
@@ -125,7 +125,8 @@ const Bookings = ({ user }: { user: User }) => {
                                             Total Cost: ${reservation.room_cost.toFixed(2)}
                                         </p>
                                     </div>
-
+                                    <div className="flex flew-grow">
+                                    </div>
                                     {/* Booking Details Button */}
                                     <div className="p-4 bg-gray-50 dark:bg-slate-900">
                                         <Link

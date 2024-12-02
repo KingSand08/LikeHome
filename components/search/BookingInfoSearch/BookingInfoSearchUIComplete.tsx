@@ -44,9 +44,6 @@ const BookingInfoUISearchComplete: React.FC<
 
   return (
     <div>
-      <h2 className="max-[900px]:text-lg text-2xl font-bold mb-5">
-        Booking Information
-      </h2>
       <div className="flex flex-wrap gap-5 items-stretch">
         {/* Booking Dates */}
         <div className="flex-1 flex flex-col">

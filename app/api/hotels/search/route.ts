@@ -130,10 +130,11 @@ function validateSearchParams(
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const { query, endpoint, error } = validateSearchParams(searchParams);
+
   if (error) {
     return NextResponse.json(
       {
-        error,
+        error: "Invalid search parameters. Please verify and try again.",
       },
       { status: 400 }
     );
@@ -143,70 +144,66 @@ export async function GET(req: NextRequest) {
     const response = await fetch(endpoint!, API_OPTIONS);
 
     if (!response.ok) {
-      return NextResponse.json(
-        {
-          error: `Failed to fetch data from API: ${response.statusText}. Status code: ${response.status} Endpoint: ${endpoint}`,
-        },
-        { status: response.status }
+      throw new Error(
+        `Failed to fetch data from API: ${response.statusText} (Status code: ${response.status}).`
       );
     }
 
     const JSON_DATA: ApiHotelSearchResponseJSON = await response.json();
     const PAYLOAD: APIHotelSearchJSONFormatted = {
       priceRange: {
-        maxPrice: JSON_DATA.filterMetadata?.priceRange?.max ?? 0,
-        minPrice: JSON_DATA.filterMetadata?.priceRange?.min ?? 0,
+        maxPrice: JSON_DATA.filterMetadata?.priceRange?.max || 0,
+        minPrice: JSON_DATA.filterMetadata?.priceRange?.min || 0,
       },
       summary: {
-        matchedPropertiesSize: JSON_DATA.summary?.matchedPropertiesSize ?? 0,
+        matchedPropertiesSize: JSON_DATA.summary?.matchedPropertiesSize || 0,
       },
       properties:
-        JSON_DATA.properties?.map(
-          (propertyItem): APIHotelSearchHotelInfo => ({
-            region_id: propertyItem.regionId ?? "",
-            hotel_id: propertyItem.id ?? "",
-            name: propertyItem.name ?? "Unknown",
-            image: {
-              description:
-                propertyItem.propertyImage?.image?.description ??
-                "No description",
-              url: propertyItem.propertyImage?.image?.url ?? "",
-              alt: propertyItem.propertyImage?.alt ?? "No alternative text",
+        JSON_DATA.properties?.map((propertyItem) => ({
+          region_id: propertyItem.regionId || "unknown",
+          hotel_id: propertyItem.id || "unknown",
+          name: propertyItem.name || "Unknown Hotel",
+          image: {
+            description:
+              propertyItem.propertyImage?.image?.description || "No description",
+            url: propertyItem.propertyImage?.image?.url || "/default-image.jpg", // Fallback image URL
+            alt: propertyItem.propertyImage?.alt || "No alternative text",
+          },
+          coordinates: {
+            lat: propertyItem.mapMarker?.latLong?.latitude || 0,
+            long: propertyItem.mapMarker?.latLong?.longitude || 0,
+          },
+          reviews: {
+            score: propertyItem.reviews?.score || 0,
+            totalReviews: propertyItem.reviews?.total || 0,
+            starRating: propertyItem.star || 0,
+          },
+          availability: {
+            available: propertyItem.availability?.available || false,
+            minRoomsLeft: propertyItem.availability?.minRoomsLeft || 0,
+          },
+          price: {
+            amount: propertyItem.price?.lead?.amount || 0,
+            currency: {
+              code: propertyItem.price?.lead?.currencyInfo?.code || "USD",
+              symbol: propertyItem.price?.lead?.currencyInfo?.symbol || "$",
             },
-            coordinates: {
-              lat: propertyItem.mapMarker?.latLong?.latitude ?? 0,
-              long: propertyItem.mapMarker?.latLong?.longitude ?? 0,
-            },
-            reviews: {
-              score: propertyItem.reviews?.score ?? 0,
-              totalReviews: propertyItem.reviews?.total ?? 0,
-              starRating: propertyItem.star ?? 0,
-            },
-            availability: {
-              available: propertyItem.availability?.available ?? false,
-              minRoomsLeft: propertyItem.availability?.minRoomsLeft ?? 0,
-            },
-            price: {
-              amount: propertyItem.price?.lead?.amount ?? 0,
-              currency: {
-                code: propertyItem.price?.lead?.currencyInfo?.code ?? "",
-                symbol: propertyItem.price?.lead?.currencyInfo?.symbol ?? "",
-              },
-            },
-          })
-        ) ?? [],
+          },
+        })) || [],
     };
 
     return NextResponse.json(PAYLOAD, { status: 200 });
   } catch (error) {
+    console.error("Error in hotel-search API:", error);
     return NextResponse.json(
       {
-        error: `An error occurred while fetching data | query: ${query} | endpoint: ${endpoint}`,
+        error: "Failed to fetch hotel search results. Please try again later.",
       },
-      { status: 500, statusText: "No Idea" }
+      { status: 500 }
     );
   }
 }
+
 
 export type APIHotelSearchJSONFormatted = {
   priceRange: {

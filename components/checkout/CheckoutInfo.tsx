@@ -133,7 +133,7 @@ export default function CheckoutInfo({
           Total Amount (including 10% tax):{" "}
           <span className="font-bold text-blue-700 dark:text-blue-400">
             {currencySymbol}
-            {totalAmount}
+            {totalAmount.toFixed(2)}
           </span>
         </h2>
       </div>

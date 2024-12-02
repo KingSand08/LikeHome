@@ -1,5 +1,6 @@
 "use client";
 import { useContext, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,
@@ -31,10 +32,13 @@ import {
 } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
 import { generateDefaultDates } from "@/lib/DateFunctions";
 import BookingInfoUISearchComplete from "@/components/search/BookingInfoSearch/BookingInfoSearchUIComplete";
-import HotelSelect from "@/components/search/HotelResults/HotelSelect";
+//import HotelSelect from "@/components/search/HotelResults/HotelSelect";
 import { RegionContext } from "@/components/providers/RegionProvider";
 import DrawerComponent from "@/components/search/HotelSearch/DrawerComponent";
-import LoadingPage from "@/components/ui/Loading/LoadingPage";
+//import LoadingPage from "@/components/ui/Loading/LoadingPage";
+const LoadingPage = dynamic(() => import("@/components/ui/Loading/LoadingPage"), { ssr: false });
+const HotelSelect = dynamic(() => import("@/components/search/HotelResults/HotelSelect"), { ssr: false });
+
 
 export type searchParamsType = {
   query: string;
@@ -90,15 +94,16 @@ const HomeSearchPage: React.FC = () => {
   );
 
   useEffect(() => {
-    const getInitialSearchParams = () => {
-      const storedParams = localStorage.getItem("searchParams");
-      if (storedParams) {
-        setSearchParams(JSON.parse(storedParams));
-      }
-      setSearchParams(defaultSearchParams);
-    };
+      const getInitialSearchParams = () => {
+        const storedParams = localStorage.getItem("searchParams");
+        if (storedParams) {
+          setSearchParams(JSON.parse(storedParams));
+        } else {
+          setSearchParams(defaultSearchParams);
+        }
+      };
 
-    getInitialSearchParams();
+      getInitialSearchParams();
   }, []);
 
   useEffect(() => {
@@ -120,7 +125,7 @@ const HomeSearchPage: React.FC = () => {
   }, [region]);
 
   if (!searchParams) {
-    return <LoadingPage className="min-h-screen" size_style={{ width: '400px', height: '400px' }} />
+    return <LoadingPage className="min-h-screen" size_style={{ width: "400px", height: "400px" }} />;
   }
 
   return (
@@ -128,20 +133,34 @@ const HomeSearchPage: React.FC = () => {
       hotelSearchInputs={searchParams}
       setHotelSearchInputs={(newHotelSearch) => setSearchParams(newHotelSearch)}
     >
-      <div className="flex flex-col w-full px-[10em] max-[900px]:px-[30px] pt-0 max-[900px]:pt-10">
-        <h1 className="max-[900px]:text-xl text-3xl font-bold mb-4">
-          <br className="border-4 border-white" />
-          <p>
-            {region
-              ? `Browsing Hotels in ${region.name} 🏨`
-              : "⬆️ Find a location to get started!"}
-          </p>
-        </h1>
-        <BookingInfoUISearchComplete
-          bookingInfo={searchParams}
-          setBookingInfo={(newParams) => updateBookingInfoParams(newParams)}
-        />
+      <div
+        className="hero min-h-screen"
+        style={{
+          backgroundImage: "url(https://img.daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.webp)",
+        }}
+      >
+        <div className="hero-overlay bg-opacity-60"></div>
+          <div className="hero-content text-neutral-content text-center">
+            <div className="flex flex-col w-full px-[10em] max-[900px]:px-[30px] pt-0 max-[900px]:pt-10">
+                <h1 className="max-[900px]:text-xl text-3xl font-bold mb-4">
+                  <br className="border-4 border-white" />
+                  <p>
+                    {region
+                      ? `Browsing Hotels in ${region.name} 🏨`
+                      : "⬆️ Find a location to get started!"}
+                  </p>
+                </h1>
+                
+                <div className="self-center max-w-md">
+                  <BookingInfoUISearchComplete
+                    bookingInfo={searchParams}
+                    setBookingInfo={(newParams) => updateBookingInfoParams(newParams)}
+                  />
+                </div>
+            </div>
+          </div>
       </div>
+
       <div className="max-[1200px]:w-full w-5/6">
         <hr />
         <HotelSelect

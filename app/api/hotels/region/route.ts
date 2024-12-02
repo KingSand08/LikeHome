@@ -42,7 +42,7 @@ function validateSearchParams(
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV !== "development") {
     const query = searchParams.get("query") ?? "Unknown";
     const mockRegionDetailsData: Omit<Region, "id">[] = Array(10)
       .fill(0)
