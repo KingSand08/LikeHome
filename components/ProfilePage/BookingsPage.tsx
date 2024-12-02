@@ -8,7 +8,6 @@ import {
     retrieveCacheHotelRoomOffer,
 } from "@/server-actions/cache-actions";
 import Link from "next/link";
-import Image from "next/image";
 import User from "@/types/User";
 import { ImageSlider } from "../ui/ImageSlider";
 
@@ -69,10 +68,10 @@ const Bookings = ({ user }: { user: User }) => {
     }, [userEmail]);
 
     return (
-        <div className="p-6">
-            <h1 className="text-2xl font-bold mb-6">Your Reservations</h1>
+        <div className="p-4 sm:p-6">
+            <h1 className="text-xl sm:text-2xl font-bold mb-6">Your Reservations</h1>
             <div className="overflow-x-auto">
-                <div className="flex gap-6 items-stretch">
+                <div className="flex flex-wrap gap-6 justify-center sm:justify-start">
                     {reservations.map((reservation) => {
                         const hotel = cachedData.hotels[reservation.hotel_id];
                         const roomOffer = cachedData.roomOffers[reservation.room_id];
@@ -85,7 +84,7 @@ const Bookings = ({ user }: { user: User }) => {
                         return (
                             <div
                                 key={reservation.id}
-                                className="min-w-[300px] max-w-sm flex-shrink-0 bg-white dark:bg-slate-800 shadow-lg rounded-lg overflow-hidden border-2 border-gray-200 dark:border-slate-800"
+                                className="w-full max-w-sm max-[1300px]:max-w-full flex-shrink-0 bg-white dark:bg-slate-800 shadow-lg rounded-lg overflow-hidden border border-gray-200 dark:border-slate-800"
                             >
                                 {/* Hotel Tagline */}
                                 <div className="text-center bg-gradient-to-r from-blue-800 to-indigo-600 text-white p-4">
@@ -96,13 +95,11 @@ const Bookings = ({ user }: { user: User }) => {
 
                                 {/* Room Images */}
                                 <div className="px-3 pt-4">
-                                    {/* Image Slider */}
-                                    <ImageSlider images={images} />
+                                    <ImageSlider images={images || []} />
                                 </div>
 
-
                                 {/* Details Section */}
-                                <div className="p-4 flex flex-col gap-2" >
+                                <div className="p-4 flex flex-col gap-2">
                                     <p className="text-sm font-medium">
                                         Room:{" "}
                                         <span className="text-gray-700 dark:text-gray-400">
@@ -132,7 +129,7 @@ const Bookings = ({ user }: { user: User }) => {
                                 <div className="p-4 bg-gray-50 dark:bg-slate-900">
                                     <Link
                                         href={`/bookings/${reservation.id}`}
-                                        className="btn btn-primary w-full"
+                                        className="btn btn-primary w-full text-sm sm:text-base"
                                     >
                                         View Booking Details
                                     </Link>

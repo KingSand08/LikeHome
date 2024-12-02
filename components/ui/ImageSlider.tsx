@@ -22,7 +22,7 @@ export function ImageSlider({ images }: ImageSliderProps) {
     }
 
     return (
-        <div className="relative w-full h-64 overflow-hidden rounded-lg bg-gray-200 dark:bg-slate-700">
+        <div className="relative w-full h-64 overflow-hidden rounded-lg bg-slate-400 bg-opacity-70 dark:bg-slate-700 dark:bg-opacity-100">
             {/* Image */}
             <div
                 className="flex transition-transform duration-300"
@@ -70,7 +70,7 @@ export function ImageSlider({ images }: ImageSliderProps) {
                         key={index}
                         onClick={() => setImageIndex(index)}
                         aria-label={`View Image ${index + 1}`}
-                        className={`w-3 h-3 rounded-full ${imageIndex === index ? "bg-primary dark:bg-secondary" : "bg-gray-300 dark:bg-gray-400"
+                        className={`w-3 h-3 rounded-full ${imageIndex === index ? "bg-primary dark:bg-secondary" : "bg-gray-100 dark:bg-gray-500"
                             }`}
                     />
                 ))}
