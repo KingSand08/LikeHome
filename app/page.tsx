@@ -34,8 +34,7 @@ import BookingInfoUISearchComplete from "@/components/search/BookingInfoSearch/B
 import HotelSelect from "@/components/search/HotelResults/HotelSelect";
 import { RegionContext } from "@/components/providers/RegionProvider";
 import DrawerComponent from "@/components/search/HotelSearch/DrawerComponent";
-import { motion } from "framer-motion";
-
+import LoadingPage from "@/components/ui/Loading/LoadingPage";
 
 export type searchParamsType = {
   query: string;
@@ -121,7 +120,7 @@ const HomeSearchPage: React.FC = () => {
   }, [region]);
 
   if (!searchParams) {
-    return <div>Loading...</div>;
+    return <LoadingPage className="min-h-screen" size_style={{ width: '400px', height: '400px' }} />
   }
 
   return (
@@ -129,18 +128,21 @@ const HomeSearchPage: React.FC = () => {
       hotelSearchInputs={searchParams}
       setHotelSearchInputs={(newHotelSearch) => setSearchParams(newHotelSearch)}
     >
-      <div className="w-fit text-center">
-        <h1 className="text-2xl font-bold mb-4">
-          {region
-            ? `Browsing Hotels in ${region.name} 🏨`
-            : "⬆️ Find a location to get started!"}
+      <div className="flex flex-col w-full px-[10em] max-[900px]:px-[30px] pt-0 max-[900px]:pt-10">
+        <h1 className="max-[900px]:text-xl text-3xl font-bold mb-4">
+          <br className="border-4 border-white" />
+          <p>
+            {region
+              ? `Browsing Hotels in ${region.name} 🏨`
+              : "⬆️ Find a location to get started!"}
+          </p>
         </h1>
         <BookingInfoUISearchComplete
           bookingInfo={searchParams}
           setBookingInfo={(newParams) => updateBookingInfoParams(newParams)}
         />
       </div>
-      <div className="w-8/12">
+      <div className="max-[1200px]:w-full w-5/6">
         <hr />
         <HotelSelect
           bookingParams={{

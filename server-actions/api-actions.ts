@@ -141,6 +141,8 @@ const mockHotelDetailsData: APIHotelDetailsJSONFormatted = {
       description: `Image ${index}`,
       url: `https://picsum.photos/600/800?random=${index}`,
       index,
+      width: 800,
+      height: 800,
     })),
   reviews: {
     score: "4.5 / 5 very good",

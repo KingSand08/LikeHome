@@ -44,35 +44,48 @@ const BookingInfoUISearchComplete: React.FC<
 
   return (
     <div>
-      <h2 className="text-2xl font-bold">Booking Information</h2>
-      <div className="gap-5 join">
-        <div className="join-item">
-          <h3 className="text-primary font-semibold">Booking Dates</h3>
+      <h2 className="max-[900px]:text-lg text-2xl font-bold mb-5">
+        Booking Information
+      </h2>
+      <div className="flex flex-wrap gap-5 items-stretch">
+        {/* Booking Dates */}
+        <div className="flex-1 flex flex-col">
+          <h3 className="text-primary font-semibold text-base max-[900px]:text-sm mb-2">
+            Booking Dates
+          </h3>
           <DatePickerWithRange
             bookingInfo={bookingInfo}
             onChange={handleDateChange}
             onValidationChange={setIsDateValid}
           />
         </div>
-        <div className="join-item">
+        {/* Number of Adults */}
+        <div className="flex-1 flex flex-col">
+          <h3 className="text-primary font-semibold text-base max-[900px]:text-sm mb-2">
+            Number of Adults
+          </h3>
           <AdultsNumberInput
             selectedNumber={tempBookingInfo.adultsNumber}
             onChange={handleAdultsNumberChange}
           />
           {!isValid && (
-            <p className="text-red-500 text-sm">
+            <p className="text-red-500 text-sm mt-1">
               Adults number is invalid. Please enter a valid number.
             </p>
           )}
         </div>
-          <div className="join-item self-center">
-            <button
-              onClick={handleApplyFilters}
-              className={cn("btn btn-primary w-full", ((!isValid || !isDateValid) || null) ? "btn-disabled " : "")}
-            >
-              Search
-            </button>
-          </div>
+      </div>
+      {/* Search Button */}
+      <div className="my-5">
+        <button
+          onClick={handleApplyFilters}
+          className={cn(
+            "btn btn-primary w-full",
+            (!isValid || !isDateValid) && "btn-disabled"
+          )}
+        >
+          Search
+        </button>
       </div>
     </div>
   );

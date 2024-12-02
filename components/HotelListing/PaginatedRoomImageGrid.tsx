@@ -10,6 +10,7 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import PhotoAlbum from "react-photo-album";
 import "react-photo-album/rows.css";
+import Image from "next/image"; // Import from next/image
 
 import { APIHotelDetailsJSONFormatted } from "@/app/api/hotels/details/route";
 
@@ -29,35 +30,13 @@ const PaginatedRoomImageGrid: React.FC<{ hotelDetails: APIHotelDetailsJSONFormat
 
     // Dynamically fetch image dimensions
     const fetchImageDimensions = async () => {
-      const updatedPhotos = await Promise.all(
-        hotelDetails.images.map(
-          (image) =>
-            new Promise<{ src: string; width: number; height: number; alt: string; title: string }>(
-              (resolve) => {
-                const img = new Image();
-                img.src = image.url;
-                img.onload = () => {
-                  resolve({
-                    src: image.url,
-                    width: img.naturalWidth,
-                    height: img.naturalHeight,
-                    alt: image.alt || image.description || "Image",
-                    title: image.description || "Image",
-                  });
-                };
-                img.onerror = () => {
-                  resolve({
-                    src: image.url,
-                    width: 800, // Fallback width
-                    height: 600, // Fallback height
-                    alt: image.alt || image.description || "Image",
-                    title: image.description || "Image",
-                  });
-                };
-              }
-            )
-        )
-      );
+      const updatedPhotos = hotelDetails.images.map((image) => ({
+        src: image.url,
+        width: image.width || 800, // Fallback width
+        height: image.height || 600, // Fallback height
+        alt: image.alt || image.description || "Image",
+        title: image.description || "Image",
+      }));
 
       setPhotos(updatedPhotos);
     };
@@ -106,21 +85,37 @@ const PaginatedRoomImageGrid: React.FC<{ hotelDetails: APIHotelDetailsJSONFormat
 
 
       {/* Photo Album Modal */}
-      <dialog id="photo_album_modal" className={`modal ${isModalOpen ? "modal-open" : ""}`}>
-        <div className="modal-box w-full max-w-5xl p-8 overflow-auto">
+      <dialog
+        id="photo_album_modal"
+        className={`modal ${isModalOpen ? "modal-open" : ""}`}
+        onClick={(e) => {
+          // Close modal if clicking outside the modal content
+          const modalBox = document.querySelector(".modal-box");
+          if (modalBox && !modalBox.contains(e.target as Node)) {
+            setIsModalOpen(false);
+          }
+        }}
+      >
+        {/* Modal Overlay */}
+        <div className="modal-overlay bg-black/50 fixed inset-0 z-10"></div>
+
+        {/* Modal Content */}
+        <div className="modal-box w-full max-w-5xl p-12 bg-gradient-to-br from-gray-100 via-white to-gray-50 dark:from-gray-800 dark:via-gray-700 dark:to-gray-900 rounded-lg shadow-2xl z-20 overflow-auto relative">
+          {/* Close Button */}
           <button
-            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            className="btn btn-sm btn-circle absolute right-4 top-4 bg-red-600 hover:bg-red-800 border-0 text-white"
             onClick={() => setIsModalOpen(false)}
           >
             ✕
           </button>
 
+          {/* Photo Album */}
           <PhotoAlbum
             photos={photos}
             layout="rows"
-            targetRowHeight={200} // Maintain consistent row height in the modal
-            spacing={10} // Adjust spacing between images
-            onClick={({ index }) => setLightboxIndex(index)} // Open Lightbox
+            targetRowHeight={200} // Ensure consistent row height
+            spacing={10} // Add spacing between images
+            onClick={({ index }) => setLightboxIndex(index)} // Open Lightbox on click
           />
         </div>
       </dialog>

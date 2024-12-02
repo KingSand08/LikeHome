@@ -8,12 +8,11 @@ import {
   fetchAllHotelRoomOffers,
   fetchHotelDetails,
 } from "@/server-actions/api-actions";
-import LoadingPage from "@/components/ui/LoadingPage";
+import LoadingPage from "@/components/ui/Loading/LoadingPage";
 import ErrorPage from "@/components/ui/ErrorPage";
 import HotelLocation from "@/components/HotelListing/HotelLocation";
 import PaginatedRoomImageGrid from "@/components/HotelListing/PaginatedRoomImageGrid";
 import RoomOffers from "@/components/HotelListing/RoomOffers";
-import { number } from "zod";
 
 const HotelIDPage: React.FC = () => {
   const { hotelId: hotelIdSlug } = useParams();
@@ -61,7 +60,7 @@ const HotelIDPage: React.FC = () => {
   }, [hotelIdSlug, searchParams]);
 
   if (loading) {
-    return <LoadingPage />;
+    return <LoadingPage className="min-h-screen" size_style={{ width: '400px', height: '400px' }} />
   }
 
   if (error || !hotelData) {
@@ -77,12 +76,12 @@ const HotelIDPage: React.FC = () => {
         <div>
           <h1 className="text-4xl font-bold mb-2">{name}</h1>
           <HotelLocation hotelDetails={hotelData} />
-          <p className="text-xl">{tagline}</p>
+          <p className="text-xl text-gray-600 dark:text-gray-100">{tagline}</p>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-bold text-info">{reviews.score}</p>
-          <p>{reviews.totalReviews} reviews</p>
-          <p>Base Price Per Night: {roomOffers?.basePricePerNight}</p>
+          <p className="text-2xl font-bold text-primary">{reviews.score}</p>
+          <p className="text-gray-500 dark:text-gray-200">{reviews.totalReviews} reviews</p>
+          <p className="text-gray-500 dark:text-gray-200">Base Price Per Night: {roomOffers?.basePricePerNight}</p>
         </div>
       </div>
 

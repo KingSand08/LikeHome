@@ -1,6 +1,6 @@
 import React from 'react'
 
-const LoadingPage = () => {
+const ErrorPage = () => {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen dark:bg-gray-900">
             <h1 className="text-4xl font-bold text-red-500 mb-4">Oops!</h1>
@@ -17,4 +17,4 @@ const LoadingPage = () => {
     )
 }
 
-export default LoadingPage
+export default ErrorPage

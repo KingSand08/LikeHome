@@ -13,7 +13,7 @@ const HotelRoomList: React.FC<HotelRoomListProps> = ({ rooms }) => {
   );
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 max-[1450px]:grid-cols-1 gap-8">
       {filteredRooms.map((room) => (
         <HotelRoomItem key={room.hotel_room_id} room={room} />
       ))}

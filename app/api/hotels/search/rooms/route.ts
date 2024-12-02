@@ -29,9 +29,9 @@ function validateSearchParams(
     // Optional
     children_ages: searchParams.get("children_ages")
       ? searchParams
-          .get("children_ages")!
-          .split(",")
-          .map((age) => parseInt(age), 10)
+        .get("children_ages")!
+        .split(",")
+        .map((age) => parseInt(age), 10)
       : undefined,
   });
   if (!parseResult.success) {

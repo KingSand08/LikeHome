@@ -4,14 +4,14 @@ import React, { useState, useEffect } from "react";
 import { Filter } from "lucide-react";
 
 const FilterButton: React.FC = () => {
-  const [buttonOffset, setButtonOffset] = useState(90); 
-  const [isSticky, setIsSticky] = useState(false); 
-  const [isMobile, setIsMobile] = useState(false); 
+  const [buttonOffset, setButtonOffset] = useState(90);
+  const [isSticky, setIsSticky] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     // Function to detect screen size
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); 
+      setIsMobile(window.innerWidth < 1200);
     };
 
     handleResize();
@@ -47,11 +47,9 @@ const FilterButton: React.FC = () => {
   return (
     <label
       htmlFor="my-drawer"
-      className={`btn btn-outline btn-primary fixed left-4 z-20 transition-transform duration-300 ${
-        isMobile || isSticky ? "top-4 left-4" : ""
-      }`}
+      className={`btn btn-outline btn-primary fixed left-4 z-20 transition-transform duration-300 ${isMobile ? "top-[180px] btn-md" : ""}`}
       style={{
-        top: !isMobile && !isSticky ? `${buttonOffset + 25}px` : undefined,
+        top: !isMobile && !isSticky ? `${buttonOffset + 50}px` : undefined,
       }}
     >
       <Filter />
