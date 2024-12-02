@@ -9,7 +9,7 @@ import {
   fetchAllHotelRoomOffers,
   fetchHotelDetails,
 } from "@/server-actions/api-actions";
-import LoadingPage from "@/components/ui/LoadingPage";
+import LoadingPage from "@/components/ui/Loading/LoadingPage";
 import ErrorPage from "@/components/ui/ErrorPage";
 import HotelLocation from "@/components/HotelListing/HotelLocation";
 import RoomImageCarousel from "@/components/HotelListing/RoomImageCarousel";
@@ -62,7 +62,7 @@ const HotelIDPage: React.FC = () => {
 
   if (loading) {
     return (
-      <LoadingPage />
+      <LoadingPage className="min-h-screen" size_style={{ width: '400px', height: '400px' }} />
     );
   }
 

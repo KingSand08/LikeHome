@@ -110,7 +110,7 @@ const HomeSearchPage: React.FC = () => {
       hotelSearchInputs={searchParams}
       setHotelSearchInputs={setSearchParams}
     >
-      <div>
+      <div className="w-screen px-[10em] mt-[3em]">
         <h1 className="text-2xl font-bold mb-4">
           {region
             ? `Browsing Hotels in ${region.name} 🏨`

@@ -4,15 +4,13 @@ import { APIHotelSearchJSONFormatted } from "@/app/api/hotels/search/route";
 import HotelList from "./HotelList/HotelList";
 import { z } from "zod";
 import { hotelSearchParamsRefinedSchema } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
-import { HOTEL_SEARCH_API_URL } from "@/lib/rapid-hotel-api/constants/ROUTES";
-import { JSONToURLSearchParams } from "@/lib/rapid-hotel-api/APIFunctions";
 import { RegionContext } from "@/components/providers/RegionProvider";
 import {
   DEFAULT_MAX_PRICE,
   DEFAULT_MIN_PRICE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
-import { Loader } from "lucide-react";
 import { hotelsFromRegion } from "@/server-actions/api-actions";
+import LoadingIcon from "@/components/ui/Loading/LoadingIcon";
 
 export type bookingParamsType = z.infer<typeof hotelSearchParamsRefinedSchema>;
 
@@ -73,9 +71,9 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
       <h2 className="text-lg font-semibold mb-4">Available Hotels</h2>
 
       {hotelsData &&
-      lastPriceRange &&
-      lastPriceRange.min > hotelsData?.priceRange?.minPrice &&
-      lastPriceRange.max < hotelsData?.priceRange?.maxPrice ? (
+        lastPriceRange &&
+        lastPriceRange.min > hotelsData?.priceRange?.minPrice &&
+        lastPriceRange.max < hotelsData?.priceRange?.maxPrice ? (
         <div className="text-red text-2xl">
           Sorry, there are no hotels with the price range between{" "}
           {`$${lastPriceRange.min} and $${lastPriceRange.max}`}. Here are some
@@ -102,12 +100,25 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
       {/* Hotel List Display */}
       <div className="mt-6">
         {loading ? (
-          <span className="rounded bg-primary text-primary-content flex flex-row justify-center align-middle text-center gap-1 p-4">
-            <Loader size={32} className="animate-spin" />
-            <p className="h-full text-middle text-center text-2xl">
-              Loading Hotels that fit your needs!
-            </p>
-          </span>
+          // <span className="rounded bg-primary text-primary-content flex flex-row justify-center align-middle text-center gap-1 p-4">
+          //   <Loader size={32} className="animate-spin" />
+          //   <p className="h-full text-middle text-center text-2xl">
+          //     Loading Hotels that fit your needs!
+          //   </p>
+          // </span>
+
+          <div className="flex items-center justify-center h-96">
+            {/* <LoadingPage
+              className="h-fit"
+              size_style={{ width: '300px', height: '300px' }}
+            /> */}
+            <LoadingIcon
+              className="h-fit pt-20 pb-48"
+              size_style={{ width: '500px', height: '500px' }}
+              iconSelf={true}
+            />
+          </div>
+
         ) : hotelsData && hotelsData.properties.length > 0 ? (
           <HotelList hotelsData={hotelsData} bookingParams={bookingParams} />
         ) : (

@@ -10,7 +10,7 @@ import {
   fetchAllHotelRoomOffers,
   fetchHotelDetails,
 } from "@/server-actions/api-actions";
-import LoadingPage from "@/components/ui/LoadingPage";
+import LoadingPage from "@/components/ui/Loading/LoadingPage";
 
 type CompleteHotelInfo = {
   hotelDetails: APIHotelDetailsJSONFormatted | null;
