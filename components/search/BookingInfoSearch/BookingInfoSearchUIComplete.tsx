@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdultsNumberInput from "./SearchComponents/AdultsNumberInput";
 import { DatePickerWithRange } from "./DatePickerWithRange";
 import { searchParamsType } from "@/app/page";
@@ -12,7 +12,6 @@ type BookingInfoUISearchCompleteProps = {
 const BookingInfoUISearchComplete: React.FC<
   BookingInfoUISearchCompleteProps
 > = ({ bookingInfo, setBookingInfo }) => {
-  const [tempBookingInfo, setTempBookingInfo] = useState(bookingInfo);
   const [isDateValid, setIsDateValid] = useState(true);
   const [isValid, setIsValid] = useState(true);
 
@@ -21,31 +20,30 @@ const BookingInfoUISearchComplete: React.FC<
     checkoutDate: string;
     numDays: number;
   }) => {
-    setTempBookingInfo((prev) => ({ ...prev, ...dates }));
+    const { checkinDate, checkoutDate, numDays } = dates;
+    if (isDateValid) {
+      setIsDateValid(true);
+      setBookingInfo({
+        ...bookingInfo,
+        checkinDate,
+        checkoutDate,
+        numDays,
+      });
+    } else {
+      setIsDateValid(false);
+    }
   };
 
   const handleAdultsNumberChange = (adults: number | null) => {
-    if (adults !== null) {
+    if (adults !== null && adults >= 1) {
+      // Ensure `adultsNumber` is always valid (e.g., minimum 1 adult)
       setIsValid(true);
-      setTempBookingInfo((prev) => ({ ...prev, adultsNumber: adults }));
+      setBookingInfo({
+        ...bookingInfo,
+        adultsNumber: adults,
+      });
     } else {
       setIsValid(false);
-    }
-  };
-
-  const handleApplyFilters = () => {
-    if (isValid) {
-      setBookingInfo(tempBookingInfo);
-    }
-  };
-
-  const handleRevertChanges = () => {
-    const confirmRevert = window.confirm(
-      "Are you sure you want to revert your booking changes?"
-    );
-    if (confirmRevert) {
-      setTempBookingInfo(bookingInfo);
-      setBookingInfo(tempBookingInfo);
     }
   };
 
@@ -56,42 +54,23 @@ const BookingInfoUISearchComplete: React.FC<
         <div className="join-item">
           <h3 className="text-primary font-semibold">Booking Dates</h3>
           <DatePickerWithRange
-            bookingInfo={bookingInfo}
+            bookingInfo={bookingInfo} // Use `tempBookingInfo` for updates
             onChange={handleDateChange}
             onValidationChange={setIsDateValid}
           />
         </div>
         <div className="join-item">
           <AdultsNumberInput
-            selectedNumber={tempBookingInfo.adultsNumber}
+            selectedNumber={bookingInfo.adultsNumber} // Default to 1
             onChange={handleAdultsNumberChange}
           />
           {!isValid && (
             <p className="text-red-500 text-sm">
-              Adults number is invalid. Please enter a valid number.
+              Adults number is invalid. Please enter a valid number (at least 1).
             </p>
           )}
         </div>
       </div>
-      {(bookingInfo.checkinDate !== tempBookingInfo.checkinDate ||
-        bookingInfo.checkoutDate !== tempBookingInfo.checkoutDate ||
-        bookingInfo.adultsNumber !== tempBookingInfo.adultsNumber) && (
-        <div className="join-item flex gap-4">
-          <button
-            onClick={handleRevertChanges}
-            className="btn btn-secondary w-1/2"
-          >
-            Revert changes
-          </button>
-          <button
-            onClick={handleApplyFilters}
-            className="btn btn-primary w-1/2"
-            disabled={!isValid || !isDateValid}
-          >
-            Apply new booking info
-          </button>
-        </div>
-      )}
     </div>
   );
 };
