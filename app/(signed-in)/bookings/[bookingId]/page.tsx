@@ -12,7 +12,9 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import HTMLSafeDescription from "@/components/booking/HTMLDescription";
-import EditReservationSection from "@/components/booking/EditReservationSection";
+import EditAdultsNumber from "@/components/booking/EditAdultsNumber";
+import DeleteReservation from "@/components/booking/EditCancelReservation";
+import LoadingPage from "@/components/ui/Loading/LoadingPage";
 
 const BookingIDPage = () => {
   const { bookingId: bookingIdSlug } = useParams();
@@ -53,7 +55,7 @@ const BookingIDPage = () => {
   }, [bookingIdSlug, session?.user?.email]);
 
   if (status === "loading") {
-    return <div>Loading...</div>;
+    return <LoadingPage className="min-h-screen" size_style={{ width: '400px', height: '400px' }} />
   }
 
   if (!session || !session.user?.email) {
@@ -77,11 +79,11 @@ const BookingIDPage = () => {
   }
 
   return (
-    <div className="p-8">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8">
       {/* Hero Section */}
       {hotel?.images?.[0]?.url && (
         <div
-          className="h-64 bg-cover bg-center rounded-lg shadow-md mb-6"
+          className="h-64 lg:h-96 bg-cover bg-center rounded-lg shadow-md mb-8"
           style={{ backgroundImage: `url(${hotel.images[0].url})` }}
         >
           <div className="bg-black bg-opacity-50 h-full flex items-center justify-center">
@@ -93,14 +95,14 @@ const BookingIDPage = () => {
       )}
       {/* <TestReservationDetailsDisplay reservation={reservation} /> */}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Booking Details */}
         <div className="lg:col-span-2">
-          <div className="bg-base-100 shadow-lg rounded-lg p-6">
-            <h2 className="text-3xl font-bold mb-4 text-primary">
+          <div className="bg-white dark:bg-slate-800 shadow-lg rounded-lg p-6">
+            <h2 className="text-3xl font-bold mb-6 text-primary">
               {hotel?.tagline || "Hotel details not available"}
             </h2>
-            <p className="text-md text-gray-600 mb-4">
+            <p className="text-lg text-gray-700 dark:text-gray-300 mb-4">
               {hotel?.location?.address
                 ? `${hotel.location.address.addressLine}, ${hotel.location.address.city}, ${hotel.location.address.province}, ${hotel.location.address.countryCode}`
                 : "Address not available"}
@@ -113,7 +115,7 @@ const BookingIDPage = () => {
             </p>
             <HTMLSafeDescription html={roomOffer?.description} />
 
-            <div className="grid grid-cols-2 gap-4 mt-6">
+            <div className="grid grid-cols-2 gap-6 mt-8">
               <p className="text-md">
                 <span className="font-bold text-primary">Check-in:</span>{" "}
                 {reservation.checkin_date}
@@ -128,55 +130,53 @@ const BookingIDPage = () => {
               </p>
             </div>
 
-            <div className="mt-6">
+            <div className="mt-8">
               <p className="text-2xl font-bold text-success">
                 Total Cost: ${reservation.room_cost.toFixed(2)}
               </p>
-              <p className="text-md mt-2">
+              <p className="text-lg mt-2">
                 Verified:{" "}
                 <span
-                  className={`${
-                    reservation.verified ? "text-success" : "text-error"
-                  } font-bold`}
+                  className={`${reservation.verified ? "text-success" : "text-error"
+                    } font-bold`}
                 >
                   {reservation.verified ? "Yes" : "No"}
                 </span>
               </p>
-              {!reservation.verified && !reservation.cost_difference && (
-                <p className="text-md mt-2">
-                  To keep reservation, must pay the difference of{" "}
-                  <span className={`text-error`}>
-                    {`$ ${reservation.cost_difference}`}
-                  </span>
-                </p>
-              )}
-              {reservation.is_cancelled && (
-                <p className="text-md mt-2 text-error">
-                  THIS RESERVATION WAS CANCELLED
-                </p>
-              )}
-              <p className="text-md mt-2 text-gray-600">
+              <p className="text-md mt-2 text-gray-600 dark:text-gray-400">
                 Booking ID: {reservation.id}
               </p>
             </div>
+          </div>
+          <div className="flex flex-col mt-8 space-y-6">
+            {/* Go Back to Profile Bookings */}
+            <Link
+              href="/profile?section=bookings"
+              className="btn btn-primary w-full py-3 text-lg"
+            >
+              Back to Profile
+            </Link>
+            {/* Cancel Reservation */}
+            <DeleteReservation reservation={reservation} />
           </div>
         </div>
 
         {/* Room Gallery */}
         {roomOffer?.galleryImages && roomOffer.galleryImages.length > 0 && (
-          <div className="bg-base-100 shadow-lg rounded-lg p-6">
-            <h2 className="text-3xl font-semibold mb-4 text-primary">
+          <div className="bg-white dark:bg-slate-800 shadow-lg rounded-lg p-6 w-full">
+            <h2 className="text-3xl font-semibold mb-6 text-primary">
               Room Gallery
             </h2>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 mb-6">
               {roomOffer.galleryImages.map((image, index) => (
-                <div key={index}>
+                <div key={index} className="flex justify-center">
                   <Image
                     src={image.url}
                     alt={image.description || "Room Image"}
-                    width={300}
-                    height={200}
-                    className="w-full h-auto rounded-lg shadow"
+                    width={400}
+                    height={400}
+                    quality={100}
+                    className="w-auto rounded-lg shadow"
                   />
                 </div>
               ))}
@@ -184,16 +184,6 @@ const BookingIDPage = () => {
           </div>
         )}
       </div>
-
-      <div className="mt-6">
-        <Link href="/bookings" className="btn btn-primary w-full">
-          Back to Bookings
-        </Link>
-      </div>
-
-      {!reservation.is_cancelled && (
-        <EditReservationSection reservation={reservation} />
-      )}
     </div>
   );
 };

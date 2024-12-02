@@ -9,8 +9,6 @@ import {
   hotelDetailsParamsSchema,
 } from "@/lib/rapid-hotel-api/zod/hotel-details-schemas";
 import { APIHotelDetailsResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotels-details-doc";
-import { ApiHotelSearchResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotels-search-doc";
-import { API_HOTEL_SEARCH_URL } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
 
 function validateSearchParams(
   searchParams: URLSearchParams
@@ -78,11 +76,14 @@ export async function GET(req: NextRequest) {
           longitude: JSON_DATA.summary?.location?.coordinates?.longitude ?? 0,
         },
       },
+
       images:
         JSON_DATA.propertyGallery?.images?.map((image, index) => ({
           alt: image.accessibilityText ?? "",
           description: image.image?.description ?? "",
           url: image.image?.url ?? "",
+          width: 800,
+          height: 600,
           index,
         })) ?? [],
       reviews: {
@@ -119,6 +120,8 @@ export type APIHotelDetailsJSONFormatted = {
 };
 
 type Image = {
+  width: number;
+  height: number;
   alt: string;
   description: string;
   url: string;

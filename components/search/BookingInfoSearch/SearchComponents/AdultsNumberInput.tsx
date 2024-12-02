@@ -38,7 +38,7 @@ const AdultsNumberInput: React.FC<AdultsNumberInputProps> = ({
 
   return (
     <TemplateInput
-      title="Number of Adults"
+      title={""}
       placeholder={`Enter number of adults (${DEFAULT_MIN_ADULTS_NUMBER}-${DEFAULT_MAX_ADULTS_NUMBER})`}
       regex={numberRegex}
       value={value}

@@ -29,7 +29,7 @@ const DeleteReservation: React.FC<DeleteReservationProps> = ({
     setIsLoading(true);
     try {
       await cancelReservation(reservation.userEmail, reservation.id);
-      router.push("/bookings");
+      router.push("/profile?section=bookings");
     } catch (error) {
       console.error("Error canceling reservation:", error);
       alert("Failed to cancel the reservation. Please try again.");
@@ -52,7 +52,9 @@ const DeleteReservation: React.FC<DeleteReservationProps> = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button>Cancel Reservation</Button>
+        <Button className="w-full">
+          Cancel Reservation
+        </Button>
       </DialogTrigger>
 
       <DialogContent>

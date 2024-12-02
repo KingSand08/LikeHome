@@ -118,101 +118,80 @@ export default function CheckoutInfo({
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="mb-10 text-black">
-        <h1 className="text-3xl font-bold mb-2">Payment</h1>
-        <h2 className="text-2xl">
-          <span className="font-bold"> {numberOfDays} days </span> at
+    <div className="flex flex-col space-y-10">
+      {/* Payment Details */}
+      <div className="mb-2 rounded-lg">
+        <h1 className="text-3xl font-extrabold text-gray-800 dark:text-white mb-6">
+          Payment
+        </h1>
+        <h2 className="text-xl text-gray-700 dark:text-gray-300">
+          <span className="font-bold">{numberOfDays} days</span> at{" "}
           <span className="font-bold">
-            {" "}
             {currencySymbol}
             {pricePerDay} per day
           </span>
         </h2>
-        <h2 className="text-2xl">
-          Total Amount due with 10% tax included:
-          <span className="font-bold">
-            {" "}
+        <h2 className="text-xl mt-2 text-gray-700 dark:text-gray-300">
+          Total Amount (including 10% tax):{" "}
+          <span className="font-bold text-blue-700 dark:text-blue-400">
             {currencySymbol}
-            {roundedTotalAmount}{" "}
+            {totalAmount}
           </span>
         </h2>
       </div>
 
       {/* User Information Fields */}
-      <div className="mb-6">
-        <input
-          type="text"
-          name="firstName"
-          placeholder="First Name"
-          value={userInfo.firstName}
-          onChange={handleUserInfoChange}
-          className="w-full p-2 mb-4 rounded-md text-white"
-        />
-        <input
-          type="text"
-          name="lastName"
-          placeholder="Last Name"
-          value={userInfo.lastName}
-          onChange={handleUserInfoChange}
-          className="w-full p-2 mb-4 rounded-md text-white"
-        />
-        <input
-          type="text"
-          name="billingAddress"
-          placeholder="Billing Address"
-          value={userInfo.billingAddress}
-          onChange={handleUserInfoChange}
-          className="w-full p-2 mb-4 rounded-md text-white"
-        />
-        <div className="flex flex-row gap-2">
-          <input
-            type="text"
-            name="city"
-            placeholder="City"
-            value={userInfo.city}
-            onChange={handleUserInfoChange}
-            className="w-full p-2 mb-4 rounded-md text-white"
-          />
-          <input
-            type="text"
-            name="state"
-            placeholder="State"
-            value={userInfo.state}
-            onChange={handleUserInfoChange}
-            className="w-full p-2 mb-4 rounded-md text-white"
-          />
+      <div className="p-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-700 dark:to-gray-800 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+          Your Information
+        </h2>
+        <div className="grid grid-cols-1 gap-6">
+          {["firstName", "lastName", "billingAddress", "city", "state", "zipCode"].map(
+            (field, idx) => (
+              <input
+                key={idx}
+                type="text"
+                name={field}
+                placeholder={field
+                  .replace(/([A-Z])/g, " $1")
+                  .replace(/\b\w/g, (char) => char.toUpperCase())}
+                value={userInfo[field as keyof FINAL_PAYMENT_INFO]}
+                onChange={handleUserInfoChange}
+                className="w-full p-2 mb-4 rounded-md bg-slate-300 dark:bg-slate-200 dark:text-black placeholder-slate-800 dark:placeholder-slate-700"
+              />
+            )
+          )}
         </div>
-        <input
-          type="text"
-          name="zipCode"
-          placeholder="ZIP Code"
-          value={userInfo.zipCode}
-          onChange={handleUserInfoChange}
-          className="w-full p-2 mb-4 rounded-md text-white"
-        />
       </div>
 
-      {/* Stripe Payment Elements */}
-      <Elements
-        stripe={stripePromise}
-        options={{
-          mode: "payment",
-          amount: convertToSubcurrency(roundedTotalAmount),
-          currency: currencyCode.toLowerCase(),
-        }}
-      >
-        <CheckoutConfirmation
-          totalAmount={roundedTotalAmount}
-          hotelRoomOffer={hotelRoomOffer}
-          bookingDetails={bookingDetails}
-          paymentInfo={userInfo}
-        />
-      </Elements>
+      {/* Stripe Payment */}
+      <div className="w-full flex flex-col items-center justify-center bg-white px-4 py-6 rounded-md space-y-5">
+        <Elements
+          stripe={stripePromise}
+          options={{
+            mode: "payment",
+            amount: convertToSubcurrency(totalAmount),
+            currency: currencyCode.toLowerCase(),
+          }}
+        >
+          <CheckoutConfirmation
+            totalAmount={totalAmount}
+            hotelRoomOffer={hotelRoomOffer}
+            bookingDetails={bookingDetails}
+            paymentInfo={userInfo}
+          />
+        </Elements>
 
-      {rewardPoints >= pretax && (
-        <RainbowButton onClick={redeemPoints}>Redeem Points</RainbowButton>
-      )}
+        {/* Redeem Points Button */}
+        {rewardPoints >= pretax && (
+          <RainbowButton
+            onClick={redeemPoints}
+            className="w-full text-center py-3"
+          >
+            Redeem Points
+          </RainbowButton>
+        )}
+      </div>
     </div>
   );
 }

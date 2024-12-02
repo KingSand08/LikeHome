@@ -99,7 +99,7 @@ export function DatePickerWithRange({
     const numDays = calculateNumDays(range.from, range.to);
 
     if (numDays == 0) {
-      setDateRange({from: undefined, to: undefined});
+      setDateRange({ from: undefined, to: undefined });
       return;
     }
     setDateRange(range);
