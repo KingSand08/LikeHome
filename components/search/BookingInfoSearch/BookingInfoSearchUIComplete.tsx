@@ -44,7 +44,6 @@ const BookingInfoUISearchComplete: React.FC<
 
   return (
     <div>
-      <h2 className="text-2xl font-bold">Booking Information</h2>
       <div className="gap-5 join">
         <div className="join-item">
           <h3 className="text-primary font-semibold">Booking Dates</h3>
