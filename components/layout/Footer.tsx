@@ -1,11 +1,6 @@
-"use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
-
 const Footer = () => {
-  const { data: session } = useSession();
-
   return (
     <footer className="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 py-10 shadow-lg border-t-2 dark:border-t-gray-800">
       <div className="container mx-auto px-6">
@@ -40,7 +35,7 @@ const Footer = () => {
               Home
             </Link>
             <Link
-              href={session ? "/profile" : "/sign-in"}
+              href={"/profile"}
               className="p-4 text-sm md:text-base font-medium hover:text-blue-600 dark:hover:text-blue-400 transition"
             >
               Profile
@@ -52,7 +47,7 @@ const Footer = () => {
               About Us
             </Link>
             <Link
-              href={session ? "/bookings" : "/sign-in"}
+              href={"/bookings"}
               className="p-4 text-sm md:text-base font-medium hover:text-blue-600 dark:hover:text-blue-400 transition"
             >
               Bookings
