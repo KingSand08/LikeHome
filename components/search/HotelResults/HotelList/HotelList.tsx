@@ -14,7 +14,7 @@ const HotelList: React.FC<HotelListProps> = ({ hotelsData, bookingParams }) => {
 
   return (
     <div>
-      <p className="text-white mb-2">
+      <p className="text-white mb-2 italic">
         Found {hotelsData.summary.matchedPropertiesSize} properties within price
         range: ${hotelsData.priceRange.minPrice} - $
         {hotelsData.priceRange.maxPrice}

@@ -51,10 +51,10 @@ const BookingInfoUISearchComplete: React.FC<
 
   return (
     <div>
-      <h2 className="text-2xl font-bold">Booking Information</h2>
+      <h2 className="max-[660px]:text-lg text-2xl font-bold">Booking Information</h2>
       <div className="gap-5 join">
         <div className="join-item">
-          <h3 className="text-primary font-semibold">Booking Dates</h3>
+          <h3 className="text-primary font-semibold text-base max-[660px]:text-sm">Booking Dates</h3>
           <DatePickerWithRange
             bookingInfo={bookingInfo}
             onChange={handleDateChange}
@@ -76,22 +76,22 @@ const BookingInfoUISearchComplete: React.FC<
       {(bookingInfo.checkinDate !== tempBookingInfo.checkinDate ||
         bookingInfo.checkoutDate !== tempBookingInfo.checkoutDate ||
         bookingInfo.adultsNumber !== tempBookingInfo.adultsNumber) && (
-        <div className="join-item flex gap-4">
-          <button
-            onClick={handleRevertChanges}
-            className="btn btn-secondary w-1/2"
-          >
-            Revert changes
-          </button>
-          <button
-            onClick={handleApplyFilters}
-            className="btn btn-primary w-1/2"
-            disabled={!isValid || !isDateValid}
-          >
-            Apply new booking info
-          </button>
-        </div>
-      )}
+          <div className="join-item flex gap-4">
+            <button
+              onClick={handleRevertChanges}
+              className="btn btn-secondary w-1/2"
+            >
+              Revert changes
+            </button>
+            <button
+              onClick={handleApplyFilters}
+              className="btn btn-primary w-1/2"
+              disabled={!isValid || !isDateValid}
+            >
+              Apply new booking info
+            </button>
+          </div>
+        )}
     </div>
   );
 };

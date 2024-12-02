@@ -74,44 +74,35 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
         lastPriceRange &&
         lastPriceRange.min > hotelsData?.priceRange?.minPrice &&
         lastPriceRange.max < hotelsData?.priceRange?.maxPrice ? (
-        <div className="text-red text-2xl">
+        <div className="italic text-red text-2xl">
           Sorry, there are no hotels with the price range between{" "}
-          {`$${lastPriceRange.min} and $${lastPriceRange.max}`}. Here are some
-          other hotels you can check out...
+          <span className="italic">
+            ${lastPriceRange.min} and ${lastPriceRange.max}
+          </span>
+          . Here are some other hotels you can check out...
         </div>
       ) : hotelsData &&
         lastPriceRange &&
         lastPriceRange.min > hotelsData?.priceRange?.minPrice ? (
-        <div className="text-red text-2xl">
+        <div className="italic text-red text-2xl">
           Sorry, there are no hotels with min price over{" "}
-          {`$${lastPriceRange.min}`}. Here are some other hotels you can check
-          out...
+          <span className="italic">${lastPriceRange.min}</span>. Here are some
+          other hotels you can check out...
         </div>
       ) : hotelsData &&
         lastPriceRange &&
         lastPriceRange.max < hotelsData?.priceRange?.maxPrice ? (
-        <div className="text-red text-2xl">
+        <div className="italic text-red text-2xl">
           Sorry, there are no hotels with max price under{" "}
-          {`$${lastPriceRange.max}`}. Here are some other hotels you can check
-          out...
+          <span className="italic">${lastPriceRange.max}</span>. Here are some
+          other hotels you can check out...
         </div>
       ) : null}
 
       {/* Hotel List Display */}
       <div className="mt-6">
         {loading ? (
-          // <span className="rounded bg-primary text-primary-content flex flex-row justify-center align-middle text-center gap-1 p-4">
-          //   <Loader size={32} className="animate-spin" />
-          //   <p className="h-full text-middle text-center text-2xl">
-          //     Loading Hotels that fit your needs!
-          //   </p>
-          // </span>
-
           <div className="flex items-center justify-center h-96">
-            {/* <LoadingPage
-              className="h-fit"
-              size_style={{ width: '300px', height: '300px' }}
-            /> */}
             <LoadingIcon
               className="h-fit pt-20 pb-48"
               size_style={{ width: '500px', height: '500px' }}
