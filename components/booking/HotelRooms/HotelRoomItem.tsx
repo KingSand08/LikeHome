@@ -61,7 +61,7 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
             onClick: () =>
               router.push(
                 "/signin?callbackUrl=" +
-                encodeURIComponent(path + "?" + searchParams)
+                  encodeURIComponent(path + "?" + searchParams)
               ),
           },
         }
@@ -73,8 +73,12 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
     const reservations = await retrieveAllReservations(session.user.email);
 
     if (
-      reservations.some(
-        (reservation: { checkin_date: any; checkout_date: any; hotel_id: string }) =>
+      reservations.filter(
+        (reservation: {
+          checkin_date: any;
+          checkout_date: any;
+          hotel_id: string;
+        }) =>
           getOverlappingDaysInIntervals(
             {
               start: toDate(finalBookingParamsJSON.checkin_date),
@@ -85,7 +89,7 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
               end: toDate(reservation.checkout_date),
             }
           ) > 0 && reservation.hotel_id !== room.hotel_id
-      )
+      ).length > 0
     ) {
       toast("You already have a reservation in a different hotel", {
         action: {
@@ -148,10 +152,7 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
 
       {/* Details Modal */}
       {isModalOpen && (
-        <dialog
-          id="details_modal"
-          className="modal modal-open"
-        >
+        <dialog id="details_modal" className="modal modal-open">
           {/* Modal Overlay */}
           <div className="modal-overlay bg-black/50 fixed inset-0 z-10"></div>
 
