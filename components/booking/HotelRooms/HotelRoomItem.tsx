@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { ImageSlider } from "@/components/ui/ImageSlider";
 
 type HotelRoomItemProps = {
   room: HotelRoomOffer;
@@ -42,7 +43,7 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
   ).replace("{roomId}", room.hotel_room_id);
 
   return (
-    <div className="flex flex-col gap-6 bg-base-200 rounded-box p-8 border border-primary shadow">
+    <div className="flex flex-col gap-6 bg-slate-800 rounded-box p-8 border-[2px] border-primary border-opacity-30 shadow">
       <div className="text-center text-base-content">
         <h2 className="text-2xl font-semibold">{room.name}</h2>
         <p className="text-lg text-base-content" dangerouslySetInnerHTML={{ __html: room.description }}>
@@ -50,20 +51,7 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
       </div>
 
       {/* Room Images */}
-      <div className="carousel carousel-center bg-neutral rounded-box space-x-4 h-96 p-4">
-      {room.galleryImages.map((image) => (
-          <div key={image.index} className="carousel-item">
-            <Image
-              src={image.url}
-              alt={image.description}
-              width={500}
-              height={500}
-              className="w-full h-auto rounded-lg"
-            />
-          </div>
-        ))}
-      </div>
-
+      <ImageSlider images={room.galleryImages || []} />
 
       {/* Pricing Section */}
       {room.pricePerNight.amount > 0 ? (
