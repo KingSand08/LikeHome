@@ -15,6 +15,7 @@ import HTMLSafeDescription from "@/components/booking/HTMLDescription";
 import EditAdultsNumber from "@/components/booking/EditAdultsNumber";
 import DeleteReservation from "@/components/booking/EditCancelReservation";
 import LoadingPage from "@/components/ui/Loading/LoadingPage";
+import EditReservationSection from "@/components/booking/EditReservationSection";
 
 const BookingIDPage = () => {
   const { bookingId: bookingIdSlug } = useParams();
@@ -55,7 +56,12 @@ const BookingIDPage = () => {
   }, [bookingIdSlug, session?.user?.email]);
 
   if (status === "loading") {
-    return <LoadingPage className="min-h-screen" size_style={{ width: '400px', height: '400px' }} />
+    return (
+      <LoadingPage
+        className="min-h-screen"
+        size_style={{ width: "400px", height: "400px" }}
+      />
+    );
   }
 
   if (!session || !session.user?.email) {
@@ -137,12 +143,18 @@ const BookingIDPage = () => {
               <p className="text-lg mt-2">
                 Verified:{" "}
                 <span
-                  className={`${reservation.verified ? "text-success" : "text-error"
-                    } font-bold`}
+                  className={`${
+                    reservation.verified ? "text-success" : "text-error"
+                  } font-bold`}
                 >
                   {reservation.verified ? "Yes" : "No"}
                 </span>
               </p>
+              {reservation.is_cancelled && (
+                <p className="text-2xl font-bold text-error">
+                  THIS RESERVATION HAS BEEN CANCELLED.
+                </p>
+              )}
               <p className="text-md mt-2 text-gray-600 dark:text-gray-400">
                 Booking ID: {reservation.id}
               </p>
@@ -157,7 +169,7 @@ const BookingIDPage = () => {
               Back to Profile
             </Link>
             {/* Cancel Reservation */}
-            <DeleteReservation reservation={reservation} />
+            <EditReservationSection reservation={reservation} />
           </div>
         </div>
 

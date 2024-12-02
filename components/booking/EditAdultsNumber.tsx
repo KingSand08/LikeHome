@@ -22,10 +22,11 @@ const EditAdultsNumber: React.FC<EditAdultsNumberProps> = ({
   };
 
   return (
-    <div className="mb-4">
-      <h3 className="font-bold text-lg mb-2 text-gray-800">
+    <div className="p-4 bg-white dark:bg-slate-800 shadow-md rounded-lg">
+      <h3 className="font-bold text-xl mb-4 text-primary">
         Edit Number of Adults
       </h3>
+      
       <AdultsNumberInput
         selectedNumber={localValue}
         onChange={handleAdultsNumberChange}

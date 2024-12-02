@@ -72,18 +72,18 @@ const EditReservationSection: React.FC<EditSectionProps> = ({
   };
 
   return (
-    <div className="edit-section p-4 bg-gray-100 rounded-lg shadow-md">
-      {/* <TestReservationDetailsDisplay reservation={tempReservation} /> */}
+    <div className="p-6 bg-white dark:bg-slate-800 shadow-lg rounded-lg">
+      <h3 className="text-2xl font-bold text-primary mb-4">Edit Reservation</h3>
       {reservation.verified && (
-        <div>
-          <div>
-            <EditAdultsNumber
-              reservation={tempReservation}
-              onUpdateTemp={handleAdultsNumberChange}
-            />
-          </div>
+        <div className="mb-6">
+          <EditAdultsNumber
+            reservation={tempReservation}
+            onUpdateTemp={handleAdultsNumberChange}
+          />
           <button
-            className="btn btn-primary mr-4"
+            className={`btn btn-primary mt-4 
+    disabled:bg-gray-300 disabled:text-gray-500 disabled:border-gray-400 
+    disabled:cursor-not-allowed`}
             onClick={handleConfirmUpdate}
             disabled={loading || !isReservationModified()}
           >
@@ -91,19 +91,23 @@ const EditReservationSection: React.FC<EditSectionProps> = ({
           </button>
         </div>
       )}
-      <div className="edit-section__actions mb-6">
-        {errorMessage && (
-          <p className="text-sm text-red-500 mt-2">{errorMessage}</p>
-        )}
-        {successMessage && (
-          <p className="text-sm text-green-500 mt-2">{successMessage}</p>
+
+      {/* Error or Success Messages */}
+      {errorMessage && (
+        <p className="text-sm text-red-500 mt-2">{errorMessage}</p>
+      )}
+      {successMessage && (
+        <p className="text-sm text-green-500 mt-2">{successMessage}</p>
+      )}
+
+      {/* Conditional Forms */}
+      <div className="mt-6">
+        {reservation.cost_difference > 0 ? (
+          <PayDifferenceForm reservation={reservation} />
+        ) : (
+          <DeleteReservation reservation={reservation} />
         )}
       </div>
-      {reservation.cost_difference > 0 ? (
-        <PayDifferenceForm reservation={reservation} />
-      ) : (
-        <DeleteReservation reservation={reservation} />
-      )}
     </div>
   );
 };
