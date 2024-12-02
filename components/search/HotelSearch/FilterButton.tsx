@@ -11,7 +11,7 @@ const FilterButton: React.FC = () => {
   useEffect(() => {
     // Function to detect screen size
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 900);
     };
 
     handleResize();
@@ -47,10 +47,11 @@ const FilterButton: React.FC = () => {
   return (
     <label
       htmlFor="my-drawer"
-      className={`btn btn-outline btn-primary fixed left-4 z-20 transition-transform duration-300 ${isMobile || isSticky ? "top-4 left-4" : ""
-        }`}
+      className={`btn btn-outline btn-primary fixed left-4 z-20 transition-transform duration-300 
+  ${isMobile ? "top-[180px] btn-md" : ""}
+  ${isSticky ? "top-4 left-4" : ""}`}
       style={{
-        top: !isMobile && !isSticky ? `${buttonOffset + 100}px` : undefined,
+        top: !isMobile && !isSticky ? `${buttonOffset + 50}px` : undefined,
       }}
     >
       <Filter />
