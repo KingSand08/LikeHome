@@ -8,6 +8,7 @@ import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ImageSlider } from "@/components/ui/ImageSlider";

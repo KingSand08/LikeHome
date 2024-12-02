@@ -37,17 +37,17 @@ export default async function Header() {
           </Link>
 
           {/* Search Bar */}
-          <div className="hidden md:flex flex-1 mx-4 max-w-full">
+          <div className="hidden min-[1200px]:flex flex-1 mx-4 max-w-full">
             <LocationCombobox />
           </div>
 
           {/* Mobile Dropdown */}
-          <div className="dropdown dropdown-end md:hidden ml-8">
+          <div className="dropdown dropdown-end min-[1200px]:hidden ml-8">
             <HamburgerMenu />
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8 ml-4">
+          <div className="hidden min-[1200px]:flex items-center gap-8 ml-4">
             <Link href="/about" className="text-base-content hover:text-accent">
               About
             </Link>
@@ -69,7 +69,7 @@ export default async function Header() {
         </div>
 
         {/* Search Bar (Visible Only on Mobile) */}
-        <div className="block md:hidden w-full px-4 pb-4">
+        <div className="block min-[1200px]:hidden w-full px-4 pb-4">
           <LocationCombobox />
         </div>
       </div>

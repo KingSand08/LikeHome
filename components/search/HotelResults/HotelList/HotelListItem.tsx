@@ -35,7 +35,7 @@ const HotelListItem: React.FC<HotelListItemProps> = ({
 
   return (
     <Link href={`${CustomHotelLink}?${finalBookingParams.toString()}`}>
-      <div className="flex flex-row max-[800px]:flex-col w-full mb-6 shadow-lg rounded-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow duration-200 border border-secondary bg-base-100">
+      <div className="flex flex-row max-[800px]:flex-col w-full mb-6 shadow-lg rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700 cursor-pointer hover:shadow-xl transition-shadow duration-200 border-[2px] border-secondary border-opacity-30">
         {/* Image Section */}
         <div className="w-full min-[800px]:w-52 h-52 min-[800px]:h-50">
           <Image
@@ -48,7 +48,7 @@ const HotelListItem: React.FC<HotelListItemProps> = ({
         </div>
 
         {/* Content Section */}
-        <div className="flex flex-col gap-4 p-4 sm:p-6 bg-base-200 flex-1">
+        <div className="flex flex-col gap-4 p-4 sm:p-6 bg-slate-200 dark:bg-slate-700 flex-1">
           {/* Hotel Name and Review Section */}
           <div className="flex flex-col sm:flex-row justify-between">
             <p className="font-bold text-xl sm:text-2xl text-primary mb-2 sm:mb-0">
