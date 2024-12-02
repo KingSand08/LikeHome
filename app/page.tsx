@@ -1,5 +1,6 @@
 "use client";
-import { useContext, useEffect, useState } from "react";
+
+import { useContext, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   DEFAULT_DOMAIN,
@@ -33,15 +34,13 @@ import {
 } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas";
 import { generateDefaultDates } from "@/lib/DateFunctions";
 import BookingInfoUISearchComplete from "@/components/search/BookingInfoSearch/BookingInfoSearchUIComplete";
-//import HotelSelect from "@/components/search/HotelResults/HotelSelect";
 import { RegionContext } from "@/components/providers/RegionProvider";
 import DrawerComponent from "@/components/search/HotelSearch/DrawerComponent";
 import { APIHotelSearchJSONFormatted } from "./api/hotels/search/route";
 import { hotelsFromRegion } from "@/server-actions/api-actions";
-//import LoadingPage from "@/components/ui/Loading/LoadingPage";
+
 const LoadingPage = dynamic(() => import("@/components/ui/Loading/LoadingPage"), { ssr: false });
 const HotelSelect = dynamic(() => import("@/components/search/HotelResults/HotelSelect"), { ssr: false });
-
 
 export type searchParamsType = {
   query: string;
@@ -65,7 +64,7 @@ export type searchParamsType = {
 
 const HomeSearchPage: React.FC = () => {
   const [region] = useContext(RegionContext);
-  const regionContextID = region?.region_id || "";
+  const searchResultsRef = useRef<HTMLDivElement | null>(null); // Reference for scrolling to the results section
   const {
     DEFAULT_CHECKIN_BOOKING_DATE,
     DEFAULT_CHECKOUT_BOOKING_DATE,
@@ -76,7 +75,7 @@ const HomeSearchPage: React.FC = () => {
     query: DEFAULT_QUERY,
     domain: DEFAULT_DOMAIN,
     locale: DEFAULT_LOCALE,
-    selectedRegionId: regionContextID,
+    selectedRegionId: region?.region_id || "",
     checkinDate: DEFAULT_CHECKIN_BOOKING_DATE,
     checkoutDate: DEFAULT_CHECKOUT_BOOKING_DATE,
     adultsNumber: DEFAULT_ADULTS_NUMBER,
@@ -95,18 +94,20 @@ const HomeSearchPage: React.FC = () => {
   const [searchParams, setSearchParams] = useState<searchParamsType | null>(
     null
   );
+  const [hotelsData, setHotelsData] = useState<APIHotelSearchJSONFormatted | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-      const getInitialSearchParams = () => {
-        const storedParams = localStorage.getItem("searchParams");
-        if (storedParams) {
-          setSearchParams(JSON.parse(storedParams));
-        } else {
-          setSearchParams(defaultSearchParams);
-        }
-      };
+    const getInitialSearchParams = () => {
+      const storedParams = localStorage.getItem("searchParams");
+      if (storedParams) {
+        setSearchParams(JSON.parse(storedParams));
+      } else {
+        setSearchParams(defaultSearchParams);
+      }
+    };
 
-      getInitialSearchParams();
+    getInitialSearchParams();
   }, []);
 
   useEffect(() => {
@@ -127,17 +128,13 @@ const HomeSearchPage: React.FC = () => {
     }));
   }, [region]);
 
-  const [hotelsData, setHotelsData] =
-    useState<APIHotelSearchJSONFormatted | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-
   const isValid: boolean =
     !!searchParams &&
     hotelSearchParamsRefinedSchema.safeParse({
       checkin_date: searchParams.checkinDate,
       checkout_date: searchParams.checkoutDate,
       adults_number: searchParams.adultsNumber,
-      region_id: regionContextID,
+      region_id: region?.region_id || "",
       sort_order: searchParams.sortOrder,
       locale: searchParams.locale,
       domain: searchParams.domain,
@@ -153,22 +150,14 @@ const HomeSearchPage: React.FC = () => {
     region.region_id !== "" &&
     !loading;
 
-  const [lastPriceRange, setLastPriceRange] = useState<{
-    max: number;
-    min: number;
-  }>({
-    max: DEFAULT_MAX_PRICE,
-    min: DEFAULT_MIN_PRICE,
-  });
-
   const handleFindHotels = async () => {
     if (!isValid) return;
 
-    const bookingParams={
+    const bookingParams = {
       checkin_date: searchParams!.checkinDate,
       checkout_date: searchParams!.checkoutDate,
       adults_number: searchParams!.adultsNumber,
-      region_id: regionContextID,
+      region_id: region?.region_id || "",
       sort_order: searchParams!.sortOrder,
       locale: searchParams!.locale,
       domain: searchParams!.domain,
@@ -179,16 +168,17 @@ const HomeSearchPage: React.FC = () => {
       lodging_type: searchParams!.lodgingOptions,
       meal_plan: searchParams!.mealPlanOptions,
       available_filter: searchParams!.availableOnly,
-    }
+    };
 
-    setLastPriceRange({
-      max: hotelsData?.priceRange?.maxPrice || DEFAULT_MAX_PRICE,
-      min: hotelsData?.priceRange?.minPrice || DEFAULT_MIN_PRICE,
-    });
     setLoading(true);
     try {
       const HOTEL_DATA = await hotelsFromRegion(bookingParams);
       setHotelsData(HOTEL_DATA);
+
+      // Smooth scroll to results after search
+      if (searchResultsRef.current) {
+        searchResultsRef.current.scrollIntoView({ behavior: "smooth" });
+      }
     } catch (error) {
       console.error("Error fetching hotels:", error);
       setHotelsData(null);
@@ -207,7 +197,7 @@ const HomeSearchPage: React.FC = () => {
       setHotelSearchInputs={(newHotelSearch) => setSearchParams(newHotelSearch)}
     >
       <div
-        className="hero min-h-screen"
+        className="hero min-[50vh]"
         style={{
           backgroundImage: "url(https://img.daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.webp)",
         }}
@@ -235,26 +225,29 @@ const HomeSearchPage: React.FC = () => {
           </div>
       </div>
 
-      <div className="max-[1200px]:w-full w-5/6">
+      {/* Search Results Section */}
+      <div ref={searchResultsRef} className="max-[1200px]:w-full w-5/6 mt-8">
         <hr />
         <HotelSelect
-        loading={loading} hotelsData={hotelsData} lastPriceRange={lastPriceRange} 
-        bookingParams={{
-          checkin_date: searchParams.checkinDate,
-          checkout_date: searchParams.checkoutDate,
-          adults_number: searchParams.adultsNumber,
-          region_id: regionContextID,
-          sort_order: searchParams.sortOrder,
-          locale: searchParams.locale,
-          domain: searchParams.domain,
-          price_min: searchParams.price_min,
-          price_max: searchParams.price_max,
-          accessibility: searchParams.accessibilityOptions,
-          amenities: searchParams.amenitiesOptions,
-          lodging_type: searchParams.lodgingOptions,
-          meal_plan: searchParams.mealPlanOptions,
-          available_filter: searchParams.availableOnly,
-        }}
+          loading={loading}
+          hotelsData={hotelsData}
+          lastPriceRange={{ max: DEFAULT_MAX_PRICE, min: DEFAULT_MIN_PRICE }}
+          bookingParams={{
+            checkin_date: searchParams.checkinDate,
+            checkout_date: searchParams.checkoutDate,
+            adults_number: searchParams.adultsNumber,
+            region_id: region?.region_id || "",
+            sort_order: searchParams.sortOrder,
+            locale: searchParams.locale,
+            domain: searchParams.domain,
+            price_min: searchParams.price_min,
+            price_max: searchParams.price_max,
+            accessibility: searchParams.accessibilityOptions,
+            amenities: searchParams.amenitiesOptions,
+            lodging_type: searchParams.lodgingOptions,
+            meal_plan: searchParams.mealPlanOptions,
+            available_filter: searchParams.availableOnly,
+          }}
         />
       </div>
     </DrawerComponent>

@@ -5,11 +5,8 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CheckoutInfo from "@/components/checkout/CheckoutInfo";
 import { calculateNumDays } from "@/lib/DateFunctions";
-import Image from "next/image";
 import { fetchHotelRoomOffer } from "@/server-actions/api-actions";
 import LoadingPage from "@/components/ui/Loading/LoadingPage";
-import PaginatedRoomImageGrid from "@/components/HotelListing/PaginatedRoomImageGrid";
-import { APIHotelDetailsJSONFormatted } from "@/app/api/hotels/details/route";
 import { ImageSlider } from "@/components/ui/ImageSlider";
 import ErrorPage from "@/components/ui/ErrorPage";
 
