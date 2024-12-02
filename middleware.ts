@@ -1,29 +1,49 @@
-
 import { auth } from "@/auth";
 import { NextResponse, NextRequest } from "next/server";
 
 export const middleware = async (request: NextRequest) => {
-    const session = await auth();
+  const session = await auth();
 
-    // If the user is authenticated and trying to access login or signup, redirect to home
-    if (session && (request.nextUrl.pathname === "/signin")) {
-        return NextResponse.redirect(new URL("/", request.url));
-    }
+  const requestedUrl = request.nextUrl.pathname + request.nextUrl.search;
 
-    // If no token is found and the route requires authentication, redirect to the login page
-    if (!session && (request.nextUrl.pathname.startsWith("/profile"))) {
-        return NextResponse.redirect(new URL("/signin", request.url));
-    }
+  console.log(`Middleware Requested URL: ${requestedUrl}`);
 
-    // Allow the request to continue if the user is authenticated or on a public page
-    return NextResponse.next();
+  // If no session and route requires authentication
+  if (!session && request.nextUrl.pathname.startsWith("/profile")) {
+    return NextResponse.redirect(
+      new URL(
+        `/signin?callbackUrl=${encodeURIComponent(requestedUrl)}`,
+        request.url
+      )
+    );
+  }
+
+  if (!session && request.nextUrl.pathname.startsWith("/bookings")) {
+    return NextResponse.redirect(
+      new URL(
+        `/signin?callbackUrl=${encodeURIComponent(requestedUrl)}`,
+        request.url
+      )
+    );
+  }
+
+  if (!session && /^\/hotels\/[^\/]+\/[^\/]+$/.test(request.nextUrl.pathname)) {
+    return NextResponse.redirect(
+      new URL(
+        `/signin?callbackUrl=${encodeURIComponent(requestedUrl)}`,
+        request.url
+      )
+    );
+  }
 };
 
 export const config = {
-    matcher: [
-        "/signin:path*",
-        "/profile:path*",
-    ],
+  matcher: [
+    "/signin:path*",
+    "/profile:path*",
+    "/bookings:path*",
+    "/hotels/:hotelID/:roomID",
+  ],
 };
 
 export default middleware;
