@@ -10,8 +10,6 @@ import {
 } from "@/server-actions/cache-actions";
 import Link from "next/link";
 import Image from "next/image";
-import HTMLSafeDescription from "@/components/booking/HTMLDescription";
-import EditAdultsNumber from "@/components/booking/EditAdultsNumber";
 
 type CachedData = {
   hotels: Record<string, CachedHotel>;
@@ -90,8 +88,8 @@ const BookingsPage = () => {
       <div
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start"
         style={{ gridAutoRows: 'min-content' }}
-      >        
-      {reservations.map((reservation) => {
+      >
+        {reservations.map((reservation) => {
           const hotel = cachedData.hotels[reservation.hotel_id];
           const roomOffer = cachedData.roomOffers[reservation.room_id];
 
@@ -125,7 +123,7 @@ const BookingsPage = () => {
               {/* <HTMLSafeDescription html={roomOffer?.description} /> */}
 
               <p className="text-md font-semibold mt-2 ">
-                Check-in: {" "} 
+                Check-in: {" "}
                 <span className="text-info ">
                   {reservation.checkin_date}
                 </span>

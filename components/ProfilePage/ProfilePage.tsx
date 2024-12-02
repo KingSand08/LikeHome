@@ -5,6 +5,7 @@ import Rewards from "@/components/ProfilePage/Rewards";
 import Avatar from "@/components/auth/Avatar";
 import User from "@/types/User";
 import DropDownBtn from "@/public/drop-down-btn";
+import Bookings from "./BookingsPage";
 
 const ProfilePage = ({ user }: { user: User }) => {
   const [activeSection, setActiveSection] = useState<string>("account");
@@ -46,24 +47,31 @@ const ProfilePage = ({ user }: { user: User }) => {
           {showContent && (
             <ul className="space-y-4 w-full bg-gray-600 p-4 rounded-lg bg-opacity-10">
               <li
-                className={`btn w-full px-4 py-2 rounded-lg cursor-pointer ${
-                  activeSection === "account"
-                    ? "btn-secondary"
-                    : "bg-blue-200 border-blue-200 hover:border-blue-400 hover:bg-blue-400 shadow-md dark:bg-slate-800 dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-700 dark:shadow-lg"
-                }`}
+                className={`btn w-full px-4 py-2 rounded-lg cursor-pointer ${activeSection === "account"
+                  ? "btn-secondary"
+                  : "bg-blue-200 border-blue-200 hover:border-blue-400 hover:bg-blue-400 shadow-md dark:bg-slate-800 dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-700 dark:shadow-lg"
+                  }`}
                 onClick={() => setActiveSection("account")}
               >
                 Account Information
               </li>
               <li
-                className={`btn w-full px-4 py-2 rounded-lg cursor-pointer ${
-                  activeSection === "rewards"
-                    ? "btn-secondary"
-                    : "bg-blue-200 border-blue-200 hover:border-blue-400 hover:bg-blue-400 shadow-md dark:bg-slate-800 dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-700 dark:shadow-lg"
-                }`}
+                className={`btn w-full px-4 py-2 rounded-lg cursor-pointer ${activeSection === "rewards"
+                  ? "btn-secondary"
+                  : "bg-blue-200 border-blue-200 hover:border-blue-400 hover:bg-blue-400 shadow-md dark:bg-slate-800 dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-700 dark:shadow-lg"
+                  }`}
                 onClick={() => setActiveSection("rewards")}
               >
                 Rewards
+              </li>
+              <li
+                className={`btn w-full px-4 py-2 rounded-lg cursor-pointer ${activeSection === "bookings"
+                  ? "btn-secondary"
+                  : "bg-blue-200 border-blue-200 hover:border-blue-400 hover:bg-blue-400 shadow-md dark:bg-slate-800 dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-700 dark:shadow-lg"
+                  }`}
+                onClick={() => setActiveSection("bookings")}
+              >
+                Bookings
               </li>
             </ul>
           )}
@@ -75,8 +83,10 @@ const ProfilePage = ({ user }: { user: User }) => {
         <div className="max-w-4xl mx-auto mt- p-6 bg-gray-300 dark:bg-gray-900 rounded-lg dark:shadow light:shadow-xl">
           {activeSection === "account" ? (
             <AccountInformation user={user} />
-          ) : (
+          ) : activeSection === "rewards" ? (
             <Rewards user={user} />
+          ) : (
+            <Bookings user={user} />
           )}
         </div>
       </div>
