@@ -155,7 +155,7 @@ export default function CheckoutInfo({
                   .replace(/\b\w/g, (char) => char.toUpperCase())}
                 value={userInfo[field as keyof FINAL_PAYMENT_INFO]}
                 onChange={handleUserInfoChange}
-                className="w-full p-2 mb-4 rounded-md bg-slate-200 dark:text-black placeholder-slate-700"
+                className="w-full p-2 mb-4 rounded-md bg-slate-300 dark:bg-slate-200 dark:text-black placeholder-slate-800 dark:placeholder-slate-700"
               />
             )
           )}
@@ -163,7 +163,7 @@ export default function CheckoutInfo({
       </div>
 
       {/* Stripe Payment */}
-      <div className="w-full flex flex-col items-center justify-center bg-white p-2 rounded-md">
+      <div className="w-full flex flex-col items-center justify-center bg-white px-4 py-6 rounded-md space-y-5">
         <Elements
           stripe={stripePromise}
           options={{
