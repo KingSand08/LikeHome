@@ -13,7 +13,7 @@ import ErrorPage from "@/components/ui/ErrorPage";
 import HotelLocation from "@/components/HotelListing/HotelLocation";
 import PaginatedRoomImageGrid from "@/components/HotelListing/PaginatedRoomImageGrid";
 import RoomOffers from "@/components/HotelListing/RoomOffers";
-import HTMLSafeDescription from "@/components/booking/HTMLDescription";
+import { number } from "zod";
 
 const HotelIDPage: React.FC = () => {
   const { hotelId: hotelIdSlug } = useParams();
@@ -80,9 +80,7 @@ const HotelIDPage: React.FC = () => {
           <p className="text-xl">{tagline}</p>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-bold text-info">
-            {reviews.score.toFixed(1)}
-          </p>
+          <p className="text-2xl font-bold text-info">{reviews.score}</p>
           <p>{reviews.totalReviews} reviews</p>
           <p>Base Price Per Night: {roomOffers?.basePricePerNight}</p>
         </div>
