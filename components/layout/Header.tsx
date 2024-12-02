@@ -6,6 +6,7 @@ import SignOutButton from "@/components/auth/SignOutButton";
 import SigninButton from "@/components/auth/SigninButton";
 import Avatar from "@/components/auth/Avatar";
 import LocationCombobox from "../ui/location-combobox";
+import HamburgerMenu from "./HamburgerMenu";
 
 export default async function Header() {
   const session = await auth();
@@ -18,42 +19,40 @@ export default async function Header() {
   }
 
   return (
-    <header className="py-5 bg-base-100 text-base-300-content border-b-2 dark:border-black dark:border-opacity-15 border-b-slate-300">
+    <header className="bg-base-100 text-base-300-content border-b-2 dark:border-black dark:border-opacity-15 border-b-slate-300">
       <div className="container mx-auto bg-base-100">
-        <div className="flex flex-col md:flex-row md:justify-between gap-6 space-x-5">
-          {/* logo */}
-          <Link href="/">
-            <div className="flex items-center gap-5 justify-center xl:w-max">
-              {/* Replace with product logo later */}
-              <Image
-                src="/icons/app/stellarHorizons.png"
-                alt="LikeHome Logo"
-                width={55}
-                height={20}
-                priority
-                style={{ height: "auto", width: "auto" }}
-              />
-              <span className="ml-2 text-lg font-bold text-base-content">
-                LikeHome
-              </span>
-            </div>
+        {/* Top Header Section */}
+        <div className="flex items-center justify-between py-5">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-5">
+            <Image
+              src="/icons/app/stellarHorizons.png"
+              alt="LikeHome Logo"
+              width={55}
+              height={20}
+              priority
+              className="w-auto h-auto"
+            />
+            <span className="text-lg font-bold text-base-content">LikeHome</span>
           </Link>
-          {/* Searh Bar */}
-          <div className="flex-1 mx-5 relative">
+
+          {/* Search Bar */}
+          <div className="hidden md:flex flex-1 mx-4 max-w-full">
             <LocationCombobox />
           </div>
-          <div className="flex flex-grow-0 items-center justify-center gap-8 ">
-            {/* Navigation Links */}
-            <Link className="flex items-center gap-8" href="/about">
-              {/* Flex container for navigation items */}
-              <div className="text-base-content hover:text-accent cursor-pointer">
-                About
-              </div>
+
+          {/* Mobile Dropdown */}
+          <div className="dropdown dropdown-end md:hidden ml-8">
+            <HamburgerMenu />
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-8 ml-4">
+            <Link href="/about" className="text-base-content hover:text-accent">
+              About
             </Link>
             {!loginStatus ? (
-              <>
-                <SigninButton className="text-base-300-content" />
-              </>
+              <SigninButton className="text-base-300-content" />
             ) : (
               <>
                 <Link
@@ -62,16 +61,76 @@ export default async function Header() {
                 >
                   Profile
                 </Link>
-                <Link href="/profile">
-                  <Avatar
-                    image={session?.user.image ?? undefined}
-                    size={"3.4em"}
-                  />
+                <SignOutButton className="text-base-300-content" />
+                <HamburgerMenu />
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Search Bar (Visible Only on Mobile) */}
+        <div className="block md:hidden w-full px-4 pb-4">
+          <LocationCombobox />
+        </div>
+      </div>
+    </header>
+  );
+  return (
+    <header className="bg-base-100 text-base-300-content border-b-2 dark:border-black dark:border-opacity-15 border-b-slate-300">
+      <div className="container mx-auto bg-base-100">
+        {/* Top Header Section */}
+        <div className="flex items-center justify-between py-5">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-5">
+            <Image
+              src="/icons/app/stellarHorizons.png"
+              alt="LikeHome Logo"
+              width={55}
+              height={20}
+              priority
+              className="w-auto h-auto"
+            />
+            <span className="text-lg font-bold text-base-content">LikeHome</span>
+          </Link>
+
+          {/* Search Bar (Hidden on Mobile) */}
+          <div className="hidden md:flex flex-1 mx-4 max-w-full">
+            <LocationCombobox />
+          </div>
+
+          {/* Mobile Dropdown */}
+          <div className="dropdown dropdown-end md:hidden">
+            <HamburgerMenu />
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-8">
+            <Link href="/about" className="text-base-content hover:text-accent">
+              About
+            </Link>
+            {!loginStatus ? (
+              <SigninButton className="text-base-300-content" />
+            ) : (
+              <>
+                <Link
+                  className="btn w-fit px-4 py-2 btn-primary text-secondary-content rounded"
+                  href="/profile"
+                >
+                  Profile
                 </Link>
+                <Avatar
+                  image={session?.user.image ?? undefined}
+                  size={"3.4em"}
+                />
                 <SignOutButton className="text-base-300-content" />
               </>
             )}
           </div>
+        </div>
+
+        {/* Search Bar (Visible Only on Mobile) */}
+        <div className="block md:hidden w-full px-4 pb-4">
+          <LocationCombobox />
         </div>
       </div>
     </header>

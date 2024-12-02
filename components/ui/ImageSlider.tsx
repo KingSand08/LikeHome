@@ -33,11 +33,11 @@ export function ImageSlider({ images }: ImageSliderProps) {
                         key={url}
                         className="flex-shrink-0 w-full h-full flex items-center justify-center py-4"
                     >
-                        <img
+                        <Image
                             src={url}
-                            // width={400}
-                            // height={400}
-                            // quality={100}
+                            width={400}
+                            height={400}
+                            quality={100}
                             alt={description}
                             className="w-auto h-52 max-w-full max-h-full m-auto"
                         />

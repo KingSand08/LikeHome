@@ -5,7 +5,7 @@ import { APIHotelRoomOffersJSONFormatted } from '@/app/api/hotels/search/rooms/r
 const RoomOffers: React.FC<{ hotelRooms: APIHotelRoomOffersJSONFormatted }> = ({ hotelRooms }) => {
     return (
         <>
-            <div className="mb-8 bg-gradient-to-r from-slate-300 to-slate-300 dark:from-slate-400 dark:to-slate-600 shadow-lg rounded-xl p-6">
+            <div className="mb-8 bg-slate-300 dark:bg-slate-700 shadow-lg rounded-xl p-6">
                 <h2 className="text-2xl font-semibold mb-4 text-base-content">Room Offers</h2>
                 {hotelRooms ? (
                     <div>
