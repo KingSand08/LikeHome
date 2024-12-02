@@ -11,7 +11,7 @@ import {
 } from "@/lib/rapid-hotel-api/zod/hotel-details-schemas";
 import { APIHotelDetailsResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotels-details-doc";
 import { ApiHotelSearchResponseJSON } from "@/types/rapid-hotels-api/api-json-docs/hotels-search-doc";
-import {  API_HOTEL_SEARCH_URL } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas"
+import { API_HOTEL_SEARCH_URL } from "@/lib/rapid-hotel-api/zod/hotel-search-schemas"
 
 function validateSearchParams(
   searchParams: URLSearchParams
@@ -144,6 +144,8 @@ export type APIHotelDetailsJSONFormatted = {
 };
 
 type Image = {
+  width: number;
+  height: number;
   alt: string;
   description: string;
   url: string;

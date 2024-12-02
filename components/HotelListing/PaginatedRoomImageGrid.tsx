@@ -10,6 +10,7 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import PhotoAlbum from "react-photo-album";
 import "react-photo-album/rows.css";
+import Image from "next/image"; // Import from next/image
 
 import { APIHotelDetailsJSONFormatted } from "@/app/api/hotels/details/route";
 
@@ -27,37 +28,14 @@ const PaginatedRoomImageGrid: React.FC<{ hotelDetails: APIHotelDetailsJSONFormat
   useEffect(() => {
     if (!hotelDetails?.images) return;
 
-    // Load images and get their natural dimensions
     const fetchImageDimensions = async () => {
-      const updatedPhotos = await Promise.all(
-        hotelDetails.images.map(
-          (image) =>
-            new Promise<{ src: string; width: number; height: number; alt: string; title: string }>(
-              (resolve) => {
-                const img = new Image();
-                img.src = image.url;
-                img.onload = () => {
-                  resolve({
-                    src: image.url,
-                    width: img.naturalWidth,
-                    height: img.naturalHeight,
-                    alt: image.alt || image.description || "Image",
-                    title: image.description || "Image",
-                  });
-                };
-                img.onerror = () => {
-                  resolve({
-                    src: image.url,
-                    width: 800, // Fallback width
-                    height: 600, // Fallback height
-                    alt: image.alt || image.description || "Image",
-                    title: image.description || "Image",
-                  });
-                };
-              }
-            )
-        )
-      );
+      const updatedPhotos = hotelDetails.images.map((image) => ({
+        src: image.url,
+        width: image.width || 800, // Fallback width
+        height: image.height || 600, // Fallback height
+        alt: image.alt || image.description || "Image",
+        title: image.description || "Image",
+      }));
 
       setPhotos(updatedPhotos);
     };
@@ -70,13 +48,17 @@ const PaginatedRoomImageGrid: React.FC<{ hotelDetails: APIHotelDetailsJSONFormat
   return (
     <div className="flex flex-col items-center">
       {/* Carousel */}
-      <div className="carousel carousel-center bg-neutral rounded-box w-full space-x-4 p-4 mb-5">
+      <div className="carousel carousel-center bg-slate-300 dark:bg-neutral rounded-box w-full space-x-4 p-4 mb-5">
         {limitedPhotos.map((photo, index) => (
           <div className="carousel-item" key={index}>
-            <img
+            <Image
               src={photo.src}
               alt={photo.alt}
-              className="rounded-box cursor-pointer w-full h-96"
+              width={400}
+              height={400}
+              quality={100}
+              priority={index === 0} // Preload the first image
+              className="rounded-box cursor-pointer w-full h-96 object-cover"
               onClick={() => setLightboxIndex(index)}
             />
           </div>

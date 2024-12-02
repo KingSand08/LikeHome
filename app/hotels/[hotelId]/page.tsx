@@ -72,11 +72,11 @@ const HotelIDPage: React.FC = () => {
         <div>
           <h1 className="text-4xl font-bold mb-2">{name}</h1>
           <HotelLocation hotelDetails={hotelData} />
-          <p className="text-xl text-gray-600">{tagline}</p>
+          <p className="text-xl text-gray-600 dark:text-gray-100">{tagline}</p>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-bold text-info">{reviews.score.toFixed(1)}</p>
-          <p className="text-gray-500">{reviews.totalReviews} reviews</p>
+          <p className="text-2xl font-bold text-primary">{reviews.score.toFixed(1)}</p>
+          <p className="text-gray-500 dark:text-gray-200">{reviews.totalReviews} reviews</p>
         </div>
       </div>
 

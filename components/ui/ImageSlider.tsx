@@ -22,7 +22,7 @@ export function ImageSlider({ images }: ImageSliderProps) {
     }
 
     return (
-        <div className="relative w-full h-64 overflow-hidden rounded-lg bg-slate-400 bg-opacity-70 dark:bg-slate-700 dark:bg-opacity-100">
+        <div className="relative w-full h-64 overflow-hidden rounded-lg bg-slate-300 bg-opacity-70 dark:bg-slate-700 dark:bg-opacity-100">
             {/* Image */}
             <div
                 className="flex transition-transform duration-300"
@@ -33,11 +33,11 @@ export function ImageSlider({ images }: ImageSliderProps) {
                         key={url}
                         className="flex-shrink-0 w-full h-full flex items-center justify-center py-4"
                     >
-                        <Image
+                        <img
                             src={url}
-                            width={400}
-                            height={400}
-                            quality={100}
+                            // width={400}
+                            // height={400}
+                            // quality={100}
                             alt={description}
                             className="w-auto h-52 max-w-full max-h-full m-auto"
                         />
@@ -70,7 +70,7 @@ export function ImageSlider({ images }: ImageSliderProps) {
                         key={index}
                         onClick={() => setImageIndex(index)}
                         aria-label={`View Image ${index + 1}`}
-                        className={`w-3 h-3 rounded-full ${imageIndex === index ? "bg-primary dark:bg-secondary" : "bg-gray-100 dark:bg-gray-500"
+                        className={`w-3 h-3 rounded-full ${imageIndex === index ? "bg-primary dark:bg-secondary" : "bg-gray-400 dark:bg-gray-500"
                             }`}
                     />
                 ))}

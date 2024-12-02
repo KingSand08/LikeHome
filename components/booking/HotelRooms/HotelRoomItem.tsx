@@ -8,7 +8,6 @@ import {
   DEFAULT_DOMAIN,
   DEFAULT_LOCALE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
-import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ImageSlider } from "@/components/ui/ImageSlider";
@@ -43,7 +42,7 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
   ).replace("{roomId}", room.hotel_room_id);
 
   return (
-    <div className="flex flex-col gap-6 bg-slate-800 rounded-box p-8 border-[2px] border-primary border-opacity-30 shadow">
+    <div className="flex flex-col gap-6 bg-slate-200 dark:bg-slate-800 rounded-box p-8 border-[2px] border-primary border-opacity-30 shadow">
       <div className="text-center text-base-content">
         <h2 className="text-2xl font-semibold">{room.name}</h2>
         <p className="text-lg text-base-content" dangerouslySetInnerHTML={{ __html: room.description }}>
