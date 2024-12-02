@@ -9,7 +9,7 @@ import {
   DEFAULT_LOCALE,
 } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import Image from "next/image";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { retrieveAllReservations } from "@/server-actions/reservation-actions";
 import { useSession } from "next-auth/react";
@@ -44,12 +44,23 @@ const HotelRoomItem: React.FC<HotelRoomItemProps> = ({ room }) => {
   ).replace("{roomId}", room.hotel_room_id);
 
   const router = useRouter();
+  const path = usePathname();
   const { data: session } = useSession();
 
   const handleReserveClick = async () => {
     if (!session || !session.user.email) {
       toast(
-        "You must be logged in to make a reservation. Try waiting a few seconds."
+        "You must be logged in to make a reservation. Try waiting a few seconds.",
+        {
+          action: {
+            label: "Sign In",
+            onClick: () =>
+              router.push(
+                "/signin?callbackUrl=" +
+                  encodeURIComponent(path + "?" + searchParams)
+              ),
+          },
+        }
       );
       return;
     }

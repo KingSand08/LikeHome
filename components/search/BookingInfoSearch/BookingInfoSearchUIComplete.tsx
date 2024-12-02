@@ -1,8 +1,10 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import AdultsNumberInput from "./SearchComponents/AdultsNumberInput";
 import { DatePickerWithRange } from "./DatePickerWithRange";
 import { searchParamsType } from "@/app/page";
+import { cn } from "@/lib/utils";
 
 type BookingInfoUISearchCompleteProps = {
   bookingInfo: searchParamsType;
@@ -39,15 +41,6 @@ const BookingInfoUISearchComplete: React.FC<
     }
   };
 
-  const handleRevertChanges = () => {
-    const confirmRevert = window.confirm(
-      "Are you sure you want to revert your booking changes?"
-    );
-    if (confirmRevert) {
-      setTempBookingInfo(bookingInfo);
-      setBookingInfo(tempBookingInfo);
-    }
-  };
 
   return (
     <div>
@@ -72,26 +65,15 @@ const BookingInfoUISearchComplete: React.FC<
             </p>
           )}
         </div>
+          <div className="join-item self-center">
+            <button
+              onClick={handleApplyFilters}
+              className={cn("btn btn-primary w-full", ((!isValid || !isDateValid) || null) ? "btn-disabled " : "")}
+            >
+              Search
+            </button>
+          </div>
       </div>
-      {(bookingInfo.checkinDate !== tempBookingInfo.checkinDate ||
-        bookingInfo.checkoutDate !== tempBookingInfo.checkoutDate ||
-        bookingInfo.adultsNumber !== tempBookingInfo.adultsNumber) && (
-        <div className="join-item flex gap-4">
-          <button
-            onClick={handleRevertChanges}
-            className="btn btn-secondary w-1/2"
-          >
-            Revert changes
-          </button>
-          <button
-            onClick={handleApplyFilters}
-            className="btn btn-primary w-1/2"
-            disabled={!isValid || !isDateValid}
-          >
-            Apply new booking info
-          </button>
-        </div>
-      )}
     </div>
   );
 };

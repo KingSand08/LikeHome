@@ -6,28 +6,7 @@ export const middleware = async (request: NextRequest) => {
 
   const requestedUrl = request.nextUrl.pathname + request.nextUrl.search;
 
-  console.log(`Middleware Requested URL: ${requestedUrl}`);
-
-  // If no session and route requires authentication
-  if (!session && request.nextUrl.pathname.startsWith("/profile")) {
-    return NextResponse.redirect(
-      new URL(
-        `/signin?callbackUrl=${encodeURIComponent(requestedUrl)}`,
-        request.url
-      )
-    );
-  }
-
-  if (!session && request.nextUrl.pathname.startsWith("/bookings")) {
-    return NextResponse.redirect(
-      new URL(
-        `/signin?callbackUrl=${encodeURIComponent(requestedUrl)}`,
-        request.url
-      )
-    );
-  }
-
-  if (!session && /^\/hotels\/[^\/]+\/[^\/]+$/.test(request.nextUrl.pathname)) {
+  if (!session) {
     return NextResponse.redirect(
       new URL(
         `/signin?callbackUrl=${encodeURIComponent(requestedUrl)}`,
@@ -38,12 +17,7 @@ export const middleware = async (request: NextRequest) => {
 };
 
 export const config = {
-  matcher: [
-    "/signin:path*",
-    "/profile:path*",
-    "/bookings:path*",
-    "/hotels/:hotelID/:roomID",
-  ],
+  matcher: ["/profile", "/bookings/:path*", "/hotels/:path/:path+"],
 };
 
 export default middleware;

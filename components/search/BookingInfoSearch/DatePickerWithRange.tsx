@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { format, isBefore, isEqual, parse, startOfDay } from "date-fns";
+import { format, isBefore, parse, startOfDay } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 
@@ -21,7 +21,6 @@ import {
 import { calculateNumDays } from "../../../lib/DateFunctions";
 import { searchParamsType } from "@/app/page";
 
-// Zod validation schema for dates
 const dateSchema = z.object({
   checkin_date: z.string().regex(dateRegex),
   checkout_date: z.string().regex(dateRegex),
@@ -51,6 +50,13 @@ export function DatePickerWithRange({
   });
   const [error, setError] = React.useState<string | null>(null);
 
+  React.useEffect(() => {
+    setDateRange({
+      from: parse(bookingInfo.checkinDate, "yyyy-MM-dd", new Date()),
+      to: parse(bookingInfo.checkoutDate, "yyyy-MM-dd", new Date()),
+    });
+  }, [bookingInfo]);
+
   const validateDates = (
     from: Date | undefined,
     to: Date | undefined
@@ -73,7 +79,7 @@ export function DatePickerWithRange({
     }
 
     setError(null);
-    onValidationChange(false);
+    onValidationChange(true);
     return true;
   };
 
@@ -92,6 +98,10 @@ export function DatePickerWithRange({
 
     const numDays = calculateNumDays(range.from, range.to);
 
+    if (numDays == 0) {
+      setDateRange({from: undefined, to: undefined});
+      return;
+    }
     setDateRange(range);
 
     const formattedRange = {
@@ -101,63 +111,55 @@ export function DatePickerWithRange({
     };
 
     setError(null);
-    if (onChange) {
-      onChange(formattedRange);
-    }
+    onChange(formattedRange);
   };
 
   return (
-    <div className={cn("grid gap-2", className)}>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            id="outline"
-            variant={"default"}
-            className={cn(
-              "btn btn-wide justify-start text-left font-normal text-base-content",
-              !dateRange && "text-muted-foreground"
-            )}
-          >
-            <CalendarIcon />
-            {dateRange?.from ? (
-              dateRange.to ? (
-                <>
-                  {format(dateRange.from, "LLL dd, y")} -{" "}
-                  {format(dateRange.to, "LLL dd, y")}
-                </>
+    <>
+      <div className={cn("grid gap-2", className)}>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              id="outline"
+              variant={"default"}
+              className={cn(
+                "btn btn-wide justify-start text-left font-normal text-base-content",
+                !dateRange && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon />
+              {dateRange?.from ? (
+                dateRange.to ? (
+                  <>
+                    {format(dateRange.from, "LLL dd, y")} -{" "}
+                    {format(dateRange.to, "LLL dd, y")}
+                  </>
+                ) : (
+                  format(dateRange.from, "LLL dd, y")
+                )
               ) : (
-                format(dateRange.from, "LLL dd, y")
-              )
-            ) : (
-              <span>Pick a date</span>
-            )}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <Calendar
-            initialFocus
-            mode="range"
-            defaultMonth={dateRange?.from}
-            selected={dateRange}
-            onSelect={handleDateRangeChange}
-            numberOfMonths={2}
-            disabled={(date) => {
-              const today = startOfDay(new Date());
-              const fromDay = dateRange?.from
-                ? startOfDay(dateRange.from)
-                : null;
+                <span>Pick a date</span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              initialFocus
+              mode="range"
+              defaultMonth={dateRange?.from}
+              selected={dateRange}
+              onSelect={handleDateRangeChange}
+              numberOfMonths={2}
+              disabled={(date) => {
+                const today = startOfDay(new Date());
+                return isBefore(startOfDay(date), today);
+              }}
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
 
-              return (
-                isBefore(startOfDay(date), today) ||
-                (fromDay !== null &&
-                  isEqual(startOfDay(date), fromDay) &&
-                  !dateRange.to)
-              );
-            }}
-          />
-        </PopoverContent>
-      </Popover>
       {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
-    </div>
+    </>
   );
 }
