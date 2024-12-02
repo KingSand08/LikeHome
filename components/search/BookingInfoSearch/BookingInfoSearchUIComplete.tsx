@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import AdultsNumberInput from "./SearchComponents/AdultsNumberInput";
 import { DatePickerWithRange } from "./DatePickerWithRange";
 import { searchParamsType } from "@/app/page";
@@ -15,6 +16,12 @@ const BookingInfoUISearchComplete: React.FC<
   const [tempBookingInfo, setTempBookingInfo] = useState(bookingInfo);
   const [isDateValid, setIsDateValid] = useState(true);
   const [isValid, setIsValid] = useState(true);
+
+  useEffect(() => {
+    return () => {
+      setBookingInfo(tempBookingInfo);
+    };
+  }, []);
 
   const handleDateChange = (dates: {
     checkinDate: string;
@@ -88,7 +95,7 @@ const BookingInfoUISearchComplete: React.FC<
             className="btn btn-primary w-1/2"
             disabled={!isValid || !isDateValid}
           >
-            Apply new booking info
+            Search
           </button>
         </div>
       )}

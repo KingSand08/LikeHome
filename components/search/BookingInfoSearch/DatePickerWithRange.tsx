@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { format, isBefore, isEqual, parse, startOfDay } from "date-fns";
+import { format, isBefore, parse, startOfDay } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 
@@ -21,7 +21,6 @@ import {
 import { calculateNumDays } from "../../../lib/DateFunctions";
 import { searchParamsType } from "@/app/page";
 
-// Zod validation schema for dates
 const dateSchema = z.object({
   checkin_date: z.string().regex(dateRegex),
   checkout_date: z.string().regex(dateRegex),
@@ -51,6 +50,13 @@ export function DatePickerWithRange({
   });
   const [error, setError] = React.useState<string | null>(null);
 
+  React.useEffect(() => {
+    setDateRange({
+      from: parse(bookingInfo.checkinDate, "yyyy-MM-dd", new Date()),
+      to: parse(bookingInfo.checkoutDate, "yyyy-MM-dd", new Date()),
+    });
+  }, [bookingInfo]);
+
   const validateDates = (
     from: Date | undefined,
     to: Date | undefined
@@ -73,7 +79,7 @@ export function DatePickerWithRange({
     }
 
     setError(null);
-    onValidationChange(false);
+    onValidationChange(true);
     return true;
   };
 
@@ -101,9 +107,7 @@ export function DatePickerWithRange({
     };
 
     setError(null);
-    if (onChange) {
-      onChange(formattedRange);
-    }
+    onChange(formattedRange);
   };
 
   return (
@@ -143,16 +147,7 @@ export function DatePickerWithRange({
             numberOfMonths={2}
             disabled={(date) => {
               const today = startOfDay(new Date());
-              const fromDay = dateRange?.from
-                ? startOfDay(dateRange.from)
-                : null;
-
-              return (
-                isBefore(startOfDay(date), today) ||
-                (fromDay !== null &&
-                  isEqual(startOfDay(date), fromDay) &&
-                  !dateRange.to)
-              );
+              return isBefore(startOfDay(date), today);
             }}
           />
         </PopoverContent>
