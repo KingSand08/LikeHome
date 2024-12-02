@@ -74,7 +74,9 @@ export async function verifyReservation(
   return true;
 }
 
-export async function retrieveAllReservations(email: string) {
+export async function retrieveAllReservations(
+  email: string
+): Promise<Reservation[]> {
   const reservations = await prisma.reservation.findMany({
     where: {
       userEmail: email,
