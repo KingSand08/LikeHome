@@ -2,7 +2,6 @@ import React from "react";
 import HotelRoomList from "../booking/HotelRooms/HotelRoomList";
 import { APIHotelRoomOffersJSONFormatted } from "@/app/api/hotels/search/rooms/route";
 
-
 const RoomOffers: React.FC<{ hotelRooms: APIHotelRoomOffersJSONFormatted }> = ({
   hotelRooms,
 }) => {
