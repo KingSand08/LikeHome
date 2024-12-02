@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Reservation } from "@prisma/client";
 import { cancelReservation } from "@/server-actions/reservation-actions";
+import { DEFAULT_CANCELLATION_PENALITY_CHARGE } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 import {
   calculateDaysUntilPenalty,
   isWithinCancellationChargeThreshold,
@@ -60,7 +61,8 @@ const DeleteReservation: React.FC<DeleteReservationProps> = ({
                 <span className="text-red-500">
                   {" "}
                   Canceling this reservation will result in a 20% penalty
-                  charge.
+                  charge from original amount of ${reservation.room_cost}.
+                  Partial refund: ${reservation.room_cost * DEFAULT_CANCELLATION_PENALITY_CHARGE}
                 </span>
               ) : daysUntilPenalty > 0 ? (
                 <span className="text-green-500">

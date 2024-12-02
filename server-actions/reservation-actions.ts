@@ -3,6 +3,7 @@ import { Reservation } from "@prisma/client";
 import { redeemRewards, updateUserRewards } from "./user-actions";
 import { isWithinCancellationChargeThreshold } from "@/lib/DateFunctions";
 import { stripe } from "@/lib/stripe";
+import { DEFAULT_CANCELLATION_PENALITY_CHARGE } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
 
 export type PartialReservation = Omit<
   Reservation,
@@ -128,8 +129,6 @@ export async function updateSpecificReservation(
     );
   }
 }
-
-const DEFAULT_CANCELLATION_PENALITY_CHARGE = 0.8 as const; // 20% penality
 
 export async function cancelReservation(email: string, id: string) {
   try {

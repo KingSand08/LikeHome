@@ -52,3 +52,4 @@ export const DEFAULT_MAX_ADULTS_NUMBER: number = 10 as const;
 // Frontend UI (for template checkbox options)
 export const DEFAULT_MAX_SELECTED_OPTIONS_LIMIT: number = 5 as const;
 export const DEFAULT_DAYS_THRESHOLD_FOR_PENALITY_CHARGE: number = 3 as const;
+export const DEFAULT_CANCELLATION_PENALITY_CHARGE = 0.8 as const; // 20% penality
