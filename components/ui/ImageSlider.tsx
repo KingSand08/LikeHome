@@ -2,6 +2,11 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 
 type ImageSliderProps = {
     images: {
@@ -12,6 +17,7 @@ type ImageSliderProps = {
 
 export function ImageSlider({ images }: ImageSliderProps) {
     const [imageIndex, setImageIndex] = useState(0);
+    const [lightboxIndex, setLightboxIndex] = useState(-1);
 
     function showNextImage() {
         setImageIndex((index) => (index === images.length - 1 ? 0 : index + 1));
@@ -28,10 +34,11 @@ export function ImageSlider({ images }: ImageSliderProps) {
                 className="flex transition-transform duration-300"
                 style={{ transform: `translateX(-${imageIndex * 100}%)` }}
             >
-                {images.map(({ url, description }) => (
+                {images.map(({ url, description }, index) => (
                     <div
                         key={url}
                         className="flex-shrink-0 w-full h-full flex items-center justify-center py-4"
+                        onClick={() => setLightboxIndex(index)} // Opens the Lightbox on click
                     >
                         <Image
                             src={url}
@@ -39,7 +46,7 @@ export function ImageSlider({ images }: ImageSliderProps) {
                             height={400}
                             quality={100}
                             alt={description}
-                            className="w-auto h-52 max-w-full max-h-full m-auto"
+                            className="w-auto h-52 max-w-full max-h-full m-auto cursor-pointer"
                         />
                     </div>
                 ))}
@@ -75,6 +82,25 @@ export function ImageSlider({ images }: ImageSliderProps) {
                     />
                 ))}
             </div>
+
+            {/* Lightbox */}
+            <Lightbox
+                slides={images.map(({ url, description }) => ({
+                    src: url,
+                    alt: description,
+                }))}
+                open={lightboxIndex >= 0}
+                index={lightboxIndex}
+                close={() => setLightboxIndex(-1)}
+                plugins={[Fullscreen, Zoom, Thumbnails]}
+                zoom={{
+                    maxZoomPixelRatio: 3,
+                    zoomInMultiplier: 1.2,
+                    doubleTapDelay: 300,
+                    doubleClickDelay: 300,
+                    scrollToZoom: true,
+                }}
+            />
         </div>
     );
 }
