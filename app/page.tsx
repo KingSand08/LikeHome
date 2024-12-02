@@ -36,7 +36,6 @@ import {
   RegionContextType,
 } from "@/components/providers/RegionProvider";
 import DrawerComponent from "@/components/search/HotelSearch/DrawerComponent";
-import SearchParamsDisplay from "@/components/search/Testing/SearchParamsDisplay";
 
 export type searchParamsType = {
   query: string;
@@ -166,7 +165,6 @@ const HomeSearchPage: React.FC = () => {
       setHotelSearchInputs={(newHotelSearch) => setSearchParams(newHotelSearch)}
     >
       <div className="w-fit text-center">
-        <SearchParamsDisplay searchParams={searchParams} />
         <h1 className="text-2xl font-bold mb-4">
           {region
             ? `Browsing Hotels in ${region.name} 🏨`
