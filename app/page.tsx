@@ -22,6 +22,7 @@ import {
   RegionSearchLocaleType,
 } from "@/lib/rapid-hotel-api/zod/region-search-schemas";
 import {
+  hotelSearchParamsRefinedSchema,
   HotelSearchSortOrderOptionsType,
   HotelsSearchAccessibilityOptionsType,
   HotelsSearchAmenitiesOptionsType,
@@ -35,6 +36,8 @@ import BookingInfoUISearchComplete from "@/components/search/BookingInfoSearch/B
 //import HotelSelect from "@/components/search/HotelResults/HotelSelect";
 import { RegionContext } from "@/components/providers/RegionProvider";
 import DrawerComponent from "@/components/search/HotelSearch/DrawerComponent";
+import { APIHotelSearchJSONFormatted } from "./api/hotels/search/route";
+import { hotelsFromRegion } from "@/server-actions/api-actions";
 //import LoadingPage from "@/components/ui/Loading/LoadingPage";
 const LoadingPage = dynamic(() => import("@/components/ui/Loading/LoadingPage"), { ssr: false });
 const HotelSelect = dynamic(() => import("@/components/search/HotelResults/HotelSelect"), { ssr: false });
@@ -124,6 +127,76 @@ const HomeSearchPage: React.FC = () => {
     }));
   }, [region]);
 
+  const [hotelsData, setHotelsData] =
+    useState<APIHotelSearchJSONFormatted | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const isValid: boolean =
+    !!searchParams &&
+    hotelSearchParamsRefinedSchema.safeParse({
+      checkin_date: searchParams.checkinDate,
+      checkout_date: searchParams.checkoutDate,
+      adults_number: searchParams.adultsNumber,
+      region_id: regionContextID,
+      sort_order: searchParams.sortOrder,
+      locale: searchParams.locale,
+      domain: searchParams.domain,
+      price_min: searchParams.price_min,
+      price_max: searchParams.price_max,
+      accessibility: searchParams.accessibilityOptions,
+      amenities: searchParams.amenitiesOptions,
+      lodging_type: searchParams.lodgingOptions,
+      meal_plan: searchParams.mealPlanOptions,
+      available_filter: searchParams.availableOnly,
+    }).success &&
+    !!region &&
+    region.region_id !== "" &&
+    !loading;
+
+  const [lastPriceRange, setLastPriceRange] = useState<{
+    max: number;
+    min: number;
+  }>({
+    max: DEFAULT_MAX_PRICE,
+    min: DEFAULT_MIN_PRICE,
+  });
+
+  const handleFindHotels = async () => {
+    if (!isValid) return;
+
+    const bookingParams={
+      checkin_date: searchParams!.checkinDate,
+      checkout_date: searchParams!.checkoutDate,
+      adults_number: searchParams!.adultsNumber,
+      region_id: regionContextID,
+      sort_order: searchParams!.sortOrder,
+      locale: searchParams!.locale,
+      domain: searchParams!.domain,
+      price_min: searchParams!.price_min,
+      price_max: searchParams!.price_max,
+      accessibility: searchParams!.accessibilityOptions,
+      amenities: searchParams!.amenitiesOptions,
+      lodging_type: searchParams!.lodgingOptions,
+      meal_plan: searchParams!.mealPlanOptions,
+      available_filter: searchParams!.availableOnly,
+    }
+
+    setLastPriceRange({
+      max: hotelsData?.priceRange?.maxPrice || DEFAULT_MAX_PRICE,
+      min: hotelsData?.priceRange?.minPrice || DEFAULT_MIN_PRICE,
+    });
+    setLoading(true);
+    try {
+      const HOTEL_DATA = await hotelsFromRegion(bookingParams);
+      setHotelsData(HOTEL_DATA);
+    } catch (error) {
+      console.error("Error fetching hotels:", error);
+      setHotelsData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!searchParams) {
     return <LoadingPage className="min-h-screen" size_style={{ width: "400px", height: "400px" }} />;
   }
@@ -155,6 +228,7 @@ const HomeSearchPage: React.FC = () => {
                   <BookingInfoUISearchComplete
                     bookingInfo={searchParams}
                     setBookingInfo={(newParams) => updateBookingInfoParams(newParams)}
+                    handleFindhotels={handleFindHotels}
                   />
                 </div>
             </div>
@@ -164,23 +238,23 @@ const HomeSearchPage: React.FC = () => {
       <div className="max-[1200px]:w-full w-5/6">
         <hr />
         <HotelSelect
-          bookingParams={{
-            checkin_date: searchParams.checkinDate,
-            checkout_date: searchParams.checkoutDate,
-            adults_number: searchParams.adultsNumber,
-            region_id: regionContextID,
-            sort_order: searchParams.sortOrder,
-            locale: searchParams.locale,
-            domain: searchParams.domain,
-            price_min: searchParams.price_min,
-            price_max: searchParams.price_max,
-            accessibility: searchParams.accessibilityOptions,
-            amenities: searchParams.amenitiesOptions,
-            lodging_type: searchParams.lodgingOptions,
-            meal_plan: searchParams.mealPlanOptions,
-            available_filter: searchParams.availableOnly,
-          }}
-          validRegionId={!!searchParams.selectedRegionId}
+        loading={loading} hotelsData={hotelsData} lastPriceRange={lastPriceRange} 
+        bookingParams={{
+          checkin_date: searchParams.checkinDate,
+          checkout_date: searchParams.checkoutDate,
+          adults_number: searchParams.adultsNumber,
+          region_id: regionContextID,
+          sort_order: searchParams.sortOrder,
+          locale: searchParams.locale,
+          domain: searchParams.domain,
+          price_min: searchParams.price_min,
+          price_max: searchParams.price_max,
+          accessibility: searchParams.accessibilityOptions,
+          amenities: searchParams.amenitiesOptions,
+          lodging_type: searchParams.lodgingOptions,
+          meal_plan: searchParams.mealPlanOptions,
+          available_filter: searchParams.availableOnly,
+        }}
         />
       </div>
     </DrawerComponent>

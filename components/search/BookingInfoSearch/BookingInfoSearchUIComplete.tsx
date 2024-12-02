@@ -10,11 +10,12 @@ import LocationCombobox from "@/components/ui/location-combobox";
 type BookingInfoUISearchCompleteProps = {
   bookingInfo: searchParamsType;
   setBookingInfo: (info: searchParamsType) => void;
+  handleFindhotels: () => void;
 };
 
 const BookingInfoUISearchComplete: React.FC<
   BookingInfoUISearchCompleteProps
-> = ({ bookingInfo, setBookingInfo }) => {
+> = ({ bookingInfo, setBookingInfo, handleFindhotels }) => {
   const [tempBookingInfo, setTempBookingInfo] = useState(bookingInfo);
   const [isDateValid, setIsDateValid] = useState(true);
   const [isValid, setIsValid] = useState(true);
@@ -39,6 +40,7 @@ const BookingInfoUISearchComplete: React.FC<
   const handleApplyFilters = () => {
     if (isValid) {
       setBookingInfo(tempBookingInfo);
+      handleFindhotels();
     }
   };
 

@@ -17,53 +17,14 @@ import LoadingIcon from "@/components/ui/Loading/LoadingIcon";
 export type bookingParamsType = z.infer<typeof hotelSearchParamsRefinedSchema>;
 
 type HotelSelectUICompleteProps = {
-  bookingParams: bookingParamsType;
-  validRegionId: boolean;
+  loading: boolean;
+  hotelsData : APIHotelSearchJSONFormatted | null;
+  lastPriceRange: {max: number; min: number};
+  bookingParams: bookingParamsType
 };
 
-const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
-  bookingParams,
+const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({hotelsData, lastPriceRange, loading, bookingParams
 }) => {
-  const [hotelsData, setHotelsData] =
-    useState<APIHotelSearchJSONFormatted | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [region] = useContext(RegionContext);
-
-  const isValid: boolean =
-    hotelSearchParamsRefinedSchema.safeParse(bookingParams).success &&
-    !!region &&
-    region.region_id !== "" &&
-    !loading;
-
-  const [lastPriceRange, setLastPriceRange] = useState<{
-    max: number;
-    min: number;
-  }>({
-    max: DEFAULT_MAX_PRICE,
-    min: DEFAULT_MIN_PRICE,
-  });
-
-  const handleFindHotels = async () => {
-    setLastPriceRange({
-      max: hotelsData?.priceRange?.maxPrice || DEFAULT_MAX_PRICE,
-      min: hotelsData?.priceRange?.minPrice || DEFAULT_MIN_PRICE,
-    });
-    setLoading(true);
-    try {
-      const HOTEL_DATA = await hotelsFromRegion(bookingParams);
-      setHotelsData(HOTEL_DATA);
-    } catch (error) {
-      console.error("Error fetching hotels:", error);
-      setHotelsData(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!isValid) return;
-    handleFindHotels();
-  }, [bookingParams]);
 
   return (
     <div className="container mx-auto p-4">
