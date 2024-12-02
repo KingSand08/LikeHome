@@ -139,6 +139,7 @@ const Rewards = ({ user }: { user: User }) => {
           <span>{nextLevel}</span>
         </div>
       </div>
+      {/* How Reward Points Work Section */}
       <h2 className="text-3xl font-bold mt-8 mb-6">How Reward Points Work</h2>
       <div className="rounded-lg shadow-md p-6 flex flex-col items-center bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700">
         <p className="mb-2">Earn reward points every time you book a stay with us! For every $10 you spend, you’ll earn 
