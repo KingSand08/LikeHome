@@ -3,7 +3,13 @@ import { Reservation } from "@prisma/client";
 import { redeemRewards, updateUserRewards } from "./user-actions";
 import { isWithinCancellationChargeThreshold } from "@/lib/DateFunctions";
 import { stripe } from "@/lib/stripe";
-import { DEFAULT_CANCELLATION_PENALITY_CHARGE } from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
+import {
+  DEFAULT_CANCELLATION_PENALITY_CHARGE,
+  DEFAULT_DOMAIN,
+  DEFAULT_LOCALE,
+} from "@/lib/rapid-hotel-api/constants/USER_OPTIONS";
+import { fetchHotelRoomOffer } from "./api-actions";
+import { createReadonlyURLSearchParams } from "@/lib/utils";
 
 export type PartialReservation = Omit<
   Reservation,
@@ -116,17 +122,73 @@ export async function updateSpecificReservation(
   edit: EditableReservationFields
 ) {
   try {
-    const editReservation = await prisma.reservation.update({
-      where: { id },
-      data: edit,
+    const targetReservation: Reservation | null =
+      await prisma.reservation.findUnique({
+        where: { id },
+      });
+
+    if (!targetReservation) {
+      throw new Error("Failed to get specific reservation");
+    }
+
+    const searchParams = createReadonlyURLSearchParams({
+      checkin_date: edit.checkin_date
+        ? edit.checkin_date
+        : targetReservation.checkin_date,
+      checkout_date: edit.checkout_date
+        ? edit.checkout_date
+        : targetReservation.checkout_date,
+      adults_number: edit.adults_number
+        ? edit.adults_number
+        : targetReservation.adults_number,
+      domain: DEFAULT_DOMAIN,
+      locale: DEFAULT_LOCALE,
     });
 
-    return editReservation;
+    // Grab new hotel room price directly from API
+    const hotelRoom = await fetchHotelRoomOffer(
+      targetReservation.hotel_id,
+      targetReservation.room_id,
+      searchParams
+    );
+    if (!hotelRoom) {
+      throw new Error("Failed to get hotel room");
+    }
+
+    // Compare prices
+    const originalPrice = targetReservation.room_cost
+    const updatedPrice = hotelRoom.pricePerNight.amount;
+    let setVerified = (originalPrice === updatedPrice) ? true: false;
+
+    // Decide on what to do if prices are different
+    if (originalPrice > updatedPrice) {
+      const refundDifference = updatedPrice - originalPrice;
+      refundSpecificReservation(targetReservation.transaction_info.stripePaymentId, refundDifference)
+      setVerified = true;
+    } else if (originalPrice < updatedPrice) {
+      const costDifference = originalPrice - updatedPrice;
+      setVerified = false;
+    }
+
+    // Finally update reservation
+    const updatedReservation = await prisma.reservation.update({
+      where: { id },
+      data: {
+        checkin_date: edit.checkin_date || targetReservation.checkin_date,
+        checkout_date: edit.checkout_date || targetReservation.checkout_date,
+        adults_number: edit.adults_number || targetReservation.adults_number,
+        room_cost: updatedPrice,
+        verified: setVerified,
+      },
+    });
+
+    return updatedReservation;
   } catch (error: any) {
     console.error(
       `Error updating reservation ${id} with fields ${JSON.stringify(edit)}:`,
       error
     );
+    throw new Error(`Failed to update reservation: ${error.message}`);
   }
 }
 
@@ -169,6 +231,8 @@ export async function cancelReservation(email: string, id: string) {
     console.error("Failed to cancel reservation:", error);
   }
 }
+
+
 
 async function refundSpecificReservation(
   stripePaymentId: string,

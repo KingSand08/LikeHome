@@ -14,6 +14,8 @@ import Image from "next/image";
 import HTMLSafeDescription from "@/components/booking/HTMLDescription";
 import EditAdultsNumber from "@/components/booking/EditAdultsNumber";
 import DeleteReservation from "@/components/booking/EditCancelReservation";
+import EditReservationSection from "@/components/booking/EditReservationSection";
+import TestReservationDetailsDisplay from "@/components/booking/test/TestReservationDetailsDisplay";
 
 const BookingIDPage = () => {
   const { bookingId: bookingIdSlug } = useParams();
@@ -92,6 +94,7 @@ const BookingIDPage = () => {
           </div>
         </div>
       )}
+      {/* <TestReservationDetailsDisplay reservation={reservation} /> */}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Booking Details */}
@@ -122,12 +125,6 @@ const BookingIDPage = () => {
                 <span className="font-bold text-primary">Check-out:</span>{" "}
                 {reservation.checkout_date}
               </p>
-              <div className="col-span-2">
-                <EditAdultsNumber
-                  reservation={reservation}
-                  onUpdate={setReservation}
-                />
-              </div>
               <p className="text-md">
                 <span className="font-bold text-primary">Number of Days:</span>{" "}
                 {reservation.numDays}
@@ -178,16 +175,15 @@ const BookingIDPage = () => {
         )}
       </div>
 
-      {/* Cancel Reservation */}
-      <div className="mt-6">
-        <DeleteReservation reservation={reservation} />
-      </div>
-
       <div className="mt-6">
         <Link href="/bookings" className="btn btn-primary w-full">
           Back to Bookings
         </Link>
       </div>
+
+      <EditReservationSection
+        reservation={reservation}
+      />
     </div>
   );
 };
