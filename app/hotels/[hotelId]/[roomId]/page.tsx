@@ -5,7 +5,6 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CheckoutInfo from "@/components/checkout/CheckoutInfo";
 import { calculateNumDays } from "@/lib/DateFunctions";
-import Image from "next/image";
 import { fetchHotelRoomOffer } from "@/server-actions/api-actions";
 import LoadingPage from "@/components/ui/Loading/LoadingPage";
 import PaginatedRoomImageGrid from "@/components/HotelListing/PaginatedRoomImageGrid";
@@ -115,7 +114,6 @@ const HotelRoomIDPage: React.FC = () => {
         </ul>
       </div>
 
-
       {/* Hotel Room Information */}
       <div className="w-full p-8 bg-gradient-to-br from-slate-100 to-slate-300 dark:from-slate-800 dark:to-slate-900 text-gray-800 dark:text-gray-100 rounded-xl shadow-lg mb-8">
         <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-4 text-center">
@@ -129,6 +127,7 @@ const HotelRoomIDPage: React.FC = () => {
         <div className="text-center">
           {/* Room Name */}
           <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+
             {hotelRoomData.name}
           </h3>
           {/* Room Description */}

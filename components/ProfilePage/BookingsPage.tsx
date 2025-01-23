@@ -125,7 +125,7 @@ const Bookings = ({ user }: { user: User }) => {
                                             Total Cost: ${reservation.room_cost.toFixed(2)}
                                         </p>
                                     </div>
-
+                                
                                     {/* Booking Details Button */}
                                     <div className="p-4 bg-gray-50 dark:bg-slate-900">
                                         <Link

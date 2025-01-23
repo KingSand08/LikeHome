@@ -12,15 +12,17 @@ import {
 import { hotelsFromRegion } from "@/server-actions/api-actions";
 import LoadingIcon from "@/components/ui/Loading/LoadingIcon";
 
+
 export type bookingParamsType = z.infer<typeof hotelSearchParamsRefinedSchema>;
 
 type HotelSelectUICompleteProps = {
-  bookingParams: bookingParamsType;
-  validRegionId: boolean;
+  loading: boolean;
+  hotelsData : APIHotelSearchJSONFormatted | null;
+  lastPriceRange: {max: number; min: number};
+  bookingParams: bookingParamsType
 };
 
-const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
-  bookingParams,
+const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({hotelsData, lastPriceRange, loading, bookingParams
 }) => {
   const [hotelsData, setHotelsData] =
     useState<APIHotelSearchJSONFormatted | null>(null);
@@ -100,7 +102,6 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
         </div>
       ) : null}
 
-      {/* Hotel List Display */}
       <div className="mt-6">
         {loading ? (
           <div className="flex items-center justify-center h-96">

@@ -43,7 +43,7 @@ const AdultsNumberInput: React.FC<AdultsNumberInputProps> = ({
       regex={numberRegex}
       value={value}
       onChange={handleInputChange}
-      required={true}
+      required={false}
     />
   );
 };

@@ -16,6 +16,7 @@ import EditAdultsNumber from "@/components/booking/EditAdultsNumber";
 import DeleteReservation from "@/components/booking/EditCancelReservation";
 import LoadingPage from "@/components/ui/Loading/LoadingPage";
 
+
 const BookingIDPage = () => {
   const { bookingId: bookingIdSlug } = useParams();
   const { data: session, status } = useSession();
@@ -23,6 +24,18 @@ const BookingIDPage = () => {
   const [reservation, setReservation] = useState<Reservation | null>(null);
   const [hotel, setHotel] = useState<CachedHotel | null>(null);
   const [roomOffer, setRoomOffer] = useState<CachedHotelRoomOffer | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState(-1);
+
+  const [date, setDateRange] = useState<{
+    checkin_date: string;
+    checkout_date: string;
+    numDays: number;
+  }>({
+    checkin_date: reservation?.checkin_date ?? "",
+    checkout_date: reservation?.checkout_date ?? "",
+    numDays: reservation?.numDays ?? 0,
+  });
+  const [validDate, setValidDate] = useState(true);
 
   useEffect(() => {
     const fetchReservationAndDetails = async () => {
@@ -123,12 +136,42 @@ const BookingIDPage = () => {
                 <span className="font-bold text-primary">Check-out:</span>{" "}
                 {reservation.checkout_date}
               </p>
+              {/* Booking Dates */}
+              <div className="flex-1 min-w-[250px]">
+                <h3 className="text-primary font-semibold text-base max-[900px]:text-sm mb-2">
+                  Booking Dates
+                </h3>
+                <DatePickerWithRange
+                  bookingInfo={{
+                    checkinDate: reservation.checkin_date,
+                    checkoutDate: reservation.checkout_date,
+                  }}
+                  onChange={(dates) =>
+                    setDateRange({
+                      checkin_date: dates.checkinDate,
+                      checkout_date: dates.checkoutDate,
+                      numDays: dates.numDays,
+                    })
+                  }
+                  onValidationChange={setValidDate}
+                  disable={(date: Date) => {
+                    const interval = {
+                      start: toDate(reservation.checkin_date),
+                      end: toDate(reservation.checkout_date),
+                    };
+                    return !isWithinInterval(date, interval);
+                  }}
+                />
+              </div>
+
+              {/* Number of Adults */}
               <div className="col-span-2">
                 <EditAdultsNumber
                   reservation={reservation}
                   onUpdate={setReservation}
                 />
               </div>
+
               <p className="text-md">
                 <span className="font-bold text-primary">Number of Days:</span>{" "}
                 {reservation.numDays}

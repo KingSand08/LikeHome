@@ -5,15 +5,17 @@ import AdultsNumberInput from "./SearchComponents/AdultsNumberInput";
 import { DatePickerWithRange } from "./DatePickerWithRange";
 import { searchParamsType } from "@/app/page";
 import { cn } from "@/lib/utils";
+import LocationCombobox from "@/components/ui/location-combobox";
 
 type BookingInfoUISearchCompleteProps = {
   bookingInfo: searchParamsType;
   setBookingInfo: (info: searchParamsType) => void;
+  handleFindhotels: () => void;
 };
 
 const BookingInfoUISearchComplete: React.FC<
   BookingInfoUISearchCompleteProps
-> = ({ bookingInfo, setBookingInfo }) => {
+> = ({ bookingInfo, setBookingInfo, handleFindhotels }) => {
   const [tempBookingInfo, setTempBookingInfo] = useState(bookingInfo);
   const [isDateValid, setIsDateValid] = useState(true);
   const [isValid, setIsValid] = useState(true);
@@ -38,6 +40,7 @@ const BookingInfoUISearchComplete: React.FC<
   const handleApplyFilters = () => {
     if (isValid) {
       setBookingInfo(tempBookingInfo);
+      handleFindhotels();
     }
   };
 
@@ -87,7 +90,45 @@ const BookingInfoUISearchComplete: React.FC<
           Search
         </button>
       </div>
+  
+      {/* Booking Dates */}
+      <div className="flex-1 min-w-[250px]">
+        <h3 className="text-primary font-semibold text-base max-[900px]:text-sm mb-2">
+          Booking Dates
+        </h3>
+        <DatePickerWithRange
+          bookingInfo={bookingInfo}
+          onChange={handleDateChange}
+          onValidationChange={setIsDateValid}
+        />
+      </div>
+  
+      {/* Number of Adults */}
+      <div className="flex-1 min-w-[150px]">
+        <h3 className="text-primary font-semibold text-base max-[900px]:text-sm mb-2">
+          Number of Adults
+        </h3>
+        <AdultsNumberInput
+          selectedNumber={tempBookingInfo.adultsNumber}
+          onChange={handleAdultsNumberChange}
+        />
+      </div>
     </div>
+  
+    {/* Search Button */}
+    <div className="my-5 flex justify-center">
+      <button
+        onClick={handleApplyFilters}
+        className={cn(
+          "btn btn-primary w-full md:w-1/2 lg:w-1/3",
+          (!isValid || !isDateValid) && "btn-disabled"
+        )}
+      >
+        Search
+      </button>
+    </div>
+  </div>
+  
   );
 };
 

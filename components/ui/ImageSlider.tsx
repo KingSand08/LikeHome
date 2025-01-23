@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
+
 type ImageSliderProps = {
     images: {
         url: string;
@@ -12,7 +13,6 @@ type ImageSliderProps = {
 
 export function ImageSlider({ images }: ImageSliderProps) {
     const [imageIndex, setImageIndex] = useState(0);
-
     function showNextImage() {
         setImageIndex((index) => (index === images.length - 1 ? 0 : index + 1));
     }
