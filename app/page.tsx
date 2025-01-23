@@ -71,26 +71,6 @@ const HomeSearchPage: React.FC = () => {
     DEFAULT_NUM_DAYS,
   } = generateDefaultDates(DEFAULT_BOOKING_NUM_DAYS);
 
-  const defaultSearchParams: searchParamsType = {
-    query: DEFAULT_QUERY,
-    domain: DEFAULT_DOMAIN,
-    locale: DEFAULT_LOCALE,
-    selectedRegionId: region?.region_id || "",
-    checkinDate: DEFAULT_CHECKIN_BOOKING_DATE,
-    checkoutDate: DEFAULT_CHECKOUT_BOOKING_DATE,
-    adultsNumber: DEFAULT_ADULTS_NUMBER,
-    numDays: DEFAULT_NUM_DAYS,
-    accessibilityOptions: DEFAULT_ACCESSIBILITY_OPTIONS,
-    amenitiesOptions: DEFAULT_AMENITIES_OPTIONS,
-    mealPlanOptions: DEFAULT_MEAL_PLAN_OPTIONS,
-    lodgingOptions: DEFAULT_LODGING_OPTIONS,
-    paymentType: DEFAULT_PAYMENT_TYPE_OPTIONS,
-    sortOrder: DEFAULT_SORT_ORDER,
-    availableOnly: DEFAULT_AVAILABILITY_FILTER_OPTIONS,
-    price_min: DEFAULT_MIN_PRICE,
-    price_max: DEFAULT_MAX_PRICE,
-  };
-
   const [searchParams, setSearchParams] = useState<searchParamsType | null>(
     null
   );
@@ -98,6 +78,26 @@ const HomeSearchPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
+    const defaultSearchParams: searchParamsType = {
+      query: DEFAULT_QUERY,
+      domain: DEFAULT_DOMAIN,
+      locale: DEFAULT_LOCALE,
+      selectedRegionId: region?.region_id || "",
+      checkinDate: DEFAULT_CHECKIN_BOOKING_DATE,
+      checkoutDate: DEFAULT_CHECKOUT_BOOKING_DATE,
+      adultsNumber: DEFAULT_ADULTS_NUMBER,
+      numDays: DEFAULT_NUM_DAYS,
+      accessibilityOptions: DEFAULT_ACCESSIBILITY_OPTIONS,
+      amenitiesOptions: DEFAULT_AMENITIES_OPTIONS,
+      mealPlanOptions: DEFAULT_MEAL_PLAN_OPTIONS,
+      lodgingOptions: DEFAULT_LODGING_OPTIONS,
+      paymentType: DEFAULT_PAYMENT_TYPE_OPTIONS,
+      sortOrder: DEFAULT_SORT_ORDER,
+      availableOnly: DEFAULT_AVAILABILITY_FILTER_OPTIONS,
+      price_min: DEFAULT_MIN_PRICE,
+      price_max: DEFAULT_MAX_PRICE,
+    };
+
     const getInitialSearchParams = () => {
       const storedParams = localStorage.getItem("searchParams");
       if (storedParams) {
@@ -108,7 +108,7 @@ const HomeSearchPage: React.FC = () => {
     };
 
     getInitialSearchParams();
-  }, []);
+  }, [DEFAULT_CHECKIN_BOOKING_DATE, DEFAULT_CHECKOUT_BOOKING_DATE, DEFAULT_NUM_DAYS, region?.region_id]);
 
   useEffect(() => {
     if (searchParams) {
@@ -203,26 +203,26 @@ const HomeSearchPage: React.FC = () => {
         }}
       >
         <div className="hero-overlay bg-opacity-80"></div>
-          <div className="hero-content text-neutral-content text-center">
-            <div className="flex flex-col w-full px-[10em] max-[900px]:px-[30px] pt-0 max-[900px]:pt-10">
-                <h1 className="max-[900px]:text-xl text-3xl font-bold mb-4">
-                  <br className="border-4 border-white" />
-                  <p>
-                    {region
-                      ? `Browsing Hotels in ${region.name} 🏨`
-                      : "⬆️ Find a location to get started!"}
-                  </p>
-                </h1>
-                
-                <div className="self-center max-w-md">
-                  <BookingInfoUISearchComplete
-                    bookingInfo={searchParams}
-                    setBookingInfo={(newParams) => updateBookingInfoParams(newParams)}
-                    handleFindhotels={handleFindHotels}
-                  />
-                </div>
+        <div className="hero-content text-neutral-content text-center">
+          <div className="flex flex-col w-full px-[10em] max-[900px]:px-[30px] pt-0 max-[900px]:pt-10">
+            <h1 className="max-[900px]:text-xl text-3xl font-bold mb-4">
+              <br className="border-4 border-white" />
+              <p>
+                {region
+                  ? `Browsing Hotels in ${region.name} 🏨`
+                  : "⬆️ Find a location to get started!"}
+              </p>
+            </h1>
+
+            <div className="self-center max-w-md">
+              <BookingInfoUISearchComplete
+                bookingInfo={searchParams}
+                setBookingInfo={(newParams) => updateBookingInfoParams(newParams)}
+                handleFindhotels={handleFindHotels}
+              />
             </div>
           </div>
+        </div>
       </div>
 
       {/* Search Results Section */}
