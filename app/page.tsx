@@ -65,31 +65,31 @@ const HomeSearchPage: React.FC = () => {
     DEFAULT_NUM_DAYS,
   } = generateDefaultDates(DEFAULT_BOOKING_NUM_DAYS);
 
-  const defaultSearchParams: searchParamsType = {
-    query: DEFAULT_QUERY,
-    domain: DEFAULT_DOMAIN,
-    locale: DEFAULT_LOCALE,
-    selectedRegionId: regionContextID,
-    checkinDate: DEFAULT_CHECKIN_BOOKING_DATE,
-    checkoutDate: DEFAULT_CHECKOUT_BOOKING_DATE,
-    adultsNumber: DEFAULT_ADULTS_NUMBER,
-    numDays: DEFAULT_NUM_DAYS,
-    accessibilityOptions: DEFAULT_ACCESSIBILITY_OPTIONS,
-    amenitiesOptions: DEFAULT_AMENITIES_OPTIONS,
-    mealPlanOptions: DEFAULT_MEAL_PLAN_OPTIONS,
-    lodgingOptions: DEFAULT_LODGING_OPTIONS,
-    paymentType: DEFAULT_PAYMENT_TYPE_OPTIONS,
-    sortOrder: DEFAULT_SORT_ORDER,
-    availableOnly: DEFAULT_AVAILABILITY_FILTER_OPTIONS,
-    price_min: DEFAULT_MIN_PRICE,
-    price_max: DEFAULT_MAX_PRICE,
-  };
-
   const [searchParams, setSearchParams] = useState<searchParamsType | null>(
     null
   );
 
   useEffect(() => {
+    const defaultSearchParams: searchParamsType = {
+      query: DEFAULT_QUERY,
+      domain: DEFAULT_DOMAIN,
+      locale: DEFAULT_LOCALE,
+      selectedRegionId: regionContextID,
+      checkinDate: DEFAULT_CHECKIN_BOOKING_DATE,
+      checkoutDate: DEFAULT_CHECKOUT_BOOKING_DATE,
+      adultsNumber: DEFAULT_ADULTS_NUMBER,
+      numDays: DEFAULT_NUM_DAYS,
+      accessibilityOptions: DEFAULT_ACCESSIBILITY_OPTIONS,
+      amenitiesOptions: DEFAULT_AMENITIES_OPTIONS,
+      mealPlanOptions: DEFAULT_MEAL_PLAN_OPTIONS,
+      lodgingOptions: DEFAULT_LODGING_OPTIONS,
+      paymentType: DEFAULT_PAYMENT_TYPE_OPTIONS,
+      sortOrder: DEFAULT_SORT_ORDER,
+      availableOnly: DEFAULT_AVAILABILITY_FILTER_OPTIONS,
+      price_min: DEFAULT_MIN_PRICE,
+      price_max: DEFAULT_MAX_PRICE,
+    };
+
     const getInitialSearchParams = () => {
       const storedParams = localStorage.getItem("searchParams");
       if (storedParams) {
@@ -99,7 +99,7 @@ const HomeSearchPage: React.FC = () => {
     };
 
     getInitialSearchParams();
-  }, []);
+  }, [DEFAULT_CHECKIN_BOOKING_DATE, DEFAULT_CHECKOUT_BOOKING_DATE, DEFAULT_NUM_DAYS, regionContextID]);
 
   useEffect(() => {
     if (searchParams) {

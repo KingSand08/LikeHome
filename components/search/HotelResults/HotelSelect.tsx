@@ -40,31 +40,32 @@ const HotelSelect: React.FC<HotelSelectUICompleteProps> = ({
     max: DEFAULT_MAX_PRICE,
     min: DEFAULT_MIN_PRICE,
   });
-  const handleFindHotels = async () => {
-    setLastPriceRange({
-      max: hotelsData?.priceRange?.maxPrice!,
-      min: hotelsData?.priceRange?.minPrice!,
-    });
-    setLoading(true);
-    try {
-      const HOTEL_DATA = await hotelsFromRegion(bookingParams);
-      setHotelsData(HOTEL_DATA);
-    } catch (error) {
-      alert("An unexpected error occurred. Please try again.");
-      setHotelsData(null);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Only re-renders on initial load and region change.
   // We don't want to call the API after clicking one checkbox.
   // So, in the future we could have an "apply new filters button" if filters change.
   // Also, store filters in searchParams or localStorage...
   useEffect(() => {
+    const handleFindHotels = async () => {
+      setLastPriceRange({
+        max: hotelsData?.priceRange?.maxPrice!,
+        min: hotelsData?.priceRange?.minPrice!,
+      });
+      setLoading(true);
+      try {
+        const HOTEL_DATA = await hotelsFromRegion(bookingParams);
+        setHotelsData(HOTEL_DATA);
+      } catch (error) {
+        alert("An unexpected error occurred. Please try again.");
+        setHotelsData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (!isValid) return;
     handleFindHotels();
-  }, [bookingParams]);
+  }, [bookingParams, hotelsData?.priceRange?.maxPrice, hotelsData?.priceRange?.minPrice, isValid]);
 
   return (
     <div className="container mx-auto p-4">

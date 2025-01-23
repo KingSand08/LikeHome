@@ -57,7 +57,7 @@ const PaginatedRoomImageGrid: React.FC<{ hotelDetails: APIHotelDetailsJSONFormat
             className="relative w-1/6 h-48 rounded-lg overflow-hidden cursor-pointer"
             onClick={() => setLightboxIndex(index)}
           >
-            <img
+            <Image
               src={photo.src}
               alt={photo.alt}
               className="object-cover w-full h-full"
@@ -71,7 +71,7 @@ const PaginatedRoomImageGrid: React.FC<{ hotelDetails: APIHotelDetailsJSONFormat
             className="relative w-1/6 h-48 rounded-lg overflow-hidden cursor-pointer bg-gray-800 flex items-center justify-center text-white"
             onClick={() => setIsModalOpen(true)} // Open modal
           >
-            <img
+            <Image
               src={photos[MAX_IMAGES - 1].src}
               alt="View All"
               className="object-cover w-full h-full opacity-50"
