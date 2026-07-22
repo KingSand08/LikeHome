@@ -60,6 +60,8 @@ const PaginatedRoomImageGrid: React.FC<{ hotelDetails: APIHotelDetailsJSONFormat
             <Image
               src={photo.src}
               alt={photo.alt}
+              width={100}
+              height={100}
               className="object-cover w-full h-full"
             />
           </div>
@@ -74,6 +76,8 @@ const PaginatedRoomImageGrid: React.FC<{ hotelDetails: APIHotelDetailsJSONFormat
             <Image
               src={photos[MAX_IMAGES - 1].src}
               alt="View All"
+              width={100}
+              height={100}
               className="object-cover w-full h-full opacity-50"
             />
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">

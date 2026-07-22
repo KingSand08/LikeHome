@@ -67,9 +67,8 @@ export default function LocationCombobox() {
       ref={dropdownRef}
       onFocus={() => setOpen(true)}
       onBlur={handleBlur}
-      className={`relative ${
-        open ? "rounded-lg rounded-b-none" : "rounded-lg"
-      } text-neutral dark:text-gray-100 dark:bg-gray-800 border-2 border-secondary focus:outline-none focus:ring-2 focus:ring-blue-500`}
+      className={`relative ${open ? "rounded-lg rounded-b-none" : "rounded-lg"
+        } text-neutral dark:text-gray-100 dark:bg-gray-800 border-2 border-secondary focus:outline-none focus:ring-2 focus:ring-blue-500`}
     >
       <CommandInput
         placeholder={value?.name ?? "Search locations..."}
